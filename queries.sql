@@ -15,13 +15,17 @@ $$;
 
 /* Procedures */
 
-/* ADDING PATIENT */
-CREATE OR REPLACE PROCEDURE add_patient(health_number Bigint, sos_contact varchar, cc Bigint, p_name varchar, p_birthday date)
-LANGUAGE plpgsql 
+/* ADDING PATIENT
+Ter em atenção que os últimos 2 campos podem ser NULL
+TESTADO E FUNCIONAL NO ENDPOINT
+*/
+CREATE OR REPLACE PROCEDURE add_patient(cc_num BIGINT, username VARCHAR, hashcode VARCHAR, health_number BIGINT, sos_contact BIGINT, birthday DATE, email VARCHAR)
+LANGUAGE plpgsql
 AS $$
 BEGIN
-	INSERT INTO patient (health_num, emergency_contact, person_cc, person_name, person_birthday) 
-	VALUES (health_number, sos_contact, cc, p_name, p_birthday);
+	INSERT INTO patient
+	VALUES (cc_num, username, hashcode, health_number, sos_contact, birthday, email);
+	
 	EXCEPTION
 		WHEN unique_violation THEN
 			RAISE EXCEPTION 'Primary key already exists';
@@ -29,12 +33,6 @@ BEGIN
 			RAISE EXCEPTION 'Error adding patient';
 END;
 $$;
-
--- EXEMPLO --
-call add_patient(100000, '987654321', 132454125, 'Carlos Silva', '1967-06-23');
-call add_patient(100001, '987654322', 132454126, 'Filipe Dias', '1997-04-11');
-CALL add_patient(987654324, '911', 123456790, 'John', NULL);
-
 
 /* ADDING EMPLOYEE CONTRACT */
 CREATE OR REPLACE PROCEDURE add_emp(empnum BIGINT, id_contract BIGINT, sal INT, cont_day DATE, due_date DATE, cc BIGINT, p_name VARCHAR, bday DATE)

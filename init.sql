@@ -20,12 +20,14 @@ CREATE TABLE employee_contract (
 );
 
 CREATE TABLE patient (
+	cc	 BIGINT,
+	username	 VARCHAR(128) NOT NULL,
+	hashcode	 VARCHAR(128) NOT NULL,
 	health_num	 BIGINT NOT NULL,
-	emergency_contact VARCHAR(512) NOT NULL,
-	person_cc	 BIGINT,
-	person_name	 VARCHAR(512) NOT NULL,
-	person_birthday	 DATE,
-	PRIMARY KEY(person_cc)
+	emergency_contact BIGINT NOT NULL,
+	birthday	 DATE,
+	email	 VARCHAR(128),
+	PRIMARY KEY(cc)
 );
 
 CREATE TABLE assistant (
