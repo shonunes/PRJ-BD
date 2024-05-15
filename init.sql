@@ -7,16 +7,18 @@ CREATE TABLE doctor_license (
 	PRIMARY KEY(employee_contract_person_cc)
 );
 
-CREATE TABLE employee_contract (
+CREATE TABLE employee (
+	cc	 BIGINT,
+	username	 VARCHAR(128) NOT NULL,
+	hashcode	 VARCHAR(128) NOT NULL,
 	emp_num		 BIGSERIAL NOT NULL,
 	contract_id	 BIGINT NOT NULL,
-	contract_salary	 INTEGER NOT NULL,
-	contract_issue_date DATE,
+	salary	 INTEGER NOT NULL,
+	contract_issue_date	 DATE NOT NULL,
 	contract_due_date	 DATE NOT NULL,
-	person_cc		 BIGINT,
-	person_name	 BOOL NOT NULL,
-	person_birthday	 DATE,
-	PRIMARY KEY(person_cc)
+	birthday	 DATE,
+	email	 VARCHAR(128),
+	PRIMARY KEY(cc)
 );
 
 CREATE TABLE patient (
@@ -31,8 +33,8 @@ CREATE TABLE patient (
 );
 
 CREATE TABLE assistant (
-	employee_contract_person_cc BIGINT,
-	PRIMARY KEY(employee_contract_person_cc)
+	cc BIGINT,
+	PRIMARY KEY(cc)
 );
 
 CREATE TABLE nurse (
@@ -163,10 +165,14 @@ CREATE TABLE appointment_prescription (
 );
 
 ALTER TABLE doctor_license ADD UNIQUE (license_id);
-ALTER TABLE doctor_license ADD CONSTRAINT doctor_license_fk1 FOREIGN KEY (employee_contract_person_cc) REFERENCES employee_contract(person_cc);
-ALTER TABLE employee_contract ADD UNIQUE (emp_num, contract_id);
-ALTER TABLE patient ADD UNIQUE (health_num);
-ALTER TABLE assistant ADD CONSTRAINT assistant_fk1 FOREIGN KEY (employee_contract_person_cc) REFERENCES employee_contract(person_cc);
+ALTER TABLE doctor_license ADD CONSTRAINT doctor_license_fk1 FOREIGN KEY (cc) REFERENCES employee(cc);
+
+
+ALTER TABLE employee ADD UNIQUE (emp_num, contract_id, username);
+ALTER TABLE patient ADD UNIQUE (health_num, username);
+ALTER TABLE assistant ADD CONSTRAINT assistant_fk1 FOREIGN KEY (cc) REFERENCES employee(cc);
+
+
 ALTER TABLE nurse ADD CONSTRAINT nurse_fk1 FOREIGN KEY (employee_contract_person_cc) REFERENCES employee_contract(person_cc);
 ALTER TABLE appointment ADD UNIQUE (bill_id);
 ALTER TABLE appointment ADD CONSTRAINT appointment_fk1 FOREIGN KEY (bill_id) REFERENCES bill(id);

@@ -27,33 +27,34 @@ BEGIN
 	VALUES (cc_num, username, hashcode, health_number, sos_contact, birthday, email);
 	
 	EXCEPTION
-		WHEN unique_violation THEN
+		WHEN UNIQUE_VIOLATION THEN
 			RAISE EXCEPTION 'Primary key already exists';
 		WHEN OTHERS THEN
 			RAISE EXCEPTION 'Error adding patient';
 END;
 $$;
 
-/* ADDING EMPLOYEE CONTRACT */
-CREATE OR REPLACE PROCEDURE add_emp(empnum BIGINT, id_contract BIGINT, sal INT, cont_day DATE, due_date DATE, cc BIGINT, p_name VARCHAR, bday DATE)
+/* ADDING GENERAL EMPLOYEE INFORMATION */
+CREATE OR REPLACE PROCEDURE add_emp(cc_num BIGINT, username VARCHAR, hashcode VARCHAR, contract_id BIGINT, sal INT, contract_issue_date DATE, contract_due_date DATE, birthday DATE, email VARCHAR)
 LANGUAGE plpgsql
 AS $$
 BEGIN
-	INSERT INTO employee_contract (emp_num, contract_id, contract_salary, contract_issue_date, contract_due_date, person_cc, person_name, person_birthday) 
-	VALUES (empnum, id_contract, sal, cont_day, due_date, cc, p_name, bday );
+	INSERT INTO employee (cc, username, hashcode, contract_id, salary, contract_issue_date, contract_due_date, birthday, email)
+	VALUES (cc_num, username, hashcode, contract_id, sal, contract_issue_date, contract_due_date, birthday, email);
+	
 	EXCEPTION
 		WHEN OTHERS THEN
-			RAISE EXCEPTION 'error adding employee contract';
+			RAISE EXCEPTION 'error adding employee';
 END;
 $$;
 
-/*ADDING ASSISTANT LICENSE*/
-CREATE OR REPLACE PROCEDURE add_assistant(empnum BIGINT, id_contract BIGINT, sal INT, cont_day DATE, due_date DATE, cc BIGINT, p_name VARCHAR, bday DATE)
+CREATE OR REPLACE PROCEDURE add_assistant(cc_num BIGINT, username VARCHAR, hashcode VARCHAR, contract_id BIGINT, sal INT, contract_issue_date DATE, contract_due_date DATE, birthday DATE, email VARCHAR)
 LANGUAGE plpgsql
 AS $$
 BEGIN
-	CALL add_emp(empnum, id_contract, sal, cont_day, due_date, cc, p_name, bday);
-	INSERT INTO assistant VALUES(id_contract);
+	CALL add_emp(cc_num, username, hashcode, contract_id, sal, contract_issue_date, contract_due_date, birthday, email);
+	INSERT INTO assistant VALUES(cc_num);
+	
 	EXCEPTION
 		WHEN OTHERS THEN
 			RAISE EXCEPTION 'error adding assistant';

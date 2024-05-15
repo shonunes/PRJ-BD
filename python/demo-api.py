@@ -74,7 +74,7 @@ def add_patient():
     logger.debug(f'POST /dbproj/register/patient - payload: {payload}')
 
     # validate every argument
-    args = ['cc', 'username', 'password', 'health_number', 'emergency_contact', 'birthday']
+    args = ['cc', 'username', 'password', 'health_number', 'emergency_contact', 'birthday', 'email']
     for arg in args:
         if arg not in payload:
             response = {'status': StatusCodes['api_error'], 'results': f'{arg} value not in payload'}
@@ -92,10 +92,64 @@ def add_patient():
 
         # commit the transaction
         conn.commit()
-        response = {'status': StatusCodes['success'], 'results': f'Inserted patient {payload["username"]}'}
+        response = {'status': StatusCodes['success'], 'results': payload['cc']}
 
     except (Exception, psycopg2.DatabaseError) as error:
         logger.error(f'POST /dbproj/register/patient - error: {error}')
+        response = {'status': StatusCodes['internal_error'], 'errors': str(error)}
+
+        # an error occurred, rollback
+        conn.rollback()
+
+    finally:
+        if conn is not None:
+            conn.close()
+
+    return flask.jsonify(response)
+
+
+##
+## POST
+##
+## Add assistant
+##
+## To use it, access:
+## 
+## http://localhost:8080/dbproj/register/assistant
+##
+@app.route('/dbproj/register/assistant', methods=['POST'])
+def add_assistant():
+    logger.info('POST /dbproj/register/assistant')
+    payload = flask.request.get_json()
+
+    conn = db_connection()
+    cur = conn.cursor()
+
+    logger.debug(f'POST /dbproj/register/assistant - payload: {payload}')
+
+    # validate every argument
+    args = ['cc', 'username', 'password', 'contract_id', 'salary', 'contract_issue_date', 'contract_due_date', 'birthday', 'email']
+    for arg in args:
+        if arg not in payload:
+            response = {'status': StatusCodes['api_error'], 'results': f'{arg} value not in payload'}
+            return flask.jsonify(response)
+
+    # generate password hash to store in the database
+    hashed_password = generate_password_hash(payload['password'], method='sha256')
+
+    # parameterized queries, good for security and performance
+    statement = 'CALL add_assistant(%s, %s, %s, %s, %s, %s, %s, %s, %s)'
+    values = (payload['cc'], payload['username'], hashed_password, payload['contract_id'], payload['salary'], payload['contract_issue_date'], payload['contract_due_date'], payload['birthday'], payload['email'],)
+
+    try:
+        cur.execute(statement, values)
+
+        # commit the transaction
+        conn.commit()
+        response = {'status': StatusCodes['success'], 'results': payload['cc']}
+
+    except (Exception, psycopg2.DatabaseError) as error:
+        logger.error(f'POST /dbproj/register/assistant - error: {error}')
         response = {'status': StatusCodes['internal_error'], 'errors': str(error)}
 
         # an error occurred, rollback
@@ -125,6 +179,20 @@ def login():
         token = jwt.encode({'user': auth.username, 'exp': time.time() + 60 * 60}, app.config['SECRET_KEY'])
         return flask.jsonify({'token': token.decode('UTF-8')})
     return flask.Flask.make_response('Could not verify!', 401, {'WWW-Authenticate': 'Basic realm="Login Required"'})
+
+
+
+
+
+
+
+
+
+
+
+
+
+
 
 ##
 ## Demo GET
