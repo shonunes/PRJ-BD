@@ -15,7 +15,7 @@ $$;
 
 /* Procedures */
 
-/* ADDING PATIENT
+/* ADD_PATIENT
 Ter em atenção que os últimos 2 campos podem ser NULL
 TESTADO E FUNCIONAL NO ENDPOINT
 */
@@ -25,7 +25,7 @@ AS $$
 BEGIN
 	INSERT INTO patient
 	VALUES (cc_num, username, hashcode, health_number, sos_contact, birthday, email);
-	
+
 	EXCEPTION
 		WHEN UNIQUE_VIOLATION THEN
 			RAISE EXCEPTION 'Primary key already exists';
@@ -34,40 +34,56 @@ BEGIN
 END;
 $$;
 
-/* ADDING GENERAL EMPLOYEE INFORMATION */
+/* ADDING GENERAL EMPLOYEE INFORMATION
+Atenção com os campos que podem ser NULL
+TESTADO E FUNCIONAL NO ENDPOINT
+*/
 CREATE OR REPLACE PROCEDURE add_emp(cc_num BIGINT, username VARCHAR, hashcode VARCHAR, contract_id BIGINT, sal INT, contract_issue_date DATE, contract_due_date DATE, birthday DATE, email VARCHAR)
 LANGUAGE plpgsql
 AS $$
 BEGIN
 	INSERT INTO employee (cc, username, hashcode, contract_id, salary, contract_issue_date, contract_due_date, birthday, email)
 	VALUES (cc_num, username, hashcode, contract_id, sal, contract_issue_date, contract_due_date, birthday, email);
-	
+
 	EXCEPTION
 		WHEN OTHERS THEN
 			RAISE EXCEPTION 'error adding employee';
 END;
 $$;
 
+/* ADD_ASSISTANT
+Atenção com os campos que podem ser NULL
+TESTADO E FUNCIONAL NO ENDPOINT
+*/
 CREATE OR REPLACE PROCEDURE add_assistant(cc_num BIGINT, username VARCHAR, hashcode VARCHAR, contract_id BIGINT, sal INT, contract_issue_date DATE, contract_due_date DATE, birthday DATE, email VARCHAR)
 LANGUAGE plpgsql
 AS $$
 BEGIN
 	CALL add_emp(cc_num, username, hashcode, contract_id, sal, contract_issue_date, contract_due_date, birthday, email);
-	INSERT INTO assistant VALUES(cc_num);
-	
+	INSERT INTO assistant
+	VALUES(cc_num);
+
 	EXCEPTION
 		WHEN OTHERS THEN
 			RAISE EXCEPTION 'error adding assistant';
 END;
 $$;
 
-/*ADDING NURSE LICENSE*/
-CREATE OR REPLACE PROCEDURE add_nurse(empnum BIGINT, id_contract BIGINT, sal INT, cont_day DATE, due_date DATE, cc BIGINT, p_name VARCHAR, bday DATE)
+/* ADD_NURSE
+Atenção com os campos que podem ser NULL
+POR TESTAR
+*/
+CREATE OR REPLACE PROCEDURE add_nurse(cc_num BIGINT, username VARCHAR, hashcode VARCHAR, contract_id BIGINT, sal INT, contract_issue_date DATE, contract_due_date DATE, birthday DATE, email VARCHAR, cc_boss BIGINT)
 LANGUAGE plpgsql
 AS $$
 BEGIN
-	CALL add_emp(empnum, id_contract, sal, cont_day, due_date, cc, p_name, bday);
-	INSERT INTO nurse VALUES(id_contract);
+	CALL add_emp(cc_num, username, hashcode, contract_id, sal, contract_issue_date, contract_due_date, birthday, email);
+	INSERT INTO nurse VALUES(cc_num);
+	IF (cc_boss IS NOT NULL) THEN
+		INSERT INTO nurse_hierarchy
+		VALUES(cc_num, cc_boss);
+	END IF;
+
 	EXCEPTION
 		WHEN OTHERS THEN
 			RAISE EXCEPTION 'error adding nurse';
@@ -104,20 +120,7 @@ $$;
 
 call add_doctor(1, 1, 0, 0100-01-01, 0100-01-02, 0,varchar 'Daniela', 1-1-1,varchar 'ola',varchar 'OLA', 0001-01-01,  0001-01-03,varchar 'EXISTIR');
 
-
-/*ADDING HIERARCHY BETWEEN NURSES*/
-CREATE OR REPLACE PROCEDURE add_nurse_hierarchy(superior_cc BIGINT, inferior_cc BIGINT)
-LANGUAGE plpgsql
-AS $$
-BEGIN
-	INSERT INTO nurse_nurse(nurse_employee_contract_person_cc, nurse_employee_contract_person_cc1) VALUES(inferior_cc, superior_cc);
-	EXCEPTION
-		WHEN OTHERS THEN
-			RAISE EXCEPTION 'error adding hierarchy between nurses';
-END;
-$$;
-
-/*ADDING SPECIALTY*/
+/* ADDING SPECIALTY */
 CREATE OR REPLACE PROCEDURE add_specialty(spec VARCHAR)
 LANGUAGE plpgsql
 AS $$
