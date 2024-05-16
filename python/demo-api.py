@@ -217,6 +217,59 @@ def add_nurse():
 
 
 ##
+## POST
+##
+## Add doctor
+##
+## To use it, access:
+## 
+## http://localhost:8080/dbproj/register/doctor
+##
+@app.route('/dbproj/register/doctor', methods=['POST'])
+def add_doctor():
+    logger.info('POST /dbproj/register/doctor')
+    payload = flask.request.get_json()
+
+    conn = db_connection()
+    cur = conn.cursor()
+
+    logger.debug(f'POST /dbproj/register/doctor - payload: {payload}')
+
+    # validate every argument
+    args = ['cc', 'username', 'password', 'contract_id', 'salary', 'contract_issue_date', 'contract_due_date', 'birthday', 'email', 'license_id', 'license_issue_date', 'license_due_date', 'specialty_name']
+    for arg in args:
+        if arg not in payload:
+            response = {'status': StatusCodes['api_error'], 'results': f'{arg} value not in payload'}
+            return flask.jsonify(response)
+
+    # generate password hash to store in the database
+    hashed_password = generate_password_hash(payload['password'], method='sha256')
+
+    # parameterized queries, good for security and performance
+    statement = 'CALL add_doctor(%s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s)'
+    values = (payload['cc'], payload['username'], hashed_password, payload['contract_id'], payload['salary'], payload['contract_issue_date'], payload['contract_due_date'], payload['birthday'], payload['email'], payload['license_id'], payload['license_issue_date'], payload['license_due_date'], payload['license_company'], payload['specialty_name'],)
+
+    try:
+        cur.execute(statement, values)
+
+        # commit the transaction
+        conn.commit()
+        response = {'status': StatusCodes['success'], 'results': payload['cc']}
+
+    except (Exception, psycopg2.DatabaseError) as error:
+        logger.error(f'POST /dbproj/register/doctor - error: {error}')
+        response = {'status': StatusCodes['internal_error'], 'errors': str(error)}
+
+        # an error occurred, rollback
+        conn.rollback()
+
+    finally:
+        if conn is not None:
+            conn.close()
+
+    return flask.jsonify(response)
+
+##
 ## PUT
 ##
 ## User login

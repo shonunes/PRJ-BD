@@ -1,10 +1,10 @@
-CREATE TABLE doctor_license (
+CREATE TABLE doctor (
+	cc	 BIGINT,
 	license_id			 VARCHAR(64) NOT NULL,
-	license_company_name	 VARCHAR(512),
-	license_issue_date		 DATE,
+	license_company_name	 VARCHAR(128),
+	license_issue_date		 DATE NOT NULL,
 	license_due_date		 DATE NOT NULL,
-	employee_contract_person_cc BIGINT,
-	PRIMARY KEY(employee_contract_person_cc)
+	PRIMARY KEY(cc)
 );
 
 CREATE TABLE employee (
@@ -44,10 +44,10 @@ CREATE TABLE nurse (
 
 CREATE TABLE appointment (
 	id					 BIGSERIAL,
-	start_time				 TIMESTAMP NOT NULL,
-	duration					 TIMESTAMP,
-	cost					 INTEGER NOT NULL,
-	bill_id					 BIGINT NOT NULL,
+	start_time			 TIMESTAMP NOT NULL,
+	duration			 TIMESTAMP,
+	cost				 INTEGER NOT NULL,
+	bill_id				 BIGINT NOT NULL,
 	doctor_license_employee_contract_person_cc BIGINT NOT NULL,
 	patient_person_cc				 BIGINT NOT NULL,
 	PRIMARY KEY(id)
@@ -115,8 +115,8 @@ CREATE TABLE bill (
 	PRIMARY KEY(id)
 );
 
-CREATE TABLE especiality (
-	name VARCHAR(512),
+CREATE TABLE specialty (
+	name VARCHAR(128),
 	PRIMARY KEY(name)
 );
 
@@ -134,16 +134,16 @@ CREATE TABLE surgery_role (
 	PRIMARY KEY(surgery_id,nurse_employee_contract_person_cc)
 );
 
-CREATE TABLE especiality_especiality (
-	especiality_name	 VARCHAR(512),
-	especiality_name1 VARCHAR(512) NOT NULL,
-	PRIMARY KEY(especiality_name)
+CREATE TABLE specialty_hierarchy (
+	specialty_name	 VARCHAR(128),
+	specialty_parent VARCHAR(128) NOT NULL,
+	PRIMARY KEY(specialty_name)
 );
 
-CREATE TABLE doctor_license_especiality (
-	doctor_license_employee_contract_person_cc BIGINT,
-	especiality_name				 VARCHAR(512),
-	PRIMARY KEY(doctor_license_employee_contract_person_cc,especiality_name)
+CREATE TABLE doctor_specialty (
+	doctor_cc	 BIGINT,
+	specialty_name		 VARCHAR(128),
+	PRIMARY KEY(doctor_cc, specialty_name)
 );
 
 CREATE TABLE nurse_hierarchy (
@@ -160,14 +160,12 @@ CREATE TABLE prescription_hospitalization (
 
 CREATE TABLE appointment_prescription (
 	appointment_id	 BIGINT NOT NULL,
-	prescription_id BIGINT,
+	prescription_id	 BIGINT,
 	PRIMARY KEY(prescription_id)
 );
 
-ALTER TABLE doctor_license ADD UNIQUE (license_id);
-ALTER TABLE doctor_license ADD CONSTRAINT doctor_license_fk1 FOREIGN KEY (cc) REFERENCES employee(cc);
-
-
+ALTER TABLE doctor ADD UNIQUE (license_id);
+ALTER TABLE doctor ADD CONSTRAINT doctor_fk1 FOREIGN KEY (cc) REFERENCES employee(cc);
 ALTER TABLE employee ADD UNIQUE (emp_num, contract_id, username);
 ALTER TABLE patient ADD UNIQUE (health_num, username);
 ALTER TABLE assistant ADD CONSTRAINT assistant_fk1 FOREIGN KEY (cc) REFERENCES employee(cc);
@@ -193,13 +191,15 @@ ALTER TABLE appointment_role ADD CONSTRAINT appointment_role_fk1 FOREIGN KEY (ap
 ALTER TABLE appointment_role ADD CONSTRAINT appointment_role_fk2 FOREIGN KEY (nurse_employee_contract_person_cc) REFERENCES nurse(employee_contract_person_cc);
 ALTER TABLE surgery_role ADD CONSTRAINT surgery_role_fk1 FOREIGN KEY (surgery_id) REFERENCES surgery(id);
 ALTER TABLE surgery_role ADD CONSTRAINT surgery_role_fk2 FOREIGN KEY (nurse_employee_contract_person_cc) REFERENCES nurse(employee_contract_person_cc);
-ALTER TABLE especiality_especiality ADD CONSTRAINT especiality_especiality_fk1 FOREIGN KEY (especiality_name) REFERENCES especiality(name);
-ALTER TABLE especiality_especiality ADD CONSTRAINT especiality_especiality_fk2 FOREIGN KEY (especiality_name1) REFERENCES especiality(name);
-ALTER TABLE doctor_license_especiality ADD CONSTRAINT doctor_license_especiality_fk1 FOREIGN KEY (doctor_license_employee_contract_person_cc) REFERENCES doctor_license(employee_contract_person_cc);
-ALTER TABLE doctor_license_especiality ADD CONSTRAINT doctor_license_especiality_fk2 FOREIGN KEY (especiality_name) REFERENCES especiality(name);
 
+
+ALTER TABLE specialty_hierarchy ADD CONSTRAINT specialty_hierarchy_fk1 FOREIGN KEY (specialty_name) REFERENCES specialty(name);
+ALTER TABLE specialty_hierarchy ADD CONSTRAINT specialty_hierarchy_fk2 FOREIGN KEY (specialty_parent) REFERENCES specialty(name);
+ALTER TABLE doctor_specialty ADD CONSTRAINT doctor_specialty_fk1 FOREIGN KEY (doctor_cc) REFERENCES doctor(cc);
+ALTER TABLE doctor_specialty ADD CONSTRAINT doctor_specialty_fk2 FOREIGN KEY (specialty_name) REFERENCES specialty(name);
 ALTER TABLE nurse_hierarchy ADD CONSTRAINT nurse_nurse_fk1 FOREIGN KEY (cc_nurse) REFERENCES nurse(cc);
 ALTER TABLE nurse_hierarchy ADD CONSTRAINT nurse_nurse_fk2 FOREIGN KEY (cc_boss) REFERENCES nurse(cc);
+
 
 ALTER TABLE prescription_hospitalization ADD CONSTRAINT prescription_hospitalization_fk1 FOREIGN KEY (prescription_id) REFERENCES prescription(id);
 ALTER TABLE prescription_hospitalization ADD CONSTRAINT prescription_hospitalization_fk2 FOREIGN KEY (hospitalization_id) REFERENCES hospitalization(id);

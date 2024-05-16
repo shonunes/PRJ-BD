@@ -1,20 +1,3 @@
-/* FUNCTIONS */
-CREATE OR REPLACE FUNCTION specialty_exists(specialty VARCHAR) RETURNS BOOLEAN
-LANGUAGE plpgsql
-AS $$
-DECLARE 
-	res INTEGER;
-BEGIN
-	SELECT COUNT(*) INTO res 
-	FROM especiality
-	WHERE name = specialty;
-	return res = 1;
-END;
-$$;
-
-
-/* Procedures */
-
 /* ADD_PATIENT
 Ter em atenção que os últimos 2 campos podem ser NULL
 TESTADO E FUNCIONAL NO ENDPOINT
@@ -71,7 +54,7 @@ $$;
 
 /* ADD_NURSE
 Atenção com os campos que podem ser NULL
-POR TESTAR
+TESTADO E FUNCIONAL NO ENDPOINT
 */
 CREATE OR REPLACE PROCEDURE add_nurse(cc_num BIGINT, username VARCHAR, hashcode VARCHAR, contract_id BIGINT, sal INT, contract_issue_date DATE, contract_due_date DATE, birthday DATE, email VARCHAR, cc_boss BIGINT)
 LANGUAGE plpgsql
@@ -90,45 +73,59 @@ BEGIN
 END;
 $$;
 
-/*ADDING DOCTOR LICENSE*/
-CREATE OR REPLACE PROCEDURE add_doctor(empnum BIGINT, id_contract BIGINT, sal INT, cont_day DATE, contract_due_date DATE, cc BIGINT, p_name VARCHAR, bday DATE, id_license VARCHAR, license_comp VARCHAR, issue_date DATE, l_due_date DATE)
+/* ADDING DOCTOR
+Atenção com os campos que podem ser NULL 
+*/
+CREATE OR REPLACE PROCEDURE add_doctor(cc_num BIGINT, username VARCHAR, hashcode VARCHAR, contract_id BIGINT, sal INT, contract_issue_date DATE, contract_due_date DATE, birthday DATE, email VARCHAR, license_id VARCHAR, license_issue_date DATE, license_due_date DATE, license_comp VARCHAR, specialty_name VARCHAR)
 LANGUAGE plpgsql
 AS $$
 BEGIN
-	CALL add_emp(empnum, id_contract, sal, cont_day, contract_due_date, cc, p_name, bday);
-	INSERT INTO doctor_license(license_id, license_company_name, license_issue_date, license_due_date, employee_contract_person_cc) VALUES(id_license, license_comp, issue_date, l_due_date, cc);
-	EXCEPTION
-		WHEN OTHERS THEN
-			RAISE EXCEPTION 'error adding doctor';
-END;
-$$;
+	CALL add_emp(cc_num, username, hashcode, contract_id, sal, contract_issue_date, contract_due_date, birthday, email);
+	INSERT INTO doctor
+	VALUES(cc_num, license_id, license_comp, license_issue_date, license_due_date);
 
-CREATE OR REPLACE PROCEDURE add_doctor(empnum BIGINT, id_contract BIGINT, sal INT, cont_day DATE, contract_due_date DATE, cc BIGINT, p_name VARCHAR, bday DATE, id_license VARCHAR, license_comp VARCHAR, issue_date DATE, l_due_date DATE, specialty VARCHAR)
-LANGUAGE plpgsql
-AS $$
-BEGIN
-	CALL add_emp(empnum, id_contract, sal, cont_day, contract_due_date, cc, p_name, bday);
-	INSERT INTO doctor_license(license_id, license_company_name, license_issue_date, license_due_date, employee_contract_person_cc) VALUES(id_license, license_comp, issue_date, l_due_date, cc);
-	IF (NOT specialty_exists(specialty)) THEN
-		CALL add_specialty(specialty);
+	IF (NOT specialty_exists(specialty_name)) THEN
+		CALL add_specialty(specialty_name, NULL);
 	END IF;
+	INSERT INTO doctor_specialty
+	VALUES(cc_num, specialty_name);
+
 	EXCEPTION
 		WHEN OTHERS THEN
 			RAISE EXCEPTION 'error adding doctor';
 END;
 $$;
-
-call add_doctor(1, 1, 0, 0100-01-01, 0100-01-02, 0,varchar 'Daniela', 1-1-1,varchar 'ola',varchar 'OLA', 0001-01-01,  0001-01-03,varchar 'EXISTIR');
 
 /* ADDING SPECIALTY */
-CREATE OR REPLACE PROCEDURE add_specialty(spec VARCHAR)
+CREATE OR REPLACE PROCEDURE add_specialty(specialty_name VARCHAR, specialty_parent VARCHAR)
 LANGUAGE plpgsql
 AS $$
 BEGIN
-	INSERT INTO especiality VALUES(spec);
+	INSERT INTO specialty
+	VALUES(specialty_name);
+	IF (specialty_parent IS NOT NULL) THEN
+		INSERT INTO specialty_hierarchy
+		VALUES(specialty_name, specialty_parent);
+	END IF;
+
 	EXCEPTION
 		WHEN OTHERS THEN
 			RAISE EXCEPTION 'error adding specialty';
+END;
+$$;
+
+/* CHECKING IF SPECIALTY EXISTS */
+CREATE OR REPLACE FUNCTION specialty_exists(specialty_name VARCHAR) 
+RETURNS BOOLEAN
+LANGUAGE plpgsql
+AS $$
+DECLARE
+	res INTEGER;
+BEGIN
+	SELECT COUNT(*) INTO res 
+	FROM specialty
+	WHERE name = specialty_name;
+	return res = 1;
 END;
 $$;
 
