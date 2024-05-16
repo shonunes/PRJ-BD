@@ -24,6 +24,7 @@ import time
 from werkzeug.security import generate_password_hash, check_password_hash
 
 app = flask.Flask(__name__)
+app.config['SECRET_KEY'] = 'jyrcv1+lR#acVxK'
 
 StatusCodes = {
     'success': 200,
@@ -77,7 +78,7 @@ def add_patient():
     args = ['cc', 'username', 'password', 'health_number', 'emergency_contact', 'birthday', 'email']
     for arg in args:
         if arg not in payload:
-            response = {'status': StatusCodes['api_error'], 'results': f'{arg} value not in payload'}
+            response = {'status': StatusCodes['api_error'], 'errors': f'{arg} value not in payload'}
             return flask.jsonify(response)
 
     # generate password hash to store in the database
@@ -131,7 +132,7 @@ def add_assistant():
     args = ['cc', 'username', 'password', 'contract_id', 'salary', 'contract_issue_date', 'contract_due_date', 'birthday', 'email']
     for arg in args:
         if arg not in payload:
-            response = {'status': StatusCodes['api_error'], 'results': f'{arg} value not in payload'}
+            response = {'status': StatusCodes['api_error'], 'errors': f'{arg} value not in payload'}
             return flask.jsonify(response)
 
     # generate password hash to store in the database
@@ -185,7 +186,7 @@ def add_nurse():
     args = ['cc', 'username', 'password', 'contract_id', 'salary', 'contract_issue_date', 'contract_due_date', 'birthday', 'email', 'cc_superior']
     for arg in args:
         if arg not in payload:
-            response = {'status': StatusCodes['api_error'], 'results': f'{arg} value not in payload'}
+            response = {'status': StatusCodes['api_error'], 'errors': f'{arg} value not in payload'}
             return flask.jsonify(response)
 
     # generate password hash to store in the database
@@ -239,7 +240,7 @@ def add_doctor():
     args = ['cc', 'username', 'password', 'contract_id', 'salary', 'contract_issue_date', 'contract_due_date', 'birthday', 'email', 'license_id', 'license_issue_date', 'license_due_date', 'specialty_name']
     for arg in args:
         if arg not in payload:
-            response = {'status': StatusCodes['api_error'], 'results': f'{arg} value not in payload'}
+            response = {'status': StatusCodes['api_error'], 'errors': f'{arg} value not in payload'}
             return flask.jsonify(response)
 
     # generate password hash to store in the database
@@ -280,12 +281,101 @@ def add_doctor():
 ##
 @app.route('/dbproj/user', methods=['PUT'])
 def login():
-    auth = flask.request.autorization
+    logger.info('PUT /dbproj/user')
+    payload = flask.request.get_json()
 
-    if auth and auth.password == 'password':
-        token = jwt.encode({'user': auth.username, 'exp': time.time() + 60 * 60}, app.config['SECRET_KEY'])
-        return flask.jsonify({'token': token.decode('UTF-8')})
-    return flask.Flask.make_response('Could not verify!', 401, {'WWW-Authenticate': 'Basic realm="Login Required"'})
+    conn = db_connection()
+    cur = conn.cursor()
+
+    logger.debug(f'PUT /dbproj/user - payload: {payload}')
+
+    # validate every argument
+    args = ['username', 'password', 'type']
+    for arg in args:
+        if arg not in payload:
+            response = {'status': StatusCodes['api_error'], 'errors': f'{arg} value not in payload'}
+            return flask.jsonify(response)
+
+    types = ['patient', 'assistant', 'nurse', 'doctor']
+    user_type = payload['type']
+    if user_type not in types:
+        response = {'status': StatusCodes['api_error'], 'errors': 'Invalid type'}
+        return flask.jsonify(response)
+
+    value = (payload['username'],)
+
+    try:
+        if (user_type == 'patient'):
+            statement = 'SELECT hashcode \
+                        FROM patient \
+                        WHERE username = %s'
+        else:
+            statement = f'SELECT hashcode \
+                        FROM employee \
+                        JOIN {user_type} ON {user_type}.cc = employee.cc \
+                        WHERE username = %s'
+
+        cur.execute(statement, value)
+
+        row = cur.fetchone()
+        if row is None:
+            response = {'status': StatusCodes['api_error'], 'errors': 'User not found'}
+            return flask.jsonify(response)
+
+        if not check_password_hash(row[0], payload['password']):
+            response = {'status': StatusCodes['api_error'], 'errors': 'Invalid password'}
+            return flask.jsonify(response)
+
+        # generate token
+        token = jwt.encode({'username': payload['username'], 'type': user_type, 'exp': time.time() + 3600}, app.config['SECRET_KEY'], algorithm='HS256')
+
+        response = {'status': StatusCodes['success'], 'results': token}
+
+        # commit the transaction
+        conn.commit()
+
+    except (Exception, psycopg2.DatabaseError) as error:
+        logger.error(f'POST /dbproj/user - error: {error}')
+        response = {'status': StatusCodes['internal_error'], 'errors': str(error)}
+
+        # an error occurred, rollback
+        conn.rollback()
+
+    finally:
+        if conn is not None:
+            conn.close()
+
+    return flask.jsonify(response)
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
 
 
 
