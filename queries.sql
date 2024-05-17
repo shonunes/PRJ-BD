@@ -2,12 +2,12 @@
 Ter em atenção que os últimos 2 campos podem ser NULL
 TESTADO E FUNCIONAL NO ENDPOINT
 */
-CREATE OR REPLACE PROCEDURE add_patient(cc_num BIGINT, username VARCHAR, hashcode VARCHAR, health_number BIGINT, sos_contact BIGINT, birthday DATE, email VARCHAR)
+CREATE OR REPLACE PROCEDURE add_patient(cc_num BIGINT, patient_name VARCHAR, hashcode VARCHAR, health_number BIGINT, sos_contact BIGINT, birthday DATE, email VARCHAR)
 LANGUAGE plpgsql
 AS $$
 BEGIN
 	INSERT INTO patient
-	VALUES (cc_num, username, hashcode, health_number, sos_contact, birthday, email);
+	VALUES (cc_num, patient_name, hashcode, health_number, sos_contact, birthday, email);
 
 	EXCEPTION
 		WHEN UNIQUE_VIOLATION THEN
@@ -21,12 +21,18 @@ $$;
 Atenção com os campos que podem ser NULL
 TESTADO E FUNCIONAL NO ENDPOINT
 */
-CREATE OR REPLACE PROCEDURE add_emp(cc_num BIGINT, username VARCHAR, hashcode VARCHAR, contract_id BIGINT, sal INT, contract_issue_date DATE, contract_due_date DATE, birthday DATE, email VARCHAR)
+CREATE OR REPLACE FUNCTION add_emp(cc_num BIGINT, emp_name VARCHAR, hashcode VARCHAR, contract_id BIGINT, sal INT, contract_issue_date DATE, contract_due_date DATE, birthday DATE, email VARCHAR)
+RETURNS INTEGER
 LANGUAGE plpgsql
 AS $$
+DECLARE
+    user_id INTEGER;
 BEGIN
-	INSERT INTO employee (cc, username, hashcode, contract_id, salary, contract_issue_date, contract_due_date, birthday, email)
-	VALUES (cc_num, username, hashcode, contract_id, sal, contract_issue_date, contract_due_date, birthday, email);
+	INSERT INTO employee (cc, name, hashcode, contract_id, salary, contract_issue_date, contract_due_date, birthday, email)
+	VALUES (cc_num, emp_name, hashcode, contract_id, sal, contract_issue_date, contract_due_date, birthday, email)
+	RETURNING emp_num INTO user_id;
+
+	RETURN user_id;
 
 	EXCEPTION
 		WHEN OTHERS THEN
@@ -38,13 +44,18 @@ $$;
 Atenção com os campos que podem ser NULL
 TESTADO E FUNCIONAL NO ENDPOINT
 */
-CREATE OR REPLACE PROCEDURE add_assistant(cc_num BIGINT, username VARCHAR, hashcode VARCHAR, contract_id BIGINT, sal INT, contract_issue_date DATE, contract_due_date DATE, birthday DATE, email VARCHAR)
+CREATE OR REPLACE FUNCTION add_assistant(cc_num BIGINT, name VARCHAR, hashcode VARCHAR, contract_id BIGINT, sal INT, contract_issue_date DATE, contract_due_date DATE, birthday DATE, email VARCHAR)
+RETURNS INTEGER
 LANGUAGE plpgsql
 AS $$
+DECLARE
+    user_id INTEGER;
 BEGIN
-	CALL add_emp(cc_num, username, hashcode, contract_id, sal, contract_issue_date, contract_due_date, birthday, email);
+	user_id := add_emp(cc_num, name, hashcode, contract_id, sal, contract_issue_date, contract_due_date, birthday, email);
 	INSERT INTO assistant
 	VALUES(cc_num);
+
+	RETURN user_id;
 
 	EXCEPTION
 		WHEN OTHERS THEN
@@ -56,16 +67,21 @@ $$;
 Atenção com os campos que podem ser NULL
 TESTADO E FUNCIONAL NO ENDPOINT
 */
-CREATE OR REPLACE PROCEDURE add_nurse(cc_num BIGINT, username VARCHAR, hashcode VARCHAR, contract_id BIGINT, sal INT, contract_issue_date DATE, contract_due_date DATE, birthday DATE, email VARCHAR, cc_boss BIGINT)
+CREATE OR REPLACE FUNCTION add_nurse(cc_num BIGINT, name VARCHAR, hashcode VARCHAR, contract_id BIGINT, sal INT, contract_issue_date DATE, contract_due_date DATE, birthday DATE, email VARCHAR, cc_boss BIGINT)
+RETURNS INTEGER
 LANGUAGE plpgsql
 AS $$
+DECLARE
+    user_id INTEGER;
 BEGIN
-	CALL add_emp(cc_num, username, hashcode, contract_id, sal, contract_issue_date, contract_due_date, birthday, email);
+	user_id := add_emp(cc_num, name, hashcode, contract_id, sal, contract_issue_date, contract_due_date, birthday, email);
 	INSERT INTO nurse VALUES(cc_num);
 	IF (cc_boss IS NOT NULL) THEN
 		INSERT INTO nurse_hierarchy
 		VALUES(cc_num, cc_boss);
 	END IF;
+
+	RETURN user_id;
 
 	EXCEPTION
 		WHEN OTHERS THEN
@@ -76,11 +92,14 @@ $$;
 /* ADDING DOCTOR
 Atenção com os campos que podem ser NULL 
 */
-CREATE OR REPLACE PROCEDURE add_doctor(cc_num BIGINT, username VARCHAR, hashcode VARCHAR, contract_id BIGINT, sal INT, contract_issue_date DATE, contract_due_date DATE, birthday DATE, email VARCHAR, license_id VARCHAR, license_issue_date DATE, license_due_date DATE, license_comp VARCHAR, specialty_name VARCHAR)
+CREATE OR REPLACE FUNCTION add_doctor(cc_num BIGINT, name VARCHAR, hashcode VARCHAR, contract_id BIGINT, sal INT, contract_issue_date DATE, contract_due_date DATE, birthday DATE, email VARCHAR, license_id VARCHAR, license_issue_date DATE, license_due_date DATE, license_comp VARCHAR, specialty_name VARCHAR)
+RETURNS INTEGER
 LANGUAGE plpgsql
 AS $$
+DECLARE
+    user_id INTEGER;
 BEGIN
-	CALL add_emp(cc_num, username, hashcode, contract_id, sal, contract_issue_date, contract_due_date, birthday, email);
+	user_id := add_emp(cc_num, name, hashcode, contract_id, sal, contract_issue_date, contract_due_date, birthday, email);
 	INSERT INTO doctor
 	VALUES(cc_num, license_id, license_comp, license_issue_date, license_due_date);
 
@@ -89,6 +108,8 @@ BEGIN
 	END IF;
 	INSERT INTO doctor_specialty
 	VALUES(cc_num, specialty_name);
+
+	RETURN user_id;
 
 	EXCEPTION
 		WHEN OTHERS THEN

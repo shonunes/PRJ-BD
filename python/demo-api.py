@@ -69,9 +69,6 @@ def add_patient():
     logger.info('POST /dbproj/register/patient')
     payload = flask.request.get_json()
 
-    conn = db_connection()
-    cur = conn.cursor()
-
     logger.debug(f'POST /dbproj/register/patient - payload: {payload}')
 
     # validate every argument
@@ -87,6 +84,9 @@ def add_patient():
     # parameterized queries, good for security and performance
     statement = 'CALL add_patient(%s, %s, %s, %s, %s, %s, %s)'
     values = (payload['cc'], payload['username'], hashed_password, payload['health_number'], payload['emergency_contact'], payload['birthday'], payload['email'],)
+
+    conn = db_connection()
+    cur = conn.cursor()
 
     try:
         cur.execute(statement, values)
@@ -123,9 +123,6 @@ def add_assistant():
     logger.info('POST /dbproj/register/assistant')
     payload = flask.request.get_json()
 
-    conn = db_connection()
-    cur = conn.cursor()
-
     logger.debug(f'POST /dbproj/register/assistant - payload: {payload}')
 
     # validate every argument
@@ -139,15 +136,19 @@ def add_assistant():
     hashed_password = generate_password_hash(payload['password'], method='sha256')
 
     # parameterized queries, good for security and performance
-    statement = 'CALL add_assistant(%s, %s, %s, %s, %s, %s, %s, %s, %s)'
+    statement = 'SELECT add_assistant(%s, %s, %s, %s, %s, %s, %s, %s, %s)'
     values = (payload['cc'], payload['username'], hashed_password, payload['contract_id'], payload['salary'], payload['contract_issue_date'], payload['contract_due_date'], payload['birthday'], payload['email'],)
+
+    conn = db_connection()
+    cur = conn.cursor()
 
     try:
         cur.execute(statement, values)
+        emp_num = cur.fetchone()[0]
 
         # commit the transaction
         conn.commit()
-        response = {'status': StatusCodes['success'], 'results': payload['cc']}
+        response = {'status': StatusCodes['success'], 'results': emp_num}
 
     except (Exception, psycopg2.DatabaseError) as error:
         logger.error(f'POST /dbproj/register/assistant - error: {error}')
@@ -177,9 +178,6 @@ def add_nurse():
     logger.info('POST /dbproj/register/nurse')
     payload = flask.request.get_json()
 
-    conn = db_connection()
-    cur = conn.cursor()
-
     logger.debug(f'POST /dbproj/register/nurse - payload: {payload}')
 
     # validate every argument
@@ -193,15 +191,19 @@ def add_nurse():
     hashed_password = generate_password_hash(payload['password'], method='sha256')
 
     # parameterized queries, good for security and performance
-    statement = 'CALL add_nurse(%s, %s, %s, %s, %s, %s, %s, %s, %s, %s)'
+    statement = 'SELECT add_nurse(%s, %s, %s, %s, %s, %s, %s, %s, %s, %s)'
     values = (payload['cc'], payload['username'], hashed_password, payload['contract_id'], payload['salary'], payload['contract_issue_date'], payload['contract_due_date'], payload['birthday'], payload['email'], payload['cc_superior'],)
+
+    conn = db_connection()
+    cur = conn.cursor()
 
     try:
         cur.execute(statement, values)
+        emp_num = cur.fetchone()[0]
 
         # commit the transaction
         conn.commit()
-        response = {'status': StatusCodes['success'], 'results': payload['cc']}
+        response = {'status': StatusCodes['success'], 'results': emp_num}
 
     except (Exception, psycopg2.DatabaseError) as error:
         logger.error(f'POST /dbproj/register/nurse - error: {error}')
@@ -231,9 +233,6 @@ def add_doctor():
     logger.info('POST /dbproj/register/doctor')
     payload = flask.request.get_json()
 
-    conn = db_connection()
-    cur = conn.cursor()
-
     logger.debug(f'POST /dbproj/register/doctor - payload: {payload}')
 
     # validate every argument
@@ -247,15 +246,19 @@ def add_doctor():
     hashed_password = generate_password_hash(payload['password'], method='sha256')
 
     # parameterized queries, good for security and performance
-    statement = 'CALL add_doctor(%s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s)'
+    statement = 'SELECT add_doctor(%s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s)'
     values = (payload['cc'], payload['username'], hashed_password, payload['contract_id'], payload['salary'], payload['contract_issue_date'], payload['contract_due_date'], payload['birthday'], payload['email'], payload['license_id'], payload['license_issue_date'], payload['license_due_date'], payload['license_company'], payload['specialty_name'],)
+
+    conn = db_connection()
+    cur = conn.cursor()
 
     try:
         cur.execute(statement, values)
+        emp_num = cur.fetchone()[0]
 
         # commit the transaction
         conn.commit()
-        response = {'status': StatusCodes['success'], 'results': payload['cc']}
+        response = {'status': StatusCodes['success'], 'results': emp_num}
 
     except (Exception, psycopg2.DatabaseError) as error:
         logger.error(f'POST /dbproj/register/doctor - error: {error}')
@@ -270,10 +273,14 @@ def add_doctor():
 
     return flask.jsonify(response)
 
+
 ##
 ## PUT
 ##
 ## User login
+## 
+## For patients username = cc
+## For employees username = emp_num
 ##
 ## To use it, access:
 ## 
@@ -284,51 +291,56 @@ def login():
     logger.info('PUT /dbproj/user')
     payload = flask.request.get_json()
 
-    conn = db_connection()
-    cur = conn.cursor()
-
     logger.debug(f'PUT /dbproj/user - payload: {payload}')
 
     # validate every argument
-    args = ['username', 'password', 'type']
+    args = ['username', 'password']
     for arg in args:
         if arg not in payload:
             response = {'status': StatusCodes['api_error'], 'errors': f'{arg} value not in payload'}
             return flask.jsonify(response)
 
-    types = ['patient', 'assistant', 'nurse', 'doctor']
-    user_type = payload['type']
-    if user_type not in types:
-        response = {'status': StatusCodes['api_error'], 'errors': 'Invalid type'}
-        return flask.jsonify(response)
-
+    statement = 'SELECT hashcode \
+                FROM patient \
+                WHERE cc = %s'
     value = (payload['username'],)
+    user_type = None
+    
+    conn = db_connection()
+    cur = conn.cursor()
 
     try:
-        if (user_type == 'patient'):
-            statement = 'SELECT hashcode \
-                        FROM patient \
-                        WHERE username = %s'
-        else:
-            statement = f'SELECT hashcode \
-                        FROM employee \
-                        JOIN {user_type} ON {user_type}.cc = employee.cc \
-                        WHERE username = %s'
-
         cur.execute(statement, value)
-
         row = cur.fetchone()
-        if row is None:
-            response = {'status': StatusCodes['api_error'], 'errors': 'User not found'}
-            return flask.jsonify(response)
 
-        if not check_password_hash(row[0], payload['password']):
+        if row and check_password_hash(row[0], payload['password']):
+            user_type = 'patient'
+        elif row:
             response = {'status': StatusCodes['api_error'], 'errors': 'Invalid password'}
             return flask.jsonify(response)
 
-        # generate token
-        token = jwt.encode({'username': payload['username'], 'type': user_type, 'exp': time.time() + 3600}, app.config['SECRET_KEY'], algorithm='HS256')
+        for worker_type in ['assistant', 'nurse', 'doctor']:
+            if (user_type):
+                break
+            statement = f'SELECT hashcode \
+                        FROM employee \
+                        JOIN {worker_type} ON {worker_type}.cc = employee.cc \
+                        WHERE emp_num = %s'
+            cur.execute(statement, value)
+            row = cur.fetchone()
+            if row and check_password_hash(row[0], payload['password']):
+                user_type = worker_type
+            elif row:
+                response = {'status': StatusCodes['api_error'], 'errors': 'Invalid password'}
+                return flask.jsonify(response)
 
+        if not user_type:
+            response = {'status': StatusCodes['api_error'], 'errors': 'User not found'}
+            return flask.jsonify(response)
+
+        # generate token
+        token = jwt.encode({'username': payload['username'], 'type': user_type, 'exp': time.time() + 600}, app.config['SECRET_KEY'], algorithm='HS256')
+        
         response = {'status': StatusCodes['success'], 'results': token}
 
         # commit the transaction
@@ -346,7 +358,6 @@ def login():
             conn.close()
 
     return flask.jsonify(response)
-
 
 
 

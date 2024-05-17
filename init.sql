@@ -9,7 +9,7 @@ CREATE TABLE doctor (
 
 CREATE TABLE employee (
 	cc	 BIGINT,
-	username	 VARCHAR(128) NOT NULL,
+	name	 VARCHAR(128) NOT NULL,
 	hashcode	 VARCHAR(128) NOT NULL,
 	emp_num		 BIGSERIAL NOT NULL,
 	contract_id	 BIGINT NOT NULL,
@@ -23,7 +23,7 @@ CREATE TABLE employee (
 
 CREATE TABLE patient (
 	cc	 BIGINT,
-	username	 VARCHAR(128) NOT NULL,
+	name	 VARCHAR(128) NOT NULL,
 	hashcode	 VARCHAR(128) NOT NULL,
 	health_num	 BIGINT NOT NULL,
 	emergency_contact BIGINT NOT NULL,
@@ -166,8 +166,8 @@ CREATE TABLE appointment_prescription (
 
 ALTER TABLE doctor ADD UNIQUE (license_id);
 ALTER TABLE doctor ADD CONSTRAINT doctor_fk1 FOREIGN KEY (cc) REFERENCES employee(cc);
-ALTER TABLE employee ADD UNIQUE (emp_num, contract_id, username);
-ALTER TABLE patient ADD UNIQUE (health_num, username);
+ALTER TABLE employee ADD UNIQUE (emp_num, contract_id);
+ALTER TABLE patient ADD UNIQUE (health_num);
 ALTER TABLE assistant ADD CONSTRAINT assistant_fk1 FOREIGN KEY (cc) REFERENCES employee(cc);
 ALTER TABLE nurse ADD CONSTRAINT nurse_fk1 FOREIGN KEY (cc) REFERENCES employee(cc);
 
