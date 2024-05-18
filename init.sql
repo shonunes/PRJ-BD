@@ -45,20 +45,21 @@ CREATE TABLE nurse (
 CREATE TABLE appointment (
 	id					 BIGSERIAL,
 	start_time			 TIMESTAMP NOT NULL,
-	duration			 TIMESTAMP,
+	end_time			 TIMESTAMP NOT NULL,
 	cost				 INTEGER NOT NULL,
 	bill_id				 BIGINT NOT NULL,
-	doctor_license_employee_contract_person_cc BIGINT NOT NULL,
-	patient_person_cc				 BIGINT NOT NULL,
+	doctor_cc			 BIGINT NOT NULL,
+	patient_cc			 BIGINT NOT NULL,
 	PRIMARY KEY(id)
 );
 
 CREATE TABLE hospitalization (
 	id				 BIGSERIAL,
-	entry_date			 DATE NOT NULL,
+	entry_time			 DATE NOT NULL,
+	exit_time			 DATE,
 	bill_id				 BIGINT NOT NULL,
-	nurse_employee_contract_person_cc BIGINT NOT NULL,
-	patient_person_cc		 BIGINT NOT NULL,
+	nurse_cc		 BIGINT NOT NULL,
+	patient_cc		 BIGINT NOT NULL,
 	PRIMARY KEY(id)
 );
 
@@ -67,7 +68,7 @@ CREATE TABLE surgery (
 	start_time				 TIMESTAMP NOT NULL,
 	duration					 TIMESTAMP,
 	cost					 BIGINT,
-	doctor_license_employee_contract_person_cc BIGINT NOT NULL,
+	doctor_cc			 BIGINT NOT NULL,
 	hospitalization_id			 BIGINT NOT NULL,
 	PRIMARY KEY(id)
 );
@@ -83,9 +84,9 @@ CREATE TABLE medicine (
 );
 
 CREATE TABLE side_effect (
-	occurency	 VARCHAR(512),
+	occurrence	 VARCHAR(512),
 	description VARCHAR(512),
-	PRIMARY KEY(occurency)
+	PRIMARY KEY(occurrence)
 );
 
 CREATE TABLE medicine_dosage (
@@ -123,15 +124,15 @@ CREATE TABLE specialty (
 CREATE TABLE appointment_role (
 	role				 VARCHAR(512),
 	appointment_id			 BIGINT,
-	nurse_employee_contract_person_cc BIGINT,
-	PRIMARY KEY(appointment_id,nurse_employee_contract_person_cc)
+	nurse_cc BIGINT,
+	PRIMARY KEY(appointment_id,nurse_cc)
 );
 
 CREATE TABLE surgery_role (
 	role				 VARCHAR(512),
 	surgery_id			 BIGINT,
-	nurse_employee_contract_person_cc BIGINT,
-	PRIMARY KEY(surgery_id,nurse_employee_contract_person_cc)
+	nurse_cc BIGINT,
+	PRIMARY KEY(surgery_id,nurse_cc)
 );
 
 CREATE TABLE specialty_hierarchy (
@@ -174,23 +175,23 @@ ALTER TABLE nurse ADD CONSTRAINT nurse_fk1 FOREIGN KEY (cc) REFERENCES employee(
 
 ALTER TABLE appointment ADD UNIQUE (bill_id);
 ALTER TABLE appointment ADD CONSTRAINT appointment_fk1 FOREIGN KEY (bill_id) REFERENCES bill(id);
-ALTER TABLE appointment ADD CONSTRAINT appointment_fk2 FOREIGN KEY (doctor_license_employee_contract_person_cc) REFERENCES doctor_license(employee_contract_person_cc);
-ALTER TABLE appointment ADD CONSTRAINT appointment_fk3 FOREIGN KEY (patient_person_cc) REFERENCES patient(person_cc);
-ALTER TABLE hospitalization ADD UNIQUE (bill_id, patient_person_cc);
+ALTER TABLE appointment ADD CONSTRAINT appointment_fk2 FOREIGN KEY (doctor_cc) REFERENCES doctor(cc);
+ALTER TABLE appointment ADD CONSTRAINT appointment_fk3 FOREIGN KEY (patient_cc) REFERENCES patient(cc);
+ALTER TABLE hospitalization ADD UNIQUE (bill_id, patient_cc);
 ALTER TABLE hospitalization ADD CONSTRAINT hospitalization_fk1 FOREIGN KEY (bill_id) REFERENCES bill(id);
-ALTER TABLE hospitalization ADD CONSTRAINT hospitalization_fk2 FOREIGN KEY (nurse_employee_contract_person_cc) REFERENCES nurse(employee_contract_person_cc);
-ALTER TABLE hospitalization ADD CONSTRAINT hospitalization_fk3 FOREIGN KEY (patient_person_cc) REFERENCES patient(person_cc);
-ALTER TABLE surgery ADD CONSTRAINT surgery_fk1 FOREIGN KEY (doctor_license_employee_contract_person_cc) REFERENCES doctor_license(employee_contract_person_cc);
+ALTER TABLE hospitalization ADD CONSTRAINT hospitalization_fk2 FOREIGN KEY (nurse_cc) REFERENCES nurse(cc);
+ALTER TABLE hospitalization ADD CONSTRAINT hospitalization_fk3 FOREIGN KEY (patient_cc) REFERENCES patient(cc);
+ALTER TABLE surgery ADD CONSTRAINT surgery_fk1 FOREIGN KEY (doctor_cc) REFERENCES doctor(cc);
 ALTER TABLE surgery ADD CONSTRAINT surgery_fk2 FOREIGN KEY (hospitalization_id) REFERENCES hospitalization(id);
 ALTER TABLE medicine_dosage ADD CONSTRAINT medicine_dosage_fk1 FOREIGN KEY (medicine_name) REFERENCES medicine(name);
 ALTER TABLE medicine_dosage ADD CONSTRAINT medicine_dosage_fk2 FOREIGN KEY (prescription_id) REFERENCES prescription(id);
-ALTER TABLE reaction_severity ADD CONSTRAINT reaction_severity_fk1 FOREIGN KEY (side_effect_occurency) REFERENCES side_effect(occurency);
+ALTER TABLE reaction_severity ADD CONSTRAINT reaction_severity_fk1 FOREIGN KEY (side_effect_occurrence) REFERENCES side_effect(occurrence);
 ALTER TABLE reaction_severity ADD CONSTRAINT reaction_severity_fk2 FOREIGN KEY (medicine_name) REFERENCES medicine(name);
 ALTER TABLE payment ADD CONSTRAINT payment_fk1 FOREIGN KEY (bill_id) REFERENCES bill(id);
 ALTER TABLE appointment_role ADD CONSTRAINT appointment_role_fk1 FOREIGN KEY (appointment_id) REFERENCES appointment(id);
-ALTER TABLE appointment_role ADD CONSTRAINT appointment_role_fk2 FOREIGN KEY (nurse_employee_contract_person_cc) REFERENCES nurse(employee_contract_person_cc);
+ALTER TABLE appointment_role ADD CONSTRAINT appointment_role_fk2 FOREIGN KEY (nurse_cc) REFERENCES nurse(cc);
 ALTER TABLE surgery_role ADD CONSTRAINT surgery_role_fk1 FOREIGN KEY (surgery_id) REFERENCES surgery(id);
-ALTER TABLE surgery_role ADD CONSTRAINT surgery_role_fk2 FOREIGN KEY (nurse_employee_contract_person_cc) REFERENCES nurse(employee_contract_person_cc);
+ALTER TABLE surgery_role ADD CONSTRAINT surgery_role_fk2 FOREIGN KEY (nurse_cc) REFERENCES nurse(cc);
 
 
 ALTER TABLE specialty_hierarchy ADD CONSTRAINT specialty_hierarchy_fk1 FOREIGN KEY (specialty_name) REFERENCES specialty(name);

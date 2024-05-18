@@ -91,6 +91,7 @@ $$;
 
 /* ADDING DOCTOR
 Atenção com os campos que podem ser NULL 
+TESTADO E FUNCIONAL NO ENDPOINT
 */
 CREATE OR REPLACE FUNCTION add_doctor(cc_num BIGINT, name VARCHAR, hashcode VARCHAR, contract_id BIGINT, sal INT, contract_issue_date DATE, contract_due_date DATE, birthday DATE, email VARCHAR, license_id VARCHAR, license_issue_date DATE, license_due_date DATE, license_comp VARCHAR, specialty_name VARCHAR)
 RETURNS INTEGER
@@ -117,7 +118,9 @@ BEGIN
 END;
 $$;
 
-/* ADDING SPECIALTY */
+/* ADDING SPECIALTY 
+TESTADO E FUNCIONAL NO ENDPOINT
+*/
 CREATE OR REPLACE PROCEDURE add_specialty(specialty_name VARCHAR, specialty_parent VARCHAR)
 LANGUAGE plpgsql
 AS $$
