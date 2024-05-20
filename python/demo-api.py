@@ -48,8 +48,6 @@ def db_connection():
     return db
 
 
-
-
 ##########################################################
 ## ENDPOINTS
 ##########################################################
@@ -76,7 +74,7 @@ def add_patient():
     for arg in args:
         if arg not in payload:
             response = {'status': StatusCodes['api_error'], 'errors': f'{arg} value not in payload'}
-            return flask.jsonify(response)
+            return flask.jsonify(response), response['status']
 
     # generate password hash to store in the database
     hashed_password = generate_password_hash(payload['password'], method='sha256')
@@ -106,7 +104,7 @@ def add_patient():
         if conn is not None:
             conn.close()
 
-    return flask.jsonify(response)
+    return flask.jsonify(response), response['status']
 
 
 ##
@@ -130,7 +128,7 @@ def add_assistant():
     for arg in args:
         if arg not in payload:
             response = {'status': StatusCodes['api_error'], 'errors': f'{arg} value not in payload'}
-            return flask.jsonify(response)
+            return flask.jsonify(response), response['status']
 
     # generate password hash to store in the database
     hashed_password = generate_password_hash(payload['password'], method='sha256')
@@ -161,7 +159,7 @@ def add_assistant():
         if conn is not None:
             conn.close()
 
-    return flask.jsonify(response)
+    return flask.jsonify(response), response['status']
 
 
 ##
@@ -185,7 +183,7 @@ def add_nurse():
     for arg in args:
         if arg not in payload:
             response = {'status': StatusCodes['api_error'], 'errors': f'{arg} value not in payload'}
-            return flask.jsonify(response)
+            return flask.jsonify(response), response['status']
 
     # generate password hash to store in the database
     hashed_password = generate_password_hash(payload['password'], method='sha256')
@@ -216,7 +214,7 @@ def add_nurse():
         if conn is not None:
             conn.close()
 
-    return flask.jsonify(response)
+    return flask.jsonify(response), response['status']
 
 
 ##
@@ -240,7 +238,7 @@ def add_doctor():
     for arg in args:
         if arg not in payload:
             response = {'status': StatusCodes['api_error'], 'errors': f'{arg} value not in payload'}
-            return flask.jsonify(response)
+            return flask.jsonify(response), response['status']
 
     # generate password hash to store in the database
     hashed_password = generate_password_hash(payload['password'], method='sha256')
@@ -271,7 +269,7 @@ def add_doctor():
         if conn is not None:
             conn.close()
 
-    return flask.jsonify(response)
+    return flask.jsonify(response), response['status']
 
 
 ##
@@ -298,7 +296,7 @@ def login():
     for arg in args:
         if arg not in payload:
             response = {'status': StatusCodes['api_error'], 'errors': f'{arg} value not in payload'}
-            return flask.jsonify(response)
+            return flask.jsonify(response), response['status']
 
     statement = 'SELECT hashcode \
                 FROM patient \
@@ -317,7 +315,7 @@ def login():
             user_type = 'patient'
         elif row:
             response = {'status': StatusCodes['api_error'], 'errors': 'Invalid password'}
-            return flask.jsonify(response)
+            return flask.jsonify(response), response['status']
 
         for worker_type in ['assistant', 'nurse', 'doctor']:
             if (user_type):
@@ -332,11 +330,11 @@ def login():
                 user_type = worker_type
             elif row:
                 response = {'status': StatusCodes['api_error'], 'errors': 'Invalid password'}
-                return flask.jsonify(response)
+                return flask.jsonify(response), response['status']
 
         if not user_type:
             response = {'status': StatusCodes['api_error'], 'errors': 'User not found'}
-            return flask.jsonify(response)
+            return flask.jsonify(response), response['status']
 
         # generate token
         token = jwt.encode({'username': payload['username'], 'type': user_type, 'exp': time.time() + 600}, app.config['SECRET_KEY'], algorithm='HS256')
@@ -357,12 +355,59 @@ def login():
         if conn is not None:
             conn.close()
 
-    return flask.jsonify(response)
+    return flask.jsonify(response), response['status']
 
 
+##
+## GET
+##
+## See appointments
+## 
+## Only assistants and the target patient can use this endpoint
+##
+## To use it, access:
+## 
+## http://localhost:8080/dbproj/appointments/{patient_user_id}
+##
+@app.route('/dbproj/appointments/<patient_user_id>', methods=['GET'])
+def get_appointments(patient_user_id):
+    logger.info('GET /dbproj/<patient_user_id>')
 
+    logger.debug(f'patient_user_id: {patient_user_id}')
+    
+    statement = 'SELECT a.id, e.emp_num, a.start_time, a.end_time \
+                FROM appointment AS a, employee AS e \
+                WHERE a.patient_cc = %s AND a.doctor_cc = e.cc'
+    value = (patient_user_id,)
 
+    conn = db_connection()
+    cur = conn.cursor()
 
+    try:
+        cur.execute(statement, value)
+        rows = cur.fetchall()
+
+        appointments = []
+        for row in rows:
+            appointments.append({'id': int(row[0]), 'doctor_id': int(row[1]), 'start_time': row[2], 'end_time': row[3]})
+
+        response = {'status': StatusCodes['success'], 'results': appointments}
+
+        # commit the transaction
+        conn.commit()
+
+    except (Exception, psycopg2.DatabaseError) as error:
+        logger.error(f'GET /dbproj/appointments/<patient_user_id> - error: {error}')
+        response = {'status': StatusCodes['internal_error'], 'errors': str(error)}
+
+        # an error occurred, rollback
+        conn.rollback()
+    
+    finally:
+        if conn is not None:
+            conn.close()
+
+    return flask.jsonify(response), response['status']
 
 
 

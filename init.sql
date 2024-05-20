@@ -98,9 +98,9 @@ CREATE TABLE medicine_dosage (
 
 CREATE TABLE reaction_severity (
 	degree		 VARCHAR(512),
-	side_effect_occurency VARCHAR(512),
+	side_effect_occurrence VARCHAR(512),
 	medicine_name	 BIGINT,
-	PRIMARY KEY(degree,side_effect_occurency,medicine_name)
+	PRIMARY KEY(degree,side_effect_occurrence,medicine_name)
 );
 
 CREATE TABLE payment (
@@ -153,7 +153,7 @@ CREATE TABLE nurse_hierarchy (
 	PRIMARY KEY(cc)
 );
 
-CREATE TABLE prescription_hospitalization (
+CREATE TABLE hospitalization_prescription (
 	prescription_id	 BIGINT,
 	hospitalization_id BIGINT NOT NULL,
 	PRIMARY KEY(prescription_id)
@@ -202,8 +202,8 @@ ALTER TABLE nurse_hierarchy ADD CONSTRAINT nurse_nurse_fk1 FOREIGN KEY (cc_nurse
 ALTER TABLE nurse_hierarchy ADD CONSTRAINT nurse_nurse_fk2 FOREIGN KEY (cc_boss) REFERENCES nurse(cc);
 
 
-ALTER TABLE prescription_hospitalization ADD CONSTRAINT prescription_hospitalization_fk1 FOREIGN KEY (prescription_id) REFERENCES prescription(id);
-ALTER TABLE prescription_hospitalization ADD CONSTRAINT prescription_hospitalization_fk2 FOREIGN KEY (hospitalization_id) REFERENCES hospitalization(id);
+ALTER TABLE hospitalization_prescription ADD CONSTRAINT hospitalization_prescription_fk1 FOREIGN KEY (prescription_id) REFERENCES prescription(id);
+ALTER TABLE hospitalization_prescription ADD CONSTRAINT hospitalization_prescription_fk2 FOREIGN KEY (hospitalization_id) REFERENCES hospitalization(id);
 ALTER TABLE appointment_prescription ADD CONSTRAINT appointment_prescription_fk1 FOREIGN KEY (appointment_id) REFERENCES appointment(id);
 ALTER TABLE appointment_prescription ADD CONSTRAINT appointment_prescription_fk2 FOREIGN KEY (prescription_id) REFERENCES prescription(id);
 
