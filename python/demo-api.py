@@ -98,6 +98,7 @@ def login():
         elif row:
             response = {'status': StatusCodes['api_error'], 'errors': 'Invalid password'}
             return flask.jsonify(response)
+        int(payload['username'])
         for worker_type in ['assistant', 'nurse', 'doctor']:
             if (user_type):
                 break
@@ -132,6 +133,9 @@ def login():
 
         # an error occurred, rollback
         conn.rollback()
+    except ValueError:
+        response = {'status': StatusCodes['api_error'], 'errors': 'Invalid username or password'}
+        return flask.jsonify(response)
     finally:
         if conn is not None:
             conn.close()
