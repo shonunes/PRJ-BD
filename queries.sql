@@ -162,9 +162,11 @@ POR TESTAR
 CREATE OR REPLACE FUNCTION appointment_trig() RETURNS TRIGGER
 LANGUAGE plpgsql
 AS $$
+DECLARE
+	overlap_appointments INTEGER;
 BEGIN
 	--- tornar o bill_id auto increment (AU) e ver como funciona ---
-	INSERT INTO bill VALUES(new.bill_id, new.cost);
+	INSERT INTO bill(amount) VALUES(new.cost, nextval('bill_id_seq'));
 	--- quando existir um pagamento, diminuir o valor da despesa ---
 	RETURN new;
 END;
@@ -175,17 +177,40 @@ BEFORE INSERT ON appointment
 FOR EACH ROW
 EXECUTE FUNCTION appointment_trig();
 
---- TODO: verificar se já há consulta nesta hora ---
-CREATE OR REPLACE PROCEDURE add_appointment(ap_start_time TIMESTAMP, ap_duration TIMESTAMP, ap_cost INTEGER, doctor_cc BIGINT, patient_cc BIGINT)
+--- TODO: verificar se já há consulta nesta hora ---CREATE OR REPLACE PROCEDURE 
+CREATE OR REPLACE PROCEDURE add_appointment(
+    ap_start_time TIMESTAMP,
+    ap_end_time TIMESTAMP,
+    ap_cost INTEGER,
+    doc_cc BIGINT,
+    pat_cc BIGINT
+)
 LANGUAGE plpgsql
 AS $$
+DECLARE 
+    overlap_appointments INT;
 BEGIN
-	--- Mais 1x verificar como funciona o AU --
-	INSERT INTO appointment(start_time, duration, cost, doctor_license_employee_contract_person_cc, patient_person_cc) 
-	VALUES(ap_start_time, ap_duration, ap_cost, doctor_cc, patient_cc);
-	EXCEPTION
-		WHEN OTHERS THEN
-			RAISE EXCEPTION 'error adding appointment';
+    -- Check for overlapping appointments for the doctor
+    SELECT COUNT(*) INTO overlap_appointments
+    FROM appointment
+    WHERE doctor_cc = doc_cc
+    AND (
+        (start_time <= ap_start_time AND end_time > ap_start_time)
+        OR (start_time < ap_end_time AND end_time >= ap_end_time)
+        OR (start_time >= ap_start_time AND end_time <= ap_end_time)
+    );
+    
+    -- Raise an exception if there are overlapping appointments
+    IF overlap_appointments > 0 THEN
+        RAISE EXCEPTION 'Doctor is not available at the requested time';
+    END IF;
+    
+    -- Insert the new appointment
+    INSERT INTO appointment (start_time, end_time, cost, doctor_cc, patient_cc) 
+    VALUES (ap_start_time, ap_end_time, ap_cost, doc_cc, pat_cc);
+EXCEPTION
+    WHEN OTHERS THEN
+        RAISE EXCEPTION 'Error adding appointment: %', SQLERRM;
 END;
 $$;
 
@@ -198,4 +223,32 @@ E possivelmente mudar o start_time para o tipo data
 SELECT a.id, a.doctor_license_employee_contract_person_cc, a.start_time
 FROM appointment AS a
 WHERE a.patient_person_cc = cc_num;
+
+
+CREATE OR REPLACE PROCEDURE add_surgery(ap_start_time TIMESTAMP, ap_duration TIMESTAMP, ap_cost INTEGER, doctor_cc BIGINT, patient_cc BIGINT)
+LANGUAGE plpgsql
+AS $$
+DECLARE 
+	overlap_surgeries INT;
+BEGIN
+    SELECT COUNT(*) INTO overlap_appointments
+    FROM appointment as app
+    WHERE app.doctor_cc = doctor_cc
+    AND (
+        (start_time <= app.ap_start_time AND start_time + duration > app.ap_start_time)
+        OR (start_time < ap_start_time + ap_duration AND start_time + duration >= app.ap_start_time + ap_duration)
+        OR (start_time >= ap_start_time AND start_time + duration <= ap_start_time + ap_duration)
+    );
+    IF overlap_appointments > 0 THEN
+        RAISE EXCEPTION 'Doctor is not available at the requested time';
+    END IF;
+	--- Mais 1x verificar como funciona o AU --
+	INSERT INTO appointment(start_time, end_time, cost, doctor_cc, patient_cc) 
+	VALUES(ap_start_time, end_time, ap_cost, doctor_cc, patient_cc);
+	EXCEPTION
+		WHEN OTHERS THEN
+			RAISE EXCEPTION 'error adding appointment';
+END;
+$$;
+
 
