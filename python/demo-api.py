@@ -80,7 +80,7 @@ def login():
     for arg in args:
         if arg not in payload:
             response = {'status': StatusCodes['api_error'], 'errors': f'{arg} value not in payload'}
-            return flask.jsonify(response)
+            return flask.jsonify(response), response['status']
 
     statement = 'SELECT hashcode \
                 FROM patient \
@@ -97,7 +97,7 @@ def login():
             user_type = 'patient'   
         elif row:
             response = {'status': StatusCodes['api_error'], 'errors': 'Invalid password'}
-            return flask.jsonify(response)
+            return flask.jsonify(response), response['status']
         int(payload['username'])
         for worker_type in ['assistant', 'nurse', 'doctor']:
             if (user_type):
@@ -112,11 +112,11 @@ def login():
                 user_type = worker_type
             elif row:
                 response = {'status': StatusCodes['api_error'], 'errors': 'Invalid username or password'}
-                return flask.jsonify(response)
+                return flask.jsonify(response), response['status']
 
         if not user_type:
             response = {'status': StatusCodes['api_error'], 'errors': 'Invalid username or password'}
-            return flask.jsonify(response)
+            return flask.jsonify(response), response['status']
 
         # generate token
         token = jwt.encode({'username': payload['username'], 'type': user_type, 'exp': time.time() + 600}, app.config['SECRET_KEY'], algorithm='HS256')
@@ -135,12 +135,12 @@ def login():
         conn.rollback()
     except ValueError:
         response = {'status': StatusCodes['api_error'], 'errors': 'Invalid username or password'}
-        return flask.jsonify(response)
+        return flask.jsonify(response), response['status']
     finally:
         if conn is not None:
             conn.close()
 
-    return flask.jsonify(response)
+    return flask.jsonify(response), response['status']
 
 ##Check if user is logged´
 def check_authentication(func):
@@ -177,7 +177,7 @@ def add_patient():
     for arg in args:
         if arg not in payload:
             response = {'status': StatusCodes['api_error'], 'errors': f'{arg} value not in payload'}
-            return flask.jsonify(response)
+            return flask.jsonify(response), response['status']
 
     # generate password hash to store in the database
     hashed_password = generate_password_hash(payload['password'], method='sha256')
@@ -207,7 +207,7 @@ def add_patient():
         if conn is not None:
             conn.close()
 
-    return flask.jsonify(response)
+    return flask.jsonify(response), response['status']
 
 
 ##
@@ -231,7 +231,7 @@ def add_assistant():
     for arg in args:
         if arg not in payload:
             response = {'status': StatusCodes['api_error'], 'errors': f'{arg} value not in payload'}
-            return flask.jsonify(response)
+            return flask.jsonify(response), response['status']
 
     # generate password hash to store in the database
     hashed_password = generate_password_hash(payload['password'], method='sha256')
@@ -262,7 +262,7 @@ def add_assistant():
         if conn is not None:
             conn.close()
 
-    return flask.jsonify(response)
+    return flask.jsonify(response), response['status']
 
 
 ##
@@ -286,7 +286,7 @@ def add_nurse():
     for arg in args:
         if arg not in payload:
             response = {'status': StatusCodes['api_error'], 'errors': f'{arg} value not in payload'}
-            return flask.jsonify(response)
+            return flask.jsonify(response), response['status']
     if 'cc_superior' not in payload:
         cc_superior = None
     else:
@@ -320,7 +320,7 @@ def add_nurse():
         if conn is not None:
             conn.close()
 
-    return flask.jsonify(response)
+    return flask.jsonify(response), response['status']
 
 
 ##
@@ -344,7 +344,7 @@ def add_doctor():
     for arg in args:
         if arg not in payload:
             response = {'status': StatusCodes['api_error'], 'errors': f'{arg} value not in payload'}
-            return flask.jsonify(response)
+            return flask.jsonify(response), response['status']
 
     # generate password hash to store in the database
     hashed_password = generate_password_hash(payload['password'], method='sha256')
@@ -375,8 +375,59 @@ def add_doctor():
         if conn is not None:
             conn.close()
 
-    return flask.jsonify(response)
+    return flask.jsonify(response), response['status']
 
+
+##
+## GET
+##
+## See appointments
+## 
+## Only assistants and the target patient can use this endpoint
+##
+## To use it, access:
+## 
+## http://localhost:8080/dbproj/appointments/{patient_user_id}
+##
+@app.route('/dbproj/appointments/<patient_user_id>', methods=['GET'])
+def get_appointments(patient_user_id):
+    logger.info('GET /dbproj/<patient_user_id>')
+
+    logger.debug(f'patient_user_id: {patient_user_id}')
+    
+    statement = 'SELECT a.id, e.emp_num, a.start_time, a.end_time \
+                FROM appointment AS a, employee AS e \
+                WHERE a.patient_cc = %s AND a.doctor_cc = e.cc'
+    value = (patient_user_id,)
+
+    conn = db_connection()
+    cur = conn.cursor()
+
+    try:
+        cur.execute(statement, value)
+        rows = cur.fetchall()
+
+        appointments = []
+        for row in rows:
+            appointments.append({'id': int(row[0]), 'doctor_id': int(row[1]), 'start_time': row[2], 'end_time': row[3]})
+
+        response = {'status': StatusCodes['success'], 'results': appointments}
+
+        # commit the transaction
+        conn.commit()
+
+    except (Exception, psycopg2.DatabaseError) as error:
+        logger.error(f'GET /dbproj/appointments/<patient_user_id> - error: {error}')
+        response = {'status': StatusCodes['internal_error'], 'errors': str(error)}
+
+        # an error occurred, rollback
+        conn.rollback()
+    
+    finally:
+        if conn is not None:
+            conn.close()
+
+    return flask.jsonify(response), response['status'], response['results']
 
 ##
 ## GET
@@ -400,7 +451,7 @@ def get_appointment(patient_cc):
         token = flask.request.headers.get('Authorization')
         data = jwt.decode(token, app.config['SECRET_KEY'], algorithms=['HS256'])
     except(jwt.InvalidTokenError):
-        return flask.jsonify({"status": 401, "errors": "Unauthorized"})
+        return flask.jsonify({"status": 401, "errors": "Unauthorized"}), 
     if data['type'] != 'patient' and data['type'] != 'assistant':
         return flask.jsonify({"status": 401, "errors": "Unauthorized"})
     try:
@@ -424,7 +475,7 @@ def get_appointment(patient_cc):
         if conn is not None:
             conn.close()
 
-    return flask.jsonify(response)
+    return flask.jsonify(response), response['status']
 
 ##
 ## POST 
@@ -500,7 +551,7 @@ def add_appointment():
     finally:
         if conn is not None:
             conn.close()
-    return flask.jsonify(response)
+    return flask.jsonify(response), response['status']
 
 ##
 ## Demo POST
@@ -525,7 +576,7 @@ def add_surgery():
     # do not forget to validate every argument, e.g.,:
     if 'escalao' not in payload:
         response = {'status': StatusCodes['api_error'], 'results': 'escalao value not in payload'}
-        return flask.jsonify(response)
+        return flask.jsonify(response), response['status']
 
     # parameterized queries, good for security and performance
     statement = 'INSERT INTO exemplo (escalao) VALUES (%s)'
@@ -549,7 +600,7 @@ def add_surgery():
         if conn is not None:
             conn.close()
 
-    return flask.jsonify(response)
+    return flask.jsonify(response), response['status']
 
 
 
@@ -626,7 +677,7 @@ def get_all_departments():
         if conn is not None:
             conn.close()
 
-    return flask.jsonify(response)
+    return flask.jsonify(response), response['status']
 
 
 ##
@@ -668,7 +719,7 @@ def get_department(ndep):
         if conn is not None:
             conn.close()
 
-    return flask.jsonify(response)
+    return flask.jsonify(response), response['status']
 
 
 ##
@@ -694,7 +745,7 @@ def add_departments():
     # do not forget to validate every argument, e.g.,:
     if 'escalao' not in payload:
         response = {'status': StatusCodes['api_error'], 'results': 'escalao value not in payload'}
-        return flask.jsonify(response)
+        return flask.jsonify(response), response['status']
 
     # parameterized queries, good for security and performance
     statement = 'INSERT INTO exemplo (escalao) VALUES (%s)'
@@ -718,7 +769,7 @@ def add_departments():
         if conn is not None:
             conn.close()
 
-    return flask.jsonify(response)
+    return flask.jsonify(response), response['status']
 
 
 ##
@@ -744,7 +795,7 @@ def update_departments(ndep):
     # do not forget to validate every argument, e.g.,:
     if 'localidade' not in payload:
         response = {'status': StatusCodes['api_error'], 'results': 'localidade is required to update'}
-        return flask.jsonify(response)
+        return flask.jsonify(response), response['status']
 
     # parameterized queries, good for security and performance
     statement = 'UPDATE dep SET local = %s WHERE ndep = %s'
@@ -768,7 +819,7 @@ def update_departments(ndep):
         if conn is not None:
             conn.close()
 
-    return flask.jsonify(response)
+    return flask.jsonify(response), response['status']
 
 
 if __name__ == '__main__':
