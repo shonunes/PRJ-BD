@@ -156,19 +156,16 @@ $$;
 
 
 /* SCHEDULE APPOINTMENT
-Simplificado - adicionar enfermeiras com determinadas funções
-POR TESTAR
+TESTADO E FUNCIONAL NO ENDPOINT
 */
 CREATE OR REPLACE FUNCTION appointment_trig() RETURNS TRIGGER
 LANGUAGE plpgsql
 AS $$
-DECLARE
-	overlap_appointments INTEGER;
 BEGIN
-	--- tornar o bill_id auto increment (AU) e ver como funciona ---
-	INSERT INTO bill(amount) VALUES(new.cost, nextval('bill_id_seq'));
-	--- quando existir um pagamento, diminuir o valor da despesa ---
-	RETURN new;
+	INSERT INTO bill(amount) VALUES(50)
+	RETURNING id INTO NEW.bill_id;
+	
+	RETURN NEW;
 END;
 $$;
 
@@ -177,78 +174,35 @@ BEFORE INSERT ON appointment
 FOR EACH ROW
 EXECUTE FUNCTION appointment_trig();
 
---- TODO: verificar se já há consulta nesta hora ---CREATE OR REPLACE PROCEDURE 
-CREATE OR REPLACE PROCEDURE add_appointment(
-    ap_start_time TIMESTAMP,
-    ap_end_time TIMESTAMP,
-    ap_cost INTEGER,
-    doc_cc BIGINT,
-    pat_cc BIGINT
-)
+CREATE OR REPLACE FUNCTION schedule_appointment(appointment_time TIMESTAMP, doctor_id BIGINT, patient_id BIGINT)
+RETURNS INTEGER
 LANGUAGE plpgsql
 AS $$
-DECLARE 
-    overlap_appointments INT;
+DECLARE
+	appointment_id INTEGER;
+	doc_cc INTEGER;
 BEGIN
-    -- Check for overlapping appointments for the doctor
-    SELECT COUNT(*) INTO overlap_appointments
-    FROM appointment
-    WHERE doctor_cc = doc_cc
-    AND (
-        (start_time <= ap_start_time AND end_time > ap_start_time)
-        OR (start_time < ap_end_time AND end_time >= ap_end_time)
-        OR (start_time >= ap_start_time AND end_time <= ap_end_time)
-    );
-    
-    -- Raise an exception if there are overlapping appointments
-    IF overlap_appointments > 0 THEN
-        RAISE EXCEPTION 'Doctor is not available at the requested time';
-    END IF;
-    
-    -- Insert the new appointment
-    INSERT INTO appointment (start_time, end_time, cost, doctor_cc, patient_cc) 
-    VALUES (ap_start_time, ap_end_time, ap_cost, doc_cc, pat_cc);
-EXCEPTION
-    WHEN OTHERS THEN
-        RAISE EXCEPTION 'Error adding appointment: %', SQLERRM;
+	SELECT cc INTO doc_cc
+	FROM employee
+	WHERE emp_num = doctor_id;
+
+	IF (appointment_time < CURRENT_TIMESTAMP) THEN
+		RAISE EXCEPTION 'Cannot schedule appointment in the past';
+	ELSEIF (appointment_time > CURRENT_TIMESTAMP + INTERVAL '1 month') THEN
+		RAISE EXCEPTION 'Cannot schedule appointment more than 1 month in advance';
+	ELSEIF (EXISTS (SELECT *
+					FROM appointment
+					WHERE start_time
+					BETWEEN appointment_time - INTERVAL '29 minutes' AND appointment_time + INTERVAL '29 minutes'
+					AND doctor_cc = doc_cc)
+			) THEN
+		RAISE EXCEPTION 'Doctor already has an appointment at this time';
+	END IF;
+
+	INSERT INTO appointment(start_time, doctor_cc, patient_cc)
+	VALUES(appointment_time, doc_cc, patient_id)
+	RETURNING id INTO appointment_id;
+
+	RETURN appointment_id;
 END;
 $$;
-
-
-
-/* SEE PATIENT APPOINTMENTS
-Ver se é necessário retornar mais coisas (p.e. nome do doutor)
-E possivelmente mudar o start_time para o tipo data
-*/ 
-SELECT a.id, a.doctor_license_employee_contract_person_cc, a.start_time
-FROM appointment AS a
-WHERE a.patient_person_cc = cc_num;
-
-
-CREATE OR REPLACE PROCEDURE add_surgery(ap_start_time TIMESTAMP, ap_duration TIMESTAMP, ap_cost INTEGER, doctor_cc BIGINT, patient_cc BIGINT)
-LANGUAGE plpgsql
-AS $$
-DECLARE 
-	overlap_surgeries INT;
-BEGIN
-    SELECT COUNT(*) INTO overlap_appointments
-    FROM appointment as app
-    WHERE app.doctor_cc = doctor_cc
-    AND (
-        (start_time <= app.ap_start_time AND start_time + duration > app.ap_start_time)
-        OR (start_time < ap_start_time + ap_duration AND start_time + duration >= app.ap_start_time + ap_duration)
-        OR (start_time >= ap_start_time AND start_time + duration <= ap_start_time + ap_duration)
-    );
-    IF overlap_appointments > 0 THEN
-        RAISE EXCEPTION 'Doctor is not available at the requested time';
-    END IF;
-	--- Mais 1x verificar como funciona o AU --
-	INSERT INTO appointment(start_time, end_time, cost, doctor_cc, patient_cc) 
-	VALUES(ap_start_time, end_time, ap_cost, doctor_cc, patient_cc);
-	EXCEPTION
-		WHEN OTHERS THEN
-			RAISE EXCEPTION 'error adding appointment';
-END;
-$$;
-
-
