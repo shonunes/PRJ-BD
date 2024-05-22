@@ -577,8 +577,6 @@ def schedule_surgery(hospitalization_id, user_id, user_type):
     return flask.jsonify(response), response['status']
 
 
-
-
 ##
 ## POST
 ##
@@ -633,9 +631,82 @@ def execute_payment(bill_id, user_id, user_type):
     return flask.jsonify(response), response['status']
 
 
+##
+## GET
+##
+## Generate monthly reports
+##
+## Only assistants can access this endpoint
+##
+## To use it, access: 
+##
+## http://localhost:8080/dbproj/report
+##
+##
+@app.route('/dbproj/report', methods=['GET'])
+@token_required(['assistant'])
+def generate_monthly_report(user_id, user_type):
+    logger.info('GET /dbproj/report')
 
+    statement = "                                                                       \
+        WITH monthly_surgeries AS (                                                     \
+            SELECT                                                                      \
+                doctor_cc,                                                              \
+                TO_CHAR(DATE_TRUNC('month', start_time), 'YYYY-MM') AS surgery_month,   \
+                COUNT(id) AS surgery_count                                              \
+            FROM surgery                                                                \
+            WHERE start_time >= (CURRENT_DATE - INTERVAL '1 year')                      \
+            GROUP BY doctor_cc, DATE_TRUNC('month', start_time)                         \
+        )                                                                               \
+        SELECT m.surgery_month, e.name, surgery_count                                   \
+        FROM monthly_surgeries AS m                                                     \
+        JOIN (                                                                          \
+            SELECT                                                                      \
+                surgery_month,                                                          \
+                MAX(surgery_count) AS max_surgery_count                                 \
+            FROM monthly_surgeries                                                      \
+            GROUP BY surgery_month                                                      \
+        ) AS month_maxs                                                                 \
+        ON m.surgery_month = month_maxs.surgery_month                                   \
+            AND m.surgery_count = month_maxs.max_surgery_count                          \
+        JOIN employee AS e                                                              \
+        ON m.doctor_cc = e.cc                                                           \
+        ORDER BY m.surgery_month;                                                       \
+    "
 
+    conn = db_connection()
+    cur = conn.cursor()
 
+    try:
+        cur.execute(statement)
+        rows = cur.fetchall()
+
+        results = []
+        last_month = None
+        for row in rows:
+            if (last_month != row[0]):
+                results.append({'month': row[0], 'doctor_name': row[1], 'surgeries': row[2]})
+            else:
+                results[-1]['doctor_name'] += ', ' + row[1]
+            last_month = row[0]
+
+        response = {'status': StatusCodes['success'], 'results': results}
+
+        # commit the transaction
+        conn.commit()
+
+    except (Exception, psycopg2.DatabaseError) as error:
+        logger.error(f'GET /dbproj/report - error: {error}')
+        response = {'status': StatusCodes['internal_error'], 'errors': str(error)}
+
+        # an error occurred, rollback
+        conn.rollback()
+
+    finally:
+        if conn is not None:
+            conn.close()
+
+    return flask.jsonify(response), response['status']
 
 
 ##########################################################

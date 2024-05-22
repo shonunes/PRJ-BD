@@ -166,7 +166,7 @@
 				"header": [],
 				"body": {
 					"mode": "raw",
-					"raw": "{\n    \"cc\": 36382574,\n    \"username\": \"João Domingos\",\n    \"password\": \"joaodomingos\",\n    \"contract_id\": 675,\n    \"salary\": 220000,\n    \"contract_issue_date\": \"2022-06-19\",\n    \"contract_due_date\": \"2032-06-19\",\n    \"birthday\": \"1956-02-01\",\n    \"email\": \"jdiogodomingos@gmail.com\",\n    \"license_id\": \"ghe2758dj\",\n    \"license_company\": \"Pfizer\",\n    \"license_issue_date\": \"1998-05-08\",\n    \"license_due_date\": \"2028-05-08\",\n    \"specialty_name\": \"oftalmologista\"\n}",
+					"raw": "{\n    \"cc\": 67349265,\n    \"username\": \"Magda Nunes\",\n    \"password\": \"magdanunes\",\n    \"contract_id\": 556,\n    \"salary\": 500000,\n    \"contract_issue_date\": \"2023-03-30\",\n    \"contract_due_date\": \"2033-03-30\",\n    \"birthday\": \"1979-08-15\",\n    \"email\": \"magdanunes@gmail.com\",\n    \"license_id\": \"grb4598gdr\",\n    \"license_company\": \"Pfizer\",\n    \"license_issue_date\": \"1998-05-08\",\n    \"license_due_date\": \"2028-05-08\",\n    \"specialty_name\": \"oftalmologista\"\n}",
 					"options": {
 						"raw": {
 							"language": "json"
@@ -212,7 +212,7 @@
 				"header": [],
 				"body": {
 					"mode": "raw",
-					"raw": "{\n\t\"username\": 15782095,\n    \"password\": \"migueltordo\"\n}",
+					"raw": "{\n\t\"username\": 7,\n    \"password\": \"antoniomarcal\"\n}",
 					"options": {
 						"raw": {
 							"language": "json"
@@ -350,13 +350,13 @@
 				"header": [
 					{
 						"key": "Authorization",
-						"value": "eyJ0eXAiOiJKV1QiLCJhbGciOiJIUzI1NiJ9.eyJ1c2VybmFtZSI6MTU3ODIwOTUsInR5cGUiOiJwYXRpZW50IiwiZXhwIjoxNzE2Mzc1ODU0Ljc5MTIyNjF9.ed7mWLNDgoUzEK2sXWhPNjlaSj41kMi2Ob9t3h-jnXo",
+						"value": "eyJ0eXAiOiJKV1QiLCJhbGciOiJIUzI1NiJ9.eyJ1c2VybmFtZSI6NywidHlwZSI6ImFzc2lzdGFudCIsImV4cCI6MTcxNjQxMDg0MS4zNjcyODE0fQ.B2pKul5AruT_TeixNnueNMv401_snApE_Dz9u63Rl_A",
 						"type": "text"
 					}
 				],
 				"body": {
 					"mode": "raw",
-					"raw": "{\n    \"doctor_id\": 25,\n    \"appointment_time\": \"2024-05-26 08:00:00\"\n}",
+					"raw": "{\n    \"patient_id\": 15782095,\n    \"doctor\": 28,\n    \"nurses\": [],\n    \"surgery_time\": \"2024-05-27 23:00:00\",\n    \"hospitalization_entry_time\": \"2024-06-28 01:00:00\",\n    \"hospitalization_exit_time\": \"2024-06-27 03:00:00\",\n    \"hospitalization_responsable_nurse\": 14\n}",
 					"options": {
 						"raw": {
 							"language": "json"
@@ -432,16 +432,15 @@
 			"response": []
 		},
 		{
-			"name": "Update data",
+			"name": "Generate Monthly Report",
 			"event": [
 				{
 					"listen": "test",
 					"script": {
 						"exec": [
-							"pm.test(\"Successful PUT request\", function () {",
-							"    pm.expect(pm.response.code).to.be.oneOf([200, 201, 204]);",
-							"});",
-							""
+							"pm.test(\"Status code is 200\", function () {",
+							"    pm.response.to.have.status(200);",
+							"});"
 						],
 						"type": "text/javascript",
 						"packages": {}
@@ -449,19 +448,16 @@
 				}
 			],
 			"request": {
-				"method": "PUT",
-				"header": [],
-				"body": {
-					"mode": "raw",
-					"raw": "{\n\t\"name\": \"Add your name in the body\"\n}",
-					"options": {
-						"raw": {
-							"language": "json"
-						}
+				"method": "GET",
+				"header": [
+					{
+						"key": "Authorization",
+						"value": "eyJ0eXAiOiJKV1QiLCJhbGciOiJIUzI1NiJ9.eyJ1c2VybmFtZSI6NywidHlwZSI6ImFzc2lzdGFudCIsImV4cCI6MTcxNjQxMTk0MS4yNzg0MzEyfQ.Fyga8KHAJXgcD1EX_NU6I6uMJ3dD3UqK4cO9t0jPbwE",
+						"type": "text"
 					}
-				},
+				],
 				"url": {
-					"raw": "http://localhost:8080/dbproj/user",
+					"raw": "http://localhost:8080/dbproj/report",
 					"protocol": "http",
 					"host": [
 						"localhost"
@@ -469,57 +465,10 @@
 					"port": "8080",
 					"path": [
 						"dbproj",
-						"user"
+						"report"
 					]
 				},
-				"description": "This is a PUT request and it is used to overwrite an existing piece of data. For instance, after you create an entity with a POST request, you may want to modify that later. You can do that using a PUT request. You typically identify the entity being updated by including an identifier in the URL (eg. `id=1`).\n\nA successful PUT request typically returns a `200 OK`, `201 Created`, or `204 No Content` response code."
-			},
-			"response": []
-		},
-		{
-			"name": "Delete data",
-			"event": [
-				{
-					"listen": "test",
-					"script": {
-						"type": "text/javascript",
-						"exec": [
-							"pm.test(\"Successful DELETE request\", function () {",
-							"    pm.expect(pm.response.code).to.be.oneOf([200, 202, 204]);",
-							"});",
-							""
-						]
-					}
-				}
-			],
-			"request": {
-				"method": "DELETE",
-				"header": [],
-				"body": {
-					"mode": "raw",
-					"raw": "",
-					"options": {
-						"raw": {
-							"language": "json"
-						}
-					}
-				},
-				"url": {
-					"raw": "{{base_url}}/info?id=1",
-					"host": [
-						"{{base_url}}"
-					],
-					"path": [
-						"info"
-					],
-					"query": [
-						{
-							"key": "id",
-							"value": "1"
-						}
-					]
-				},
-				"description": "This is a DELETE request, and it is used to delete data that was previously created via a POST request. You typically identify the entity being updated by including an identifier in the URL (eg. `id=1`).\n\nA successful DELETE request typically returns a `200 OK`, `202 Accepted`, or `204 No Content` response code."
+				"description": "This is a GET request and it is used to \"get\" data from an endpoint. There is no request body for a GET request, but you can use query parameters to help specify the resource you want data on (e.g., in this request, we have `id=1`).\n\nA successful GET response will have a `200 OK` status, and should include some kind of response body - for example, HTML web content or JSON data."
 			},
 			"response": []
 		}
