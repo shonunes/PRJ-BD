@@ -45,8 +45,6 @@ CREATE TABLE nurse (
 CREATE TABLE appointment (
 	id					 BIGSERIAL,
 	start_time			 TIMESTAMP NOT NULL,
-	end_time			 TIMESTAMP NOT NULL,
-	cost				 INTEGER NOT NULL,
 	bill_id				 BIGINT NOT NULL,
 	doctor_cc			 BIGINT NOT NULL,
 	patient_cc			 BIGINT NOT NULL,
@@ -55,8 +53,8 @@ CREATE TABLE appointment (
 
 CREATE TABLE hospitalization (
 	id				 BIGSERIAL,
-	entry_time			 DATE NOT NULL,
-	exit_time			 DATE,
+	entry_time			 TIMESTAMP NOT NULL,
+	exit_time			 TIMESTAMP NOT NULL,
 	bill_id				 BIGINT NOT NULL,
 	nurse_cc		 BIGINT NOT NULL,
 	patient_cc		 BIGINT NOT NULL,
@@ -112,7 +110,7 @@ CREATE TABLE payment (
 );
 
 CREATE TABLE bill (
-	id	 BIGINT,
+	id	 BIGSERIAL,
 	amount INTEGER NOT NULL,
 	paid	 BOOLEAN NOT NULL,
 	PRIMARY KEY(id)

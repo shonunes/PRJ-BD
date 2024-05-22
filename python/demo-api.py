@@ -57,7 +57,7 @@ def token_required(allowed_roles):
                 token = flask.request.headers['Authorization']
             if not token:
                 return flask.jsonify({'status': StatusCodes['api_error'], 'errors': 'Token is missing'}), StatusCodes['api_error']
-            
+
             try:
                 data = jwt.decode(token, app.config['SECRET_KEY'], algorithms=['HS256'])
                 kwargs['user_id'] = data['username']
@@ -65,7 +65,7 @@ def token_required(allowed_roles):
                     return flask.jsonify({'status': StatusCodes['api_error'], 'errors': 'Unauthorized'}), StatusCodes['api_error']
                 kwargs['user_type'] = data['type']
 
-                ## TODO: check if user really exists in the database
+            ## TODO: check if user really exists in the database
 
             except jwt.ExpiredSignatureError:
                 return flask.jsonify({'status': StatusCodes['api_error'], 'errors': 'Token is expired'}), StatusCodes['api_error']
@@ -77,6 +77,8 @@ def token_required(allowed_roles):
             return f(*args, **kwargs)
         return decorated
     return decorator
+
+
 
 ##########################################################
 ## ENDPOINTS
@@ -505,6 +507,74 @@ def get_appointments(patient_user_id, user_id, user_type):
 
     return flask.jsonify(response), response['status']
 
+
+##
+## POST
+##
+## Schedule surgery
+## 
+## Only assistants can use this endpoint
+##
+## To use it, access:
+## 
+## http://localhost:8080/dbproj/surgery
+## OR
+## http://localhost:8080/dbproj/surgery/<int:hospitalization_id>
+##
+## If the hospitalization_id is provided, the surgery will be associated to that hospitalization
+##
+@app.route('/dbproj/surgery', methods=['POST'], defaults={'hospitalization_id': None})
+@app.route('/dbproj/surgery/<hospitalization_id>', methods=['POST'])
+@token_required(['assistant'])
+def schedule_surgery(hospitalization_id, user_id, user_type):
+    if (hospitalization_id):
+        logger.info(f'POST /dbproj/surgery/{hospitalization_id}')
+    else:
+        logger.info('POST /dbproj/surgery')
+    payload = flask.request.get_json()
+
+    logger.debug(f'POST /dbproj/surgery - payload: {payload}, token_id: {user_id}, token_type: {user_type}')
+
+    # validate every argument
+    if (hospitalization_id):
+        args = ['patient_id', 'doctor', 'nurses', 'surgery_time']
+    else:
+        args = ['patient_id', 'doctor', 'nurses', 'surgery_time', 'hospitalization_entry_time', 'hospitalization_exit_time', 'hospitalization_responsable_nurse']
+    for arg in args:
+        if arg not in payload:
+            response = {'status': StatusCodes['api_error'], 'errors': f'{arg} value not in payload'}
+            return flask.jsonify(response), response['status']
+
+    if (hospitalization_id):
+        statement = 'SELECT schedule_surgery(%s, %s, %s, %s, %s)'
+        values = (payload['patient_id'], payload['doctor'], payload['nurses'], payload['surgery_time'], hospitalization_id,)
+    else:
+        statement = 'SELECT schedule_surgery(%s, %s, %s, %s, %s, %s, %s, %s)'
+        values = (payload['patient_id'], payload['doctor'], payload['nurses'], payload['surgery_time'], None, payload['hospitalization_entry_time'], payload['hospitalization_exit_time'], payload['hospitalization_responsable_nurse'],)
+
+    conn = db_connection()
+    cur = conn.cursor()
+
+    try:
+        cur.execute(statement, values)
+        surgery_id = cur.fetchone()[0]
+
+        # commit the transaction
+        conn.commit()
+        response = {'status': StatusCodes['success'], 'results': surgery_id}
+
+    except (Exception, psycopg2.DatabaseError) as error:
+        logger.error(f'POST /dbproj/surgery - error: {error}')
+        response = {'status': StatusCodes['internal_error'], 'errors': str(error)}
+
+        # an error occurred, rollback
+        conn.rollback()
+
+    finally:
+        if conn is not None:
+            conn.close()
+
+    return flask.jsonify(response), response['status']
 
 
 
