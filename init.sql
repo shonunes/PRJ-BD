@@ -104,8 +104,9 @@ CREATE TABLE reaction_severity (
 );
 
 CREATE TABLE payment (
-	id	 BIGINT,
-	amount	 INTEGER,
+	id	 BIGSERIAL,
+	amount	 INTEGER NOT NULL,
+	method	 VARCHAR(128) NOT NULL,
 	bill_id BIGINT,
 	PRIMARY KEY(id,bill_id)
 );
@@ -113,6 +114,7 @@ CREATE TABLE payment (
 CREATE TABLE bill (
 	id	 BIGINT,
 	amount INTEGER NOT NULL,
+	paid	 BOOLEAN NOT NULL,
 	PRIMARY KEY(id)
 );
 

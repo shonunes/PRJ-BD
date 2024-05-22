@@ -162,7 +162,7 @@ CREATE OR REPLACE FUNCTION appointment_trig() RETURNS TRIGGER
 LANGUAGE plpgsql
 AS $$
 BEGIN
-	INSERT INTO bill(amount) VALUES(50)
+	INSERT INTO bill(amount, paid) VALUES(50, false)
 	RETURNING id INTO NEW.bill_id;
 	
 	RETURN NEW;
@@ -206,3 +206,63 @@ BEGIN
 	RETURN appointment_id;
 END;
 $$;
+
+/* EXECUTE PAYMENT
+TESTADO E FUNCIONAL NO ENDPOINT
+*/
+CREATE OR REPLACE FUNCTION execute_payment(id_bill BIGINT, payment_amount INTEGER, payment_method VARCHAR, user_id BIGINT)
+RETURNS INTEGER
+LANGUAGE plpgsql
+AS $$
+DECLARE
+	bill_patient INTEGER;
+	bill_amount INTEGER;
+	paid_amount INTEGER;
+BEGIN
+	IF (payment_amount <= 0) THEN
+		RAISE EXCEPTION 'Payment must be positive';
+	END IF;
+
+	SELECT patient_cc INTO bill_patient
+	FROM appointment
+	WHERE bill_id = id_bill;
+
+	IF (bill_patient IS NULL) THEN
+		SELECT patient_cc INTO bill_patient
+		FROM hospitalization
+		WHERE bill_id = id_bill;
+	END IF;
+
+	IF (bill_patient IS NULL) THEN
+		RAISE EXCEPTION 'Bill not found';
+	ELSEIF (bill_patient != user_id) THEN
+		RAISE EXCEPTION 'Only the patient can pay the bill';
+	END IF;
+
+
+	SELECT SUM(amount) INTO paid_amount
+	FROM payment
+	WHERE bill_id = id_bill;
+	IF (paid_amount IS NULL) THEN
+		paid_amount = 0;
+	END IF;
+
+	SELECT amount INTO bill_amount
+	FROM bill
+	WHERE id = id_bill;
+
+	IF (paid_amount + payment_amount > bill_amount) THEN
+		RAISE EXCEPTION 'Payment amount exceeds bill amount';
+	ELSEIF (paid_amount + payment_amount = bill_amount) THEN
+		UPDATE bill
+		SET paid = TRUE
+		WHERE id = id_bill;
+	END IF;
+
+	INSERT INTO payment(amount, method, bill_id)
+	VALUES(payment_amount, payment_method, id_bill);
+
+	RETURN bill_amount - paid_amount - payment_amount;
+END;
+$$;
+

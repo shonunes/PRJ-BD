@@ -457,7 +457,7 @@ def schedule_appointment(user_id, user_type):
 @app.route('/dbproj/appointments/<patient_user_id>', methods=['GET'])
 @token_required(['assistant', 'patient'])
 def get_appointments(patient_user_id, user_id, user_type):
-    logger.info('GET /dbproj/<patient_user_id>')
+    logger.info('GET /dbproj/appointments/<patient_user_id>')
 
     logger.debug(f'patient_user_id: {patient_user_id}, token_id: {user_id}, token_type: {user_type}')
 
@@ -509,6 +509,58 @@ def get_appointments(patient_user_id, user_id, user_type):
 
 
 
+##
+## POST
+##
+## Execute payment
+##
+## Only the patient can pay his/her own bills
+##
+## To use it, access:
+##
+## http://localhost:8080/dbproj/bills/<bill_id>
+##
+@app.route('/dbproj/bills/<bill_id>', methods=['POST'])
+@token_required(['patient'])
+def execute_payment(bill_id, user_id, user_type):
+    logger.info('POST /dbproj/bills/<bill_id>')
+    payload = flask.request.get_json()
+
+    logger.debug(f'POST /dbproj/bills/{bill_id} - payload: {payload}, token_id: {user_id}, token_type: {user_type}')
+
+    args = ['amount', 'payment_method']
+    for arg in args:
+        if arg not in payload:
+            response = {'status': StatusCodes['api_error'], 'errors': f'{arg} value not in payload'}
+            return flask.jsonify(response), response['status']
+
+    statement = 'SELECT execute_payment(%s, %s, %s, %s)'
+    values = (bill_id, payload['amount'], payload['payment_method'], user_id,)
+
+    conn = db_connection()
+    cur = conn.cursor()
+
+    try:
+        cur.execute(statement, values)
+        remaining_amount = cur.fetchone()[0]
+
+        response = {'status': StatusCodes['success'], 'results': remaining_amount}
+
+        # commit the transaction
+        conn.commit()
+
+    except (Exception, psycopg2.DatabaseError) as error:
+        logger.error(f'POST /dbproj/bills/<bill_id> - error: {error}')
+        response = {'status': StatusCodes['internal_error'], 'errors': str(error)}
+
+        # an error occurred, rollback
+        conn.rollback()
+
+    finally:
+        if conn is not None:
+            conn.close()        
+
+    return flask.jsonify(response), response['status']
 
 
 
@@ -516,10 +568,9 @@ def get_appointments(patient_user_id, user_id, user_type):
 
 
 
-
-
-
-
+##########################################################
+## MAIN
+##########################################################
 
 if __name__ == '__main__':
 
