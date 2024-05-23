@@ -64,8 +64,6 @@ CREATE TABLE hospitalization (
 CREATE TABLE surgery (
 	id					 BIGSERIAL,
 	start_time				 TIMESTAMP NOT NULL,
-	duration					 TIMESTAMP,
-	cost					 BIGINT,
 	doctor_cc			 BIGINT NOT NULL,
 	hospitalization_id			 BIGINT NOT NULL,
 	PRIMARY KEY(id)
@@ -182,8 +180,13 @@ ALTER TABLE hospitalization ADD UNIQUE (bill_id, patient_cc);
 ALTER TABLE hospitalization ADD CONSTRAINT hospitalization_fk1 FOREIGN KEY (bill_id) REFERENCES bill(id);
 ALTER TABLE hospitalization ADD CONSTRAINT hospitalization_fk2 FOREIGN KEY (nurse_cc) REFERENCES nurse(cc);
 ALTER TABLE hospitalization ADD CONSTRAINT hospitalization_fk3 FOREIGN KEY (patient_cc) REFERENCES patient(cc);
+ALTER TABLE hospitalization ADD CONSTRAINT check_hospitalization_time CHECK (EXTRACT(MINUTE FROM entry_time) IN (0, 30) AND
+EXTRACT(SECOND FROM entry_time) = 0 AND EXTRACT(MINUTE FROM exit_time) IN (0, 30) AND
+EXTRACT(SECOND FROM exit_time) = 0);
 ALTER TABLE surgery ADD CONSTRAINT surgery_fk1 FOREIGN KEY (doctor_cc) REFERENCES doctor(cc);
 ALTER TABLE surgery ADD CONSTRAINT surgery_fk2 FOREIGN KEY (hospitalization_id) REFERENCES hospitalization(id);
+ALTER TABLE surgery ADD CONSTRAINT check_surgery_time CHECK (EXTRACT(MINUTE FROM start_time) IN (0, 30) AND
+EXTRACT(SECOND FROM start_time) = 0);
 ALTER TABLE medicine_dosage ADD CONSTRAINT medicine_dosage_fk1 FOREIGN KEY (medicine_name) REFERENCES medicine(name);
 ALTER TABLE medicine_dosage ADD CONSTRAINT medicine_dosage_fk2 FOREIGN KEY (prescription_id) REFERENCES prescription(id);
 ALTER TABLE reaction_severity ADD CONSTRAINT reaction_severity_fk1 FOREIGN KEY (side_effect_occurrence) REFERENCES side_effect(occurrence);
