@@ -164,7 +164,7 @@ AS $$
 BEGIN
 	INSERT INTO bill(amount, paid) VALUES(50, false)
 	RETURNING id INTO NEW.bill_id;
-	
+
 	RETURN NEW;
 END;
 $$;
@@ -174,7 +174,7 @@ BEFORE INSERT ON appointment
 FOR EACH ROW
 EXECUTE FUNCTION appointment_trig();
 
-CREATE OR REPLACE FUNCTION schedule_appointment(appointment_time TIMESTAMP, doctor_id BIGINT, patient_id BIGINT)
+CREATE OR REPLACE FUNCTION schedule_appointment(appointment_time TIMESTAMP, doctor_id BIGINT, patient_id BIGINT, nurse_id BIGINT[] DEFAULT NULL, nurse_role VARCHAR(128)[] DEFAULT NULL)
 RETURNS INTEGER
 LANGUAGE plpgsql
 AS $$
@@ -186,22 +186,38 @@ BEGIN
 	FROM employee
 	WHERE emp_num = doctor_id;
 
+	IF (doc_cc IS NULL) THEN
+		RAISE EXCEPTION 'Doctor not found';
+	END IF;
+
 	IF (appointment_time < CURRENT_TIMESTAMP) THEN
 		RAISE EXCEPTION 'Cannot schedule appointment in the past';
-	ELSEIF (appointment_time > CURRENT_TIMESTAMP + INTERVAL '1 month') THEN
-		RAISE EXCEPTION 'Cannot schedule appointment more than 1 month in advance';
+	ELSEIF (appointment_time > CURRENT_TIMESTAMP + INTERVAL '3 months') THEN
+		RAISE EXCEPTION 'Cannot schedule appointment more than 3 months in advance';
 	ELSEIF (EXISTS (SELECT *
 					FROM appointment
+					WHERE start_time = appointment_time
+					AND (doctor_cc = doc_cc OR patient_cc = patient_id))
+			) THEN
+		RAISE EXCEPTION 'Doctor or patient already has an appointment at this time';
+	ELSEIF (EXISTS (SELECT *
+					FROM surgery
 					WHERE start_time
-					BETWEEN appointment_time - INTERVAL '29 minutes' AND appointment_time + INTERVAL '29 minutes'
+					BETWEEN appointment_time - INTERVAL '2 hours' + '1 second' AND appointment_time
 					AND doctor_cc = doc_cc)
 			) THEN
-		RAISE EXCEPTION 'Doctor already has an appointment at this time';
+		RAISE EXCEPTION 'Doctor already has a surgery at this time';
+	-- TODO: check if the nurses are available
 	END IF;
 
 	INSERT INTO appointment(start_time, doctor_cc, patient_cc)
 	VALUES(appointment_time, doc_cc, patient_id)
 	RETURNING id INTO appointment_id;
+
+	IF (nurse_id IS NOT NULL) THEN
+		INSERT INTO appointment_role
+		VALUES(UNNEST(nurse_role), appointment_id, UNNEST(nurse_id));
+	END IF;
 
 	RETURN appointment_id;
 END;
@@ -214,7 +230,7 @@ AS $$
 BEGIN
 	INSERT INTO bill(amount, paid) VALUES(0, false)
 	RETURNING id INTO NEW.bill_id;
-	
+
 	RETURN NEW;
 END;
 $$;
@@ -250,61 +266,68 @@ EXECUTE FUNCTION surgery_trig();
 /* SCHEDULE SURGERY
 TESTADO E FUNCIONAL NO ENDPOINT
 */
-CREATE OR REPLACE FUNCTION schedule_surgery(patient_id BIGINT, doctor_id BIGINT, nurses BIGINT[], surgery_time TIMESTAMP, hospitalization_id BIGINT, hosp_entry_time TIMESTAMP DEFAULT NULL, hosp_exit_time TIMESTAMP DEFAULT NULL, hosp_nurse BIGINT DEFAULT NULL)
-RETURNS INTEGER
+CREATE OR REPLACE FUNCTION schedule_surgery(patient_id BIGINT, doctor_id BIGINT, nurse_id BIGINT[], nurse_role VARCHAR(128)[], surgery_time TIMESTAMP, hospitalization_id BIGINT, hosp_entry_time TIMESTAMP DEFAULT NULL, hosp_exit_time TIMESTAMP DEFAULT NULL, hosp_nurse BIGINT DEFAULT NULL)
+RETURNS TABLE (
+    surg_id BIGINT,
+    hosp_id BIGINT,
+    bill_id INTEGER
+)
 LANGUAGE plpgsql
 AS $$
 DECLARE
-	surgery_id INTEGER;
-	doc_cc INTEGER;
-	nurse_cc INTEGER;
-	hosp_bill_id INTEGER;
+	surgery_id BIGINT;
+	doc_cc BIGINT;
+	hosp_bill_id INTEGER DEFAULT NULL;
 BEGIN
 	SELECT cc INTO doc_cc
 	FROM employee
 	WHERE emp_num = doctor_id;
 
-	SELECT cc INTO nurse_cc
-	FROM employee
-	WHERE emp_num = hosp_nurse;
-
 	IF (surgery_time < CURRENT_TIMESTAMP) THEN
 		RAISE EXCEPTION 'Cannot schedule surgery in the past';
-	ELSEIF (surgery_time > CURRENT_TIMESTAMP + INTERVAL '6 month') THEN
-		RAISE EXCEPTION 'Cannot schedule surgery more than 6 month in advance';
-	ELSEIF (EXISTS (SELECT *
-					FROM surgery
+	ELSEIF (surgery_time > CURRENT_TIMESTAMP + INTERVAL '6 months') THEN
+		RAISE EXCEPTION 'Cannot schedule surgery more than 6 months in advance';
+	ELSEIF (EXISTS (SELECT start_time
+					FROM surgery AS s, hospitalization AS h
 					WHERE start_time
-					BETWEEN surgery_time - INTERVAL '2 hours' + INTERVAL '1 minute' AND surgery_time + INTERVAL '2 hours' - INTERVAL '1 minute'
-					AND doctor_cc = doc_cc)
+					BETWEEN surgery_time - INTERVAL '2 hours' + INTERVAL '1 second' 
+					AND surgery_time + INTERVAL '2 hours' - INTERVAL '1 second'
+					AND (doctor_cc = doc_cc OR patient_cc = patient_id))
 			) THEN
-		RAISE EXCEPTION 'Doctor already has a surgery at this time';
+		RAISE EXCEPTION 'Doctor or patient already has a surgery at this time';
 	ELSEIF (EXISTS (SELECT *
 					FROM appointment
 					WHERE start_time
-					BETWEEN surgery_time - INTERVAL '29 minutes' AND surgery_time - INTERVAL '29 minutes')
+					BETWEEN surgery_time AND surgery_time + INTERVAL '2 hours' - INTERVAL '1 second'
+					AND (doctor_cc = doc_cc OR patient_cc = patient_id))
 			) THEN
-		RAISE EXCEPTION 'Doctor already has an appointment at this time';
+		RAISE EXCEPTION 'Doctor or patient already has an appointment at this time';
 	-- TODO: check if the nurses are available
 	END IF;
 
 	IF (hosp_entry_time IS NOT NULL) THEN
 		INSERT INTO hospitalization(entry_time, exit_time, nurse_cc, patient_cc)
-		VALUES(hosp_entry_time, hosp_exit_time, nurse_cc, patient_id)
+		VALUES(hosp_entry_time, hosp_exit_time, hosp_nurse, patient_id)
 		RETURNING id, bill_id INTO hospitalization_id, hosp_bill_id;
+	ELSE
+		SELECT h.bill_id INTO hosp_bill_id
+		FROM hospitalization AS h
+		WHERE h.id = hospitalization_id;
 	END IF;
-
 
 	INSERT INTO surgery(start_time, doctor_cc, hospitalization_id)
 	VALUES(surgery_time, doc_cc, hospitalization_id)
 	RETURNING id INTO surgery_id;
-	
-	-- TODO: Add the nurses and their roles to the surgery_role table
 
-	RETURN surgery_id;
+	IF (nurse_id IS NOT NULL) THEN
+		INSERT INTO surgery_role
+		VALUES(UNNEST(nurse_role), surgery_id, UNNEST(nurse_id));
+	END IF;
+	
+	RETURN QUERY
+	SELECT  surgery_id, hospitalization_id, hosp_bill_id;
 END;
 $$;
-
 
 /* EXECUTE PAYMENT
 TESTADO E FUNCIONAL NO ENDPOINT

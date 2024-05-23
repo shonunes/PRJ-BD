@@ -172,12 +172,12 @@ ALTER TABLE employee ADD UNIQUE (emp_num, contract_id);
 ALTER TABLE patient ADD UNIQUE (health_num);
 ALTER TABLE assistant ADD CONSTRAINT assistant_fk1 FOREIGN KEY (cc) REFERENCES employee(cc);
 ALTER TABLE nurse ADD CONSTRAINT nurse_fk1 FOREIGN KEY (cc) REFERENCES employee(cc);
-
-
 ALTER TABLE appointment ADD UNIQUE (bill_id);
 ALTER TABLE appointment ADD CONSTRAINT appointment_fk1 FOREIGN KEY (bill_id) REFERENCES bill(id);
 ALTER TABLE appointment ADD CONSTRAINT appointment_fk2 FOREIGN KEY (doctor_cc) REFERENCES doctor(cc);
 ALTER TABLE appointment ADD CONSTRAINT appointment_fk3 FOREIGN KEY (patient_cc) REFERENCES patient(cc);
+ALTER TABLE appointment ADD CONSTRAINT check_appointment_time CHECK (EXTRACT(MINUTE FROM start_time) IN (0, 30) AND
+EXTRACT(SECOND FROM start_time) = 0);
 ALTER TABLE hospitalization ADD UNIQUE (bill_id, patient_cc);
 ALTER TABLE hospitalization ADD CONSTRAINT hospitalization_fk1 FOREIGN KEY (bill_id) REFERENCES bill(id);
 ALTER TABLE hospitalization ADD CONSTRAINT hospitalization_fk2 FOREIGN KEY (nurse_cc) REFERENCES nurse(cc);
@@ -193,16 +193,12 @@ ALTER TABLE appointment_role ADD CONSTRAINT appointment_role_fk1 FOREIGN KEY (ap
 ALTER TABLE appointment_role ADD CONSTRAINT appointment_role_fk2 FOREIGN KEY (nurse_cc) REFERENCES nurse(cc);
 ALTER TABLE surgery_role ADD CONSTRAINT surgery_role_fk1 FOREIGN KEY (surgery_id) REFERENCES surgery(id);
 ALTER TABLE surgery_role ADD CONSTRAINT surgery_role_fk2 FOREIGN KEY (nurse_cc) REFERENCES nurse(cc);
-
-
 ALTER TABLE specialty_hierarchy ADD CONSTRAINT specialty_hierarchy_fk1 FOREIGN KEY (specialty_name) REFERENCES specialty(name);
 ALTER TABLE specialty_hierarchy ADD CONSTRAINT specialty_hierarchy_fk2 FOREIGN KEY (specialty_parent) REFERENCES specialty(name);
 ALTER TABLE doctor_specialty ADD CONSTRAINT doctor_specialty_fk1 FOREIGN KEY (doctor_cc) REFERENCES doctor(cc);
 ALTER TABLE doctor_specialty ADD CONSTRAINT doctor_specialty_fk2 FOREIGN KEY (specialty_name) REFERENCES specialty(name);
 ALTER TABLE nurse_hierarchy ADD CONSTRAINT nurse_nurse_fk1 FOREIGN KEY (cc_nurse) REFERENCES nurse(cc);
 ALTER TABLE nurse_hierarchy ADD CONSTRAINT nurse_nurse_fk2 FOREIGN KEY (cc_boss) REFERENCES nurse(cc);
-
-
 ALTER TABLE hospitalization_prescription ADD CONSTRAINT hospitalization_prescription_fk1 FOREIGN KEY (prescription_id) REFERENCES prescription(id);
 ALTER TABLE hospitalization_prescription ADD CONSTRAINT hospitalization_prescription_fk2 FOREIGN KEY (hospitalization_id) REFERENCES hospitalization(id);
 ALTER TABLE appointment_prescription ADD CONSTRAINT appointment_prescription_fk1 FOREIGN KEY (appointment_id) REFERENCES appointment(id);

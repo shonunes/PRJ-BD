@@ -107,6 +107,13 @@ def add_patient():
         if arg not in payload:
             response = {'status': StatusCodes['api_error'], 'errors': f'{arg} value not in payload'}
             return flask.jsonify(response), response['status']
+    try:
+        payload['cc'] = int(payload['cc'])
+        payload['health_number'] = int(payload['health_number'])
+        payload['emergency_contact'] = int(payload['emergency_contact'])
+    except ValueError:
+        response = {'status': StatusCodes['api_error'], 'errors': 'Invalid cc, health_number or emergency_contact'}
+        return flask.jsonify(response), response['status']
 
     # generate password hash to store in the database
     hashed_password = generate_password_hash(payload['password'], method='sha256')
@@ -161,6 +168,13 @@ def add_assistant():
         if arg not in payload:
             response = {'status': StatusCodes['api_error'], 'errors': f'{arg} value not in payload'}
             return flask.jsonify(response), response['status']
+    try:
+        payload['cc'] = int(payload['cc'])
+        payload['contract_id'] = int(payload['contract_id'])
+        payload['salary'] = int(payload['salary'])
+    except ValueError:
+        response = {'status': StatusCodes['api_error'], 'errors': 'Invalid cc, contract_id or salary'}
+        return flask.jsonify(response), response['status']
 
     # generate password hash to store in the database
     hashed_password = generate_password_hash(payload['password'], method='sha256')
@@ -211,11 +225,22 @@ def add_nurse():
     logger.debug(f'POST /dbproj/register/nurse - payload: {payload}')
 
     # validate every argument
-    args = ['cc', 'username', 'password', 'contract_id', 'salary', 'contract_issue_date', 'contract_due_date', 'birthday', 'email', 'cc_superior']
+    args = ['cc', 'username', 'password', 'contract_id', 'salary', 'contract_issue_date', 'contract_due_date', 'birthday', 'email']
     for arg in args:
         if arg not in payload:
             response = {'status': StatusCodes['api_error'], 'errors': f'{arg} value not in payload'}
             return flask.jsonify(response), response['status']
+    try:
+        payload['cc'] = int(payload['cc'])
+        payload['contract_id'] = int(payload['contract_id'])
+        payload['salary'] = int(payload['salary'])
+        if ('cc_superior' in payload):
+            payload['cc_superior'] = int(payload['cc_superior'])
+        else:
+            payload['cc_superior'] = None
+    except ValueError:
+        response = {'status': StatusCodes['api_error'], 'errors': 'Invalid cc, contract_id, salary or cc_superior'}
+        return flask.jsonify(response), response['status']
 
     # generate password hash to store in the database
     hashed_password = generate_password_hash(payload['password'], method='sha256')
@@ -271,6 +296,14 @@ def add_doctor():
         if arg not in payload:
             response = {'status': StatusCodes['api_error'], 'errors': f'{arg} value not in payload'}
             return flask.jsonify(response), response['status']
+    try:
+        payload['cc'] = int(payload['cc'])
+        payload['contract_id'] = int(payload['contract_id'])
+        payload['salary'] = int(payload['salary'])
+        payload['license_id'] = int(payload['license_id'])
+    except ValueError:
+        response = {'status': StatusCodes['api_error'], 'errors': 'Invalid cc, contract_id, salary or license_id'}
+        return flask.jsonify(response), response['status']
 
     # generate password hash to store in the database
     hashed_password = generate_password_hash(payload['password'], method='sha256')
@@ -335,7 +368,7 @@ def login():
                 WHERE cc = %s'
     value = (payload['username'],)
     user_type = None
-    
+
     conn = db_connection()
     cur = conn.cursor()
 
@@ -369,7 +402,7 @@ def login():
             return flask.jsonify(response), response['status']
 
         # generate token
-        token = jwt.encode({'username': payload['username'], 'type': user_type, 'exp': time.time() + 600}, app.config['SECRET_KEY'], algorithm='HS256')
+        token = jwt.encode({'username': payload['username'], 'type': user_type, 'exp': time.time() + 3600}, app.config['SECRET_KEY'], algorithm='HS256')
         
         response = {'status': StatusCodes['success'], 'results': token}
 
@@ -407,7 +440,7 @@ def schedule_appointment(user_id, user_type):
     logger.info('POST /dbproj/appointment')
     payload = flask.request.get_json()
 
-    logger.debug(f'POST /dbproj/appointment - payload: {payload}')
+    logger.debug(f'POST /dbproj/appointment - payload: {payload}, token_id: {user_id}, token_type: {user_type}')
 
     # validate every argument
     args = ['doctor_id', 'appointment_time']
@@ -415,10 +448,32 @@ def schedule_appointment(user_id, user_type):
         if arg not in payload:
             response = {'status': StatusCodes['api_error'], 'errors': f'{arg} value not in payload'}
             return flask.jsonify(response), response['status']
+    try:
+        payload['doctor_id'] = int(payload['doctor_id'])
+    except ValueError:
+        response = {'status': StatusCodes['api_error'], 'errors': 'Invalid doctor_id'}
+        return flask.jsonify(response), response['status']
 
     # parameterized queries, good for security and performance
-    statement = 'SELECT schedule_appointment(%s, %s, %s)'
-    values = (payload['appointment_time'], payload['doctor_id'], user_id,)
+    if (payload['nurses']):
+        nurse_ids = []
+        nurse_roles = []
+        try:
+            for nurse in payload['nurses']:
+                nurse_ids.append(nurse[0])
+                nurse_roles.append(nurse[1])
+        except ValueError:
+            response = {'status': StatusCodes['api_error'], 'errors': 'Invalid nurse id'}
+            return flask.jsonify(response), response['status']
+        except IndexError:
+            response = {'status': StatusCodes['api_error'], 'errors': 'Invalid nurse information'}
+            return flask.jsonify(response), response['status']
+        
+        statement = 'SELECT schedule_appointment(%s, %s, %s, %s, %s)'
+        values = (payload['appointment_time'], payload['doctor_id'], user_id, nurse_ids, nurse_roles,)
+    else:
+        statement = 'SELECT schedule_appointment(%s, %s, %s)'
+        values = (payload['appointment_time'], payload['doctor_id'], user_id,)
 
     conn = db_connection()
     cur = conn.cursor()
@@ -468,7 +523,7 @@ def get_appointments(patient_user_id, user_id, user_type):
     except ValueError:
         response = {'status': StatusCodes['api_error'], 'errors': 'Invalid patient_user_id'}
         return flask.jsonify(response), response['status']
-    
+
     if (user_type == 'patient' and user_id != patient_user_id):
         response = {'status': StatusCodes['api_error'], 'errors': 'Unauthorized'}
         return flask.jsonify(response), response['status']
@@ -524,7 +579,7 @@ def get_appointments(patient_user_id, user_id, user_type):
 ## If the hospitalization_id is provided, the surgery will be associated to that hospitalization
 ##
 @app.route('/dbproj/surgery', methods=['POST'], defaults={'hospitalization_id': None})
-@app.route('/dbproj/surgery/<hospitalization_id>', methods=['POST'])
+@app.route('/dbproj/surgery/<int:hospitalization_id>', methods=['POST'])
 @token_required(['assistant'])
 def schedule_surgery(hospitalization_id, user_id, user_type):
     if (hospitalization_id):
@@ -544,24 +599,61 @@ def schedule_surgery(hospitalization_id, user_id, user_type):
         if arg not in payload:
             response = {'status': StatusCodes['api_error'], 'errors': f'{arg} value not in payload'}
             return flask.jsonify(response), response['status']
+    
+    try:
+        payload['patient_id'] = int(payload['patient_id'])
+        payload['doctor'] = int(payload['doctor'])
+        if (not hospitalization_id):
+            payload['hospitalization_entry_time'] = int(payload['hospitalization_entry_time'])
+            payload['hospitalization_exit_time'] = int(payload['hospitalization_exit_time'])
+            payload['hospitalization_responsable_nurse'] = int(payload['hospitalization_responsable_nurse'])
+    except ValueError:
+        response = {'status': StatusCodes['api_error'], 'errors': 'Invalid patient_id, doctor, hospitalization_entry_time, hospitalization_exit_time or hospitalization_responsable_nurse'}
+        return flask.jsonify(response), response['status']
+    
+    nurse_ids = []
+    nurse_roles = []
+    try:
+        for nurse in payload['nurses']:
+            id = int(nurse[0])
+            nurse_ids.append(id)
+            nurse_roles.append(nurse[1])
+    except ValueError:
+        response = {'status': StatusCodes['api_error'], 'errors': 'Invalid nurse id'}
+        return flask.jsonify(response), response['status']
+    except IndexError:
+        response = {'status': StatusCodes['api_error'], 'errors': 'Invalid nurse information'}
+        return flask.jsonify(response), response['status']
+
+    print(payload['patient_id'])
+    print(payload['doctor'])
+    print(nurse_ids)
+    print(nurse_roles)
+    print(payload['surgery_time'])
+    print(hospitalization_id)
 
     if (hospitalization_id):
-        statement = 'SELECT schedule_surgery(%s, %s, %s, %s, %s)'
-        values = (payload['patient_id'], payload['doctor'], payload['nurses'], payload['surgery_time'], hospitalization_id,)
+        statement = 'SELECT * FROM schedule_surgery(%s, %s, %s, %s, %s, %s)'
+        values = (payload['patient_id'], payload['doctor'], nurse_ids, nurse_roles, payload['surgery_time'], hospitalization_id,)
     else:
-        statement = 'SELECT schedule_surgery(%s, %s, %s, %s, %s, %s, %s, %s)'
-        values = (payload['patient_id'], payload['doctor'], payload['nurses'], payload['surgery_time'], None, payload['hospitalization_entry_time'], payload['hospitalization_exit_time'], payload['hospitalization_responsable_nurse'],)
+        statement = 'SELECT * FROM schedule_surgery(%s, %s, %s, %s, %s, %s, %s, %s, %s)'
+        values = (payload['patient_id'], payload['doctor'], nurse_ids, nurse_roles, payload['surgery_time'], None, payload['hospitalization_entry_time'], payload['hospitalization_exit_time'], payload['hospitalization_responsable_nurse'],)
 
     conn = db_connection()
     cur = conn.cursor()
 
     try:
         cur.execute(statement, values)
-        surgery_id = cur.fetchone()[0]
+        surgery_id, hospitalization_id, bill_id = cur.fetchone()
 
         # commit the transaction
         conn.commit()
-        response = {'status': StatusCodes['success'], 'results': surgery_id}
+        response = {'status': StatusCodes['success'], 'results': {'surgery_id': surgery_id, 
+                                                                  'hospitalization_id': hospitalization_id, 
+                                                                  'bill_id': bill_id, 
+                                                                  'patient_id': payload['patient_id'], 
+                                                                  'doctor_id': payload['doctor'], 
+                                                                  'date': payload['surgery_time']}}
 
     except (Exception, psycopg2.DatabaseError) as error:
         logger.error(f'POST /dbproj/surgery - error: {error}')
@@ -601,7 +693,13 @@ def execute_payment(bill_id, user_id, user_type):
         if arg not in payload:
             response = {'status': StatusCodes['api_error'], 'errors': f'{arg} value not in payload'}
             return flask.jsonify(response), response['status']
-
+    try:
+        bill_id = int(bill_id)
+        payload['amount'] = int(payload['amount']) # amount only accepts integers (no cents)
+    except ValueError:
+        response = {'status': StatusCodes['api_error'], 'errors': 'Invalid bill_id or amount'}
+        return flask.jsonify(response), response['status']
+    
     statement = 'SELECT execute_payment(%s, %s, %s, %s)'
     values = (bill_id, payload['amount'], payload['payment_method'], user_id,)
 
@@ -641,7 +739,6 @@ def execute_payment(bill_id, user_id, user_type):
 ## To use it, access: 
 ##
 ## http://localhost:8080/dbproj/report
-##
 ##
 @app.route('/dbproj/report', methods=['GET'])
 @token_required(['assistant'])
