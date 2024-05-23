@@ -88,7 +88,8 @@ CREATE TABLE side_effect (
 );
 
 CREATE TABLE medicine_dosage (
-	quantity	 BIGINT,
+	quantity	 VARCHAR(128),
+	frequency	 VARCHAR(128),
 	medicine_name	 BIGINT,
 	prescription_id BIGINT,
 	PRIMARY KEY(quantity,medicine_name,prescription_id)
