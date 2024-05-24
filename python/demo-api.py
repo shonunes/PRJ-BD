@@ -732,9 +732,66 @@ def execute_payment(bill_id, user_id, user_type):
 ##
 ## GET
 ##
+## Daily Summary
+##
+## Only assistants can use this endpoint
+##
+## To use it, access: 
+##
+## http://localhost:8080/dbproj/daily/<year-month-day>
+##
+@app.route('/dbproj/daily/<date>', methods=['GET'])
+@token_required(['assistant'])
+def daily_summary(date, user_id, user_type):
+    logger.info(f'GET /dbproj/daily/<date>')
+
+    logger.debug(f'GET /dbproj/daily/{date} - token_id: {user_id}, token_type: {user_type}')
+
+    statement = '''
+        SELECT
+            COALESCE(SUM(p.amount), 0) AS amount_spent,
+            COUNT(DISTINCT s.id) AS surgeries,
+            COUNT(DISTINCT hp.prescription_id) AS prescriptions
+        FROM hospitalization AS h
+        LEFT JOIN surgery AS s ON h.id = s.hospitalization_id
+        LEFT JOIN payment AS p ON h.bill_id = p.bill_id
+        LEFT JOIN hospitalization_prescription AS hp ON h.id = hp.hospitalization_id
+        WHERE h.entry_time::date = %s;
+    '''
+    values = (date,)
+
+    conn = db_connection()
+    cur = conn.cursor()
+
+    try:
+        cur.execute(statement, values)
+        amount_spent, surgeries, prescriptions = cur.fetchone()
+
+        response = {'status': StatusCodes['success'], 'results': {'amount_spent': amount_spent, 'surgeries': surgeries, 'prescriptions': prescriptions}}
+
+        # commit the transaction
+        conn.commit()
+
+    except (Exception, psycopg2.DatabaseError) as error:
+        logger.error(f'POST /dbproj/daily/<date> - error: {error}')
+        response = {'status': StatusCodes['internal_error'], 'errors': str(error)}
+
+        # an error occurred, rollback
+        conn.rollback()
+
+    finally:
+        if conn is not None:
+            conn.close()        
+
+    return flask.jsonify(response), response['status']
+
+
+##
+## GET
+##
 ## Generate monthly reports
 ##
-## Only assistants can access this endpoint
+## Only assistants can use this endpoint
 ##
 ## To use it, access: 
 ##
@@ -745,31 +802,33 @@ def execute_payment(bill_id, user_id, user_type):
 def generate_monthly_report(user_id, user_type):
     logger.info('GET /dbproj/report')
 
-    statement = "                                                                       \
-        WITH monthly_surgeries AS (                                                     \
-            SELECT                                                                      \
-                doctor_cc,                                                              \
-                TO_CHAR(DATE_TRUNC('month', start_time), 'YYYY-MM') AS surgery_month,   \
-                COUNT(id) AS surgery_count                                              \
-            FROM surgery                                                                \
-            WHERE start_time >= (CURRENT_DATE - INTERVAL '1 year')                      \
-            GROUP BY doctor_cc, DATE_TRUNC('month', start_time)                         \
-        )                                                                               \
-        SELECT m.surgery_month, e.name, surgery_count                                   \
-        FROM monthly_surgeries AS m                                                     \
-        JOIN (                                                                          \
-            SELECT                                                                      \
-                surgery_month,                                                          \
-                MAX(surgery_count) AS max_surgery_count                                 \
-            FROM monthly_surgeries                                                      \
-            GROUP BY surgery_month                                                      \
-        ) AS month_maxs                                                                 \
-        ON m.surgery_month = month_maxs.surgery_month                                   \
-            AND m.surgery_count = month_maxs.max_surgery_count                          \
-        JOIN employee AS e                                                              \
-        ON m.doctor_cc = e.cc                                                           \
-        ORDER BY m.surgery_month;                                                       \
-    "
+    logger.debug(f'token_id: {user_id}, token_type: {user_type}')
+
+    statement = '''                                                                    
+        WITH monthly_surgeries AS (
+            SELECT
+                doctor_cc,
+                TO_CHAR(DATE_TRUNC('month', start_time), 'YYYY-MM') AS surgery_month,
+                COUNT(id) AS surgery_count
+            FROM surgery
+            WHERE start_time >= (CURRENT_DATE - INTERVAL '1 year')                      
+            GROUP BY doctor_cc, DATE_TRUNC('month', start_time)                         
+        )                                                                               
+        SELECT m.surgery_month, e.name, surgery_count                                   
+        FROM monthly_surgeries AS m                                                     
+        JOIN (                                                                          
+            SELECT                                                                      
+                surgery_month,                                                          
+                MAX(surgery_count) AS max_surgery_count                                 
+            FROM monthly_surgeries                                                      
+            GROUP BY surgery_month                                                      
+        ) AS month_maxs                                                                 
+        ON m.surgery_month = month_maxs.surgery_month                                  
+            AND m.surgery_count = month_maxs.max_surgery_count                          
+        JOIN employee AS e                                                           
+        ON m.doctor_cc = e.cc                                                           
+        ORDER BY m.surgery_month;                                                       
+    '''
 
     conn = db_connection()
     cur = conn.cursor()

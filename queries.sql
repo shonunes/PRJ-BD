@@ -390,10 +390,11 @@ $$;
 
 
 
-/* MONTHLY_REPORT
-2 alternativas, a primeira é usada no endpoint
-TESTADO E FUNCIONAL NO ENDPOINT
+/* MONTHLY REPORT
+2 alternativas: a primeira mostra todos os doutores em caso de empate, enquanto a segunda mostra apenas 1
+TESTADO E FUNCIONAL NO ENDPOINT (alternativa 1)
 */
+-- ALTERNATIVA 1
 WITH monthly_surgeries AS (
 	SELECT
 		doctor_cc,
@@ -418,29 +419,20 @@ JOIN employee AS e
 ON m.doctor_cc = e.cc
 ORDER BY m.surgery_month;
 
-
-
+-- ALTERNATIVA 2
 WITH monthly_surgeries AS (
-	SELECT
-		doctor_cc,
-		TO_CHAR(DATE_TRUNC('month', start_time), 'YYYY-MM') AS surgery_month,
-		COUNT(id) AS surgery_count
-	FROM surgery
-	WHERE start_time >= (CURRENT_DATE - INTERVAL '1 year')
-	GROUP BY doctor_cc, DATE_TRUNC('month', start_time)
-),
-max_surgeries_per_month AS (
-	SELECT
-		surgery_month,
-		MAX(surgery_count) AS max_surgery_count
-	FROM monthly_surgeries
-	GROUP BY surgery_month
+    SELECT
+        doctor_cc,
+        TO_CHAR(DATE_TRUNC('month', start_time), 'YYYY-MM') AS surgery_month,
+        COUNT(id) AS surgery_count
+    FROM surgery
+    WHERE start_time >= (CURRENT_DATE - INTERVAL '1 year')
+    GROUP BY doctor_cc, DATE_TRUNC('month', start_time)
 )
-SELECT mtly.surgery_month, e.name, surgery_count
-FROM monthly_surgeries AS mtly
-JOIN max_surgeries_per_month AS month_maxs
-ON mtly.surgery_month = month_maxs.surgery_month
-	AND mtly.surgery_count = month_maxs.max_surgery_count
-JOIN employee AS e
-ON mtly.doctor_cc = e.cc
-ORDER BY mtly.surgery_month;
+SELECT DISTINCT ON (surgery_month)
+    m.surgery_month,
+    e.name,
+    m.surgery_count
+FROM monthly_surgeries AS m
+JOIN employee AS e ON m.doctor_cc = e.cc
+ORDER BY m.surgery_month, m.surgery_count DESC;
