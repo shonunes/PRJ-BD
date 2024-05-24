@@ -71,11 +71,12 @@ CREATE TABLE surgery (
 
 CREATE TABLE prescription (
 	id BIGSERIAL,
+	validity DATE NOT NULL,
 	PRIMARY KEY(id)
 );
 
 CREATE TABLE medicine (
-	name BIGINT,
+	name VARCHAR(128) NOT NULL,
 	PRIMARY KEY(name)
 );
 
@@ -88,7 +89,7 @@ CREATE TABLE side_effect (
 CREATE TABLE medicine_dosage (
 	quantity	 VARCHAR(128),
 	frequency	 VARCHAR(128),
-	medicine_name	 BIGINT,
+	medicine_name	 VARCHAR(128),
 	prescription_id BIGINT,
 	PRIMARY KEY(quantity,medicine_name,prescription_id)
 );
@@ -96,7 +97,7 @@ CREATE TABLE medicine_dosage (
 CREATE TABLE reaction_severity (
 	degree		 VARCHAR(512),
 	side_effect_occurrence VARCHAR(512),
-	medicine_name	 BIGINT,
+	medicine_name	 VARCHAR(128),
 	PRIMARY KEY(degree,side_effect_occurrence,medicine_name)
 );
 
