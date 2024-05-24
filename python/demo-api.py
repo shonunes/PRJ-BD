@@ -748,15 +748,27 @@ def daily_summary(date, user_id, user_type):
     logger.debug(f'GET /dbproj/daily/{date} - token_id: {user_id}, token_type: {user_type}')
 
     statement = '''
+        WITH counts AS (
+            SELECT h.id, COUNT(DISTINCT s.id) AS surgery_count, COUNT(DISTINCT hp.prescription_id) AS prescription_count
+            FROM hospitalization AS h
+            LEFT JOIN surgery AS s ON h.id = s.hospitalization_id
+            LEFT JOIN hospitalization_prescription AS hp ON h.id = hp.hospitalization_id
+            GROUP BY h.id
+        ),
+        payment_data AS (
+            SELECT h.id, COALESCE(SUM(p.amount), 0) AS total_amount_spent
+            FROM hospitalization AS h
+            LEFT JOIN payment AS p ON h.bill_id = p.bill_id
+            GROUP BY h.id
+        )
         SELECT
-            COALESCE(SUM(p.amount), 0) AS amount_spent,
-            COUNT(DISTINCT s.id) AS surgeries,
-            COUNT(DISTINCT hp.prescription_id) AS prescriptions
+            COALESCE(SUM(pd.total_amount_spent), 0) AS amount_spent,
+            COALESCE(SUM(c.surgery_count), 0) AS surgeries,
+            COALESCE(SUM(c.prescription_count), 0) AS prescriptions
         FROM hospitalization AS h
-        LEFT JOIN surgery AS s ON h.id = s.hospitalization_id
-        LEFT JOIN payment AS p ON h.bill_id = p.bill_id
-        LEFT JOIN hospitalization_prescription AS hp ON h.id = hp.hospitalization_id
-        WHERE h.entry_time::date = %s;
+        LEFT JOIN counts AS c ON h.id = c.id
+        LEFT JOIN payment_data AS pd ON h.id = pd.id
+        WHERE h.entry_time::date = '2024-06-26';
     '''
     values = (date,)
 
