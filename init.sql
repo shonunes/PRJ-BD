@@ -102,10 +102,11 @@ CREATE TABLE reaction_severity (
 );
 
 CREATE TABLE payment (
-	id	 BIGSERIAL,
+	id	BIGSERIAL,
 	amount	 INTEGER NOT NULL,
 	method	 VARCHAR(128) NOT NULL,
-	bill_id BIGINT,
+	bill_id	BIGINT,
+	date_time 	TIMESTAMP NOT NULL,
 	PRIMARY KEY(id,bill_id)
 );
 
