@@ -846,6 +846,178 @@ def generate_monthly_report(user_id, user_type):
 
     return flask.jsonify(response), response['status']
 
+@app.route('/dbproj/top3/', methods=['GET'])
+def get_top3():
+    logger.info('GET /dbproj/top3')
+
+    conn = db_connection()
+    cur = conn.cursor()
+
+    try:
+        statement = 'WITH MonthlyPayments AS (\
+        SELECT\
+            p.cc AS patient_id,\
+            SUM(pay.amount) AS total_amount\
+        FROM\
+            payment pay\
+            JOIN bill b ON pay.bill_id = b.id\
+            JOIN hospitalization h ON b.id = h.bill_id\
+            JOIN patient p ON h.patient_cc = p.cc\
+        WHERE \
+            EXTRACT(YEAR FROM pay.date_time) = EXTRACT(YEAR FROM CURRENT_DATE)\
+            AND EXTRACT(MONTH FROM pay.date_time) = EXTRACT(MONTH FROM CURRENT_DATE)\
+        GROUP BY \
+            p.cc\
+        ),\
+        TopPatients AS (\
+        SELECT \
+            patient_id,\
+            total_amount\
+        FROM \
+            MonthlyPayments\
+        ORDER BY \
+            total_amount DESC\
+        LIMIT 3\
+        )\
+        SELECT \
+        patient.name AS patient_name,\
+        patient.cc AS patient_id,\
+        tp.total_amount AS total_amount,\
+        appointment.id AS appointment_id,\
+        appointment.start_time AS appointment_start,\
+        appointment_doctor.name AS doctor_name,\
+        appointment_doctor.cc AS doctor_id,\
+        appointment_nurse.name AS nurse_name,\
+        hospitalization.id AS hospitalization_id,\
+        hospitalization.entry_time AS hospitalization_entry_date,\
+        hospitalization.exit_time AS hospitalization_exit_date,\
+        hospitalization_nurse.name AS responsible_nurse_name,\
+        hospitalization_nurse.cc AS responsible_nurse_id,\
+        surgery.id AS surgery_id,\
+        surgery.start_time AS surgery_start,\
+        surgery_doctor.name AS surgery_doctor,\
+        surgery_doctor.cc AS surgery_doctor_id,\
+        surgery_nurse.name AS surgery_nurse,\
+        surgery_nurse.cc AS surgery_nurse_id\
+        FROM \
+        TopPatients tp\
+        JOIN patient ON tp.patient_id = patient.cc\
+        LEFT JOIN appointment ON patient.cc = appointment.patient_cc\
+        LEFT JOIN employee appointment_doctor ON appointment_doctor.cc = appointment.doctor_cc\
+        LEFT JOIN appointment_role ON appointment.id = appointment_role.appointment_id\
+        LEFT JOIN employee appointment_nurse ON appointment_role.nurse_cc = appointment_nurse.cc\
+        LEFT JOIN hospitalization ON patient.cc = hospitalization.patient_cc\
+        LEFT JOIN employee hospitalization_nurse ON hospitalization.nurse_cc = hospitalization_nurse.cc\
+        LEFT JOIN surgery ON hospitalization.id = surgery.hospitalization_id\
+        LEFT JOIN surgery_role ON surgery.id = surgery_role.surgery_id\
+        LEFT JOIN employee surgery_nurse ON surgery_nurse.cc = surgery_role.nurse_cc\
+        LEFT JOIN employee surgery_doctor ON surgery_doctor.cc = surgery.doctor_cc\
+        ORDER BY \
+        tp.total_amount, patient_id, hospitalization.id, surgery.id DESC;'
+        cur.execute(statement)
+        rows = cur.fetchall()
+        print(rows)
+        logger.debug('GET /dbproj/top3 - parse')
+        i = 0
+        result = [] 
+        appointment_idx = 3
+        hospitalization_idx = 8
+        surgery_idx = 13
+        while i < len(rows):
+            client = rows[i][0]
+            total_amount = rows[i][1]
+            result.append({'client': client, 'total_amount': total_amount, 'procedures': []})
+            while i < len(rows) and rows[i][0] == client:
+                if rows[i][appointment_idx]:
+                    result[-1]['procedures'].append({'type': 'appointment', 'id': rows[i][appointment_idx], 'start_time': rows[i][appointment_idx + 1], 'doctor': rows[i][appointment_idx + 2], 'doctor_id': rows[i][appointment_idx + 3], 'nurse': rows[i][appointment_idx + 4]})
+                if rows[i][hospitalization_idx]:
+                    hosp_id = rows[i][hospitalization_idx]
+                    result[-1]['procedures'].append({'type': 'hospitalization', 'id': rows[i][hospitalization_idx], 'entry_time': rows[i][hospitalization_idx + 1], 'exit_time': rows[i][hospitalization_idx + 2], 'nurses': [rows[i][hospitalization_idx + 3]]})
+                    i += 1
+                    while i < len(rows) and rows[i][hospitalization_idx] == hosp_id:
+                        result[-1]['procedures'][-1]['nurses'].append(rows[i][hospitalization_idx + 3])
+                        i += 1
+                if rows[i][surgery_idx]:
+                    surg_id = rows[i][surgery_idx]
+                    result[-1]['procedures'].append({'type': 'surgery', 'id': rows[i][surgery_idx], 'start_time': rows[i][surgery_idx + 1], 'doctor': rows[i][surgery_idx + 2], 'doctor_id': rows[i][surgery_idx + 3], 'nurse': rows[i][surgery_idx + 4]})
+                    i += 1
+                    while i < len(rows) and rows[i][surgery_idx] == surg_id:
+                        result[-1]['procedures'][-1]['nurse'] = rows[i][surgery_idx + 4]
+                        i += 1
+
+    except (Exception, psycopg2.DatabaseError) as error:
+        logger.error(f'GET /departments/<ndep> - error: {error}')
+        result = {'status': StatusCodes['internal_error'], 'errors': str(error)}
+
+    finally:
+        if conn is not None:
+            conn.close()
+    return flask.jsonify(result)
+
+
+##
+## POST
+## add prescription
+## only assistants can use this endpoint
+##
+## To use it, access:
+## POST http://localhost:8080/dbproj/prescription/ 
+##
+##
+@app.route('/dbproj/prescription', methods=['POST'])
+@token_required(['assistant'])
+def add_prescription():
+    logger.info('POST /dbproj/prescription')
+    payload = flask.request.get_json()
+    logger.debug(f'POST /dbproj/prescription - payload: {payload}')
+
+    for arg in ['type', 'event_id', 'validity', 'medicines']:
+        if arg not in payload:
+            response = {'status': StatusCodes['api_error'], 'results': f'{arg} value not in payload'}
+            return flask.jsonify(response), response['status']
+    for medicine in payload['medicines']:
+        for arg in ['name', 'posology_dose', 'posology_frequency', 'side_effects']:
+            if arg not in medicine:
+                response = {'status': StatusCodes['api_error'], 'results': f'{arg} value not in payload'}
+                return flask.jsonify(response), response['status']
+            for side in medicine['side_effects']:
+                for arg2 in ['occurrence', 'description', 'severity']:
+                    if arg2 not in side:
+                        response = {'status': StatusCodes['api_error'], 'results': f'{arg2} value not in payload'}
+                        return flask.jsonify(response), response['status']
+
+    payload = flask.request.get_json()
+    type = payload['type']
+    event_id = payload['event_id']
+    validity = payload['validity']
+    try:
+        conn = db_connection()
+        cur = conn.cursor()
+        cur.execute('SELECT add_prescription(%s, %s, %s)', (type, validity, event_id,))
+        prescription_id = cur.fetchone() # fetch prescription id
+        prescription_id = prescription_id[0]
+        if prescription_id == -1:
+            response = {'status': StatusCodes['api_error'], 'results': 'Invalid event_id'}
+            return flask.jsonify(response), response['status']
+        response = {'status': StatusCodes['success'], 'results': f'Inserted prescription {prescription_id}'}
+        for medicine in payload['medicines']:
+            side_effects = ", ".join(
+                f"('{side['occurrence']}', '{side['description']}', '{side['severity']}')" for side in medicine['side_effects']
+            )
+            statement = 'SELECT add_medicine_with_side_effects(%s, %s, %s, %s, ARRAY[%s]::side_effect_type[])'
+            values = (medicine['name'], medicine['posology_dose'], medicine['posology_frequency'], prescription_id,side_effects, )
+            cur.execute(statement, values)
+        conn.commit()
+
+    except (Exception, psycopg2.DatabaseError) as error:
+        logger.error(f'POST /exemplo - error: {error}')
+        response = {'status': StatusCodes['internal_error'], 'errors': str(error)}
+        # an error occurred, rollback
+        conn.rollback()
+    finally:
+        if conn is not None:
+            conn.close()
+    return flask.jsonify(response), response['status']
 
 ##########################################################
 ## MAIN
