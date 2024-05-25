@@ -738,7 +738,7 @@ def daily_summary(date, user_id, user_type):
         FROM hospitalization AS h
         LEFT JOIN counts AS c ON h.id = c.id
         LEFT JOIN payment_data AS pd ON h.id = pd.id
-        WHERE h.entry_time::date = '2024-06-26';
+        WHERE h.entry_time::date = %s;
     '''
     values = (date,)
 
