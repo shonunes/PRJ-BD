@@ -88,18 +88,18 @@ CREATE TABLE side_effect (
 );
 
 CREATE TABLE medicine_dosage (
-	quantity	 VARCHAR(128),
+	quantity	 VARCHAR(128) NOT NULL,
 	frequency	 VARCHAR(128) NOT NULL,
 	medicine_name	 VARCHAR(128),
 	prescription_id BIGINT,
-	PRIMARY KEY(quantity,medicine_name,prescription_id)
+	PRIMARY KEY(medicine_name,prescription_id)
 );
 
 CREATE TABLE reaction_severity (
-	degree		 VARCHAR(128),
+	degree		 VARCHAR(128) NOT NULL,
 	side_effect_occurrence VARCHAR(512),
 	medicine_name	 VARCHAR(128),
-	PRIMARY KEY(degree,side_effect_occurrence,medicine_name)
+	PRIMARY KEY(side_effect_occurrence,medicine_name)
 );
 
 CREATE TABLE payment (

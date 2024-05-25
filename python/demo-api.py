@@ -846,6 +846,9 @@ def generate_monthly_report(user_id, user_type):
 
     return flask.jsonify(response), response['status']
 
+
+
+
 @app.route('/dbproj/top3/', methods=['GET'])
 def get_top3():
     logger.info('GET /dbproj/top3')
@@ -880,25 +883,25 @@ def get_top3():
         LIMIT 3\
         )\
         SELECT \
-        patient.name AS patient_name,\
-        patient.cc AS patient_id,\
-        tp.total_amount AS total_amount,\
-        appointment.id AS appointment_id,\
-        appointment.start_time AS appointment_start,\
-        appointment_doctor.name AS doctor_name,\
-        appointment_doctor.cc AS doctor_id,\
-        appointment_nurse.name AS nurse_name,\
-        hospitalization.id AS hospitalization_id,\
-        hospitalization.entry_time AS hospitalization_entry_date,\
-        hospitalization.exit_time AS hospitalization_exit_date,\
-        hospitalization_nurse.name AS responsible_nurse_name,\
-        hospitalization_nurse.cc AS responsible_nurse_id,\
-        surgery.id AS surgery_id,\
-        surgery.start_time AS surgery_start,\
-        surgery_doctor.name AS surgery_doctor,\
-        surgery_doctor.cc AS surgery_doctor_id,\
-        surgery_nurse.name AS surgery_nurse,\
-        surgery_nurse.cc AS surgery_nurse_id\
+            patient.name AS patient_name,\
+            patient.cc AS patient_id,\
+            tp.total_amount AS total_amount,\
+            appointment.id AS appointment_id,\
+            appointment.start_time AS appointment_start,\
+            appointment_doctor.name AS doctor_name,\
+            appointment_doctor.cc AS doctor_id,\
+            appointment_nurse.name AS nurse_name,\
+            hospitalization.id AS hospitalization_id,\
+            hospitalization.entry_time AS hospitalization_entry_date,\
+            hospitalization.exit_time AS hospitalization_exit_date,\
+            hospitalization_nurse.name AS responsible_nurse_name,\
+            hospitalization_nurse.cc AS responsible_nurse_id,\
+            surgery.id AS surgery_id,\
+            surgery.start_time AS surgery_start,\
+            surgery_doctor.name AS surgery_doctor,\
+            surgery_doctor.cc AS surgery_doctor_id,\
+            surgery_nurse.name AS surgery_nurse,\
+            surgery_nurse.cc AS surgery_nurse_id\
         FROM \
         TopPatients tp\
         JOIN patient ON tp.patient_id = patient.cc\
@@ -955,62 +958,88 @@ def get_top3():
     return flask.jsonify(result)
 
 
+
+def validate_medicines_payload(payload):
+    for medicine in payload['medicines']:
+        if not validate_medicine(medicine):
+            return {'status': StatusCodes['api_error'], 'results': 'Invalid medicine payload'}, StatusCodes['api_error']
+    return None, StatusCodes['success']
+
+def validate_medicine(medicine):
+    required_fields = ['name', 'posology_dose', 'posology_frequency']
+    for field in required_fields:
+        if field not in medicine:
+            return False
+    if 'side_effects' in medicine and not validate_side_effects(medicine['side_effects']):
+        return False
+    return True
+
+def validate_side_effects(side_effects):
+    for side_effect in side_effects:
+        required_fields = ['occurrence', 'description', 'severity']
+        for field in required_fields:
+            if field not in side_effect:
+                return False
+    return True
+
+
 ##
 ## POST
-## add prescription
-## only assistants can use this endpoint
+##
+## Add Prescription
+##
+## Only assistants can use this endpoint
 ##
 ## To use it, access:
-## POST http://localhost:8080/dbproj/prescription/ 
 ##
+## http://localhost:8080/dbproj/prescription/
 ##
 @app.route('/dbproj/prescription', methods=['POST'])
 @token_required(['assistant'])
-def add_prescription():
+def add_prescription(user_id, user_type):
     logger.info('POST /dbproj/prescription')
-    payload = flask.request.get_json()
-    logger.debug(f'POST /dbproj/prescription - payload: {payload}')
 
-    for arg in ['type', 'event_id', 'validity', 'medicines']:
+    payload = flask.request.get_json()
+
+    logger.debug(f'POST /dbproj/prescription - payload: {payload}, token_id: {user_id}, token_type: {user_type}')
+
+    for arg in ['type', 'event_id', 'validity']:
         if arg not in payload:
             response = {'status': StatusCodes['api_error'], 'results': f'{arg} value not in payload'}
             return flask.jsonify(response), response['status']
-    for medicine in payload['medicines']:
-        for arg in ['name', 'posology_dose', 'posology_frequency', 'side_effects']:
-            if arg not in medicine:
-                response = {'status': StatusCodes['api_error'], 'results': f'{arg} value not in payload'}
-                return flask.jsonify(response), response['status']
-            for side in medicine['side_effects']:
-                for arg2 in ['occurrence', 'description', 'severity']:
-                    if arg2 not in side:
-                        response = {'status': StatusCodes['api_error'], 'results': f'{arg2} value not in payload'}
-                        return flask.jsonify(response), response['status']
 
-    payload = flask.request.get_json()
-    type = payload['type']
-    event_id = payload['event_id']
-    validity = payload['validity']
+    validation_result, status_code = validate_medicines_payload(payload)
+    if validation_result is not None:
+        return flask.jsonify(validation_result), status_code
+
     try:
         conn = db_connection()
         cur = conn.cursor()
-        cur.execute('SELECT add_prescription(%s, %s, %s)', (type, validity, event_id,))
-        prescription_id = cur.fetchone() # fetch prescription id
-        prescription_id = prescription_id[0]
+
+        cur.execute('SELECT add_prescription(%s, %s, %s)', (payload['type'], payload['validity'], payload['event_id'],))
+        prescription_id = cur.fetchone()[0]
+
         if prescription_id == -1:
-            response = {'status': StatusCodes['api_error'], 'results': 'Invalid event_id'}
+            response = {'status': StatusCodes['api_error'], 'errors': 'Invalid event_id'}
             return flask.jsonify(response), response['status']
-        response = {'status': StatusCodes['success'], 'results': f'Inserted prescription {prescription_id}'}
+
+        response = {'status': StatusCodes['success'], 'results': prescription_id}
         for medicine in payload['medicines']:
-            side_effects = ", ".join(
-                f"('{side['occurrence']}', '{side['description']}', '{side['severity']}')" for side in medicine['side_effects']
-            )
-            statement = 'SELECT add_medicine_with_side_effects(%s, %s, %s, %s, ARRAY[%s]::side_effect_type[])'
-            values = (medicine['name'], medicine['posology_dose'], medicine['posology_frequency'], prescription_id,side_effects, )
+            if ('side_effects' not in medicine):
+                side_effects = ''
+            else:
+                side_effects = ", ".join(
+                    f"({se['occurrence']}, {se['description']}, {se['severity']})" for se in medicine['side_effects']
+                )
+
+            statement = 'CALL add_medicine_with_side_effects(%s, %s, %s, %s, ARRAY[%s]::side_effect_type[])'
+            values = (medicine['name'], medicine['posology_dose'], medicine['posology_frequency'], prescription_id, side_effects,)
             cur.execute(statement, values)
+
         conn.commit()
 
     except (Exception, psycopg2.DatabaseError) as error:
-        logger.error(f'POST /exemplo - error: {error}')
+        logger.error(f'POST /dbproj/prescription - error: {error}')
         response = {'status': StatusCodes['internal_error'], 'errors': str(error)}
         # an error occurred, rollback
         conn.rollback()
@@ -1018,6 +1047,7 @@ def add_prescription():
         if conn is not None:
             conn.close()
     return flask.jsonify(response), response['status']
+
 
 ##########################################################
 ## MAIN

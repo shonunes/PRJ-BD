@@ -146,7 +146,8 @@ $$;
 
 
 /* SCHEDULE APPOINTMENT */
-CREATE OR REPLACE FUNCTION appointment_trig() RETURNS TRIGGER
+CREATE OR REPLACE FUNCTION appointment_trig() 
+RETURNS TRIGGER
 LANGUAGE plpgsql
 AS $$
 BEGIN
@@ -222,7 +223,8 @@ $$;
 
 
 /* SCHEDULE SURGERY */
-CREATE OR REPLACE FUNCTION hospitalization_trig() RETURNS TRIGGER
+CREATE OR REPLACE FUNCTION hospitalization_trig() 
+RETURNS TRIGGER
 LANGUAGE plpgsql
 AS $$
 BEGIN
@@ -238,7 +240,8 @@ BEFORE INSERT ON hospitalization
 FOR EACH ROW
 EXECUTE FUNCTION hospitalization_trig();
 
-CREATE OR REPLACE FUNCTION surgery_trig() RETURNS TRIGGER
+CREATE OR REPLACE FUNCTION surgery_trig() 
+RETURNS TRIGGER
 LANGUAGE plpgsql
 AS $$
 DECLARE 
@@ -273,7 +276,6 @@ DECLARE
 	surgery_id BIGINT;
 	hosp_bill_id BIGINT DEFAULT NULL;
 BEGIN
-
 	IF (surgery_start < CURRENT_TIMESTAMP) THEN
 		RAISE EXCEPTION 'Cannot schedule surgery in the past';
 	ELSEIF (surgery_start > CURRENT_TIMESTAMP + INTERVAL '6 months') THEN
@@ -397,84 +399,91 @@ END;
 $$;
 
 /* ADD PRESCRIPTIONS AND MEDICINE */
-CREATE OR REPLACE FUNCTION add_prescription(type VARCHAR, val DATE, event_id BIGINT) RETURNS INTEGER
+CREATE OR REPLACE FUNCTION add_prescription(type VARCHAR, val DATE, event_id BIGINT) 
+RETURNS INTEGER
 LANGUAGE plpgsql
 AS $$
 DECLARE
 	prescription_id INTEGER;
 BEGIN
 	IF type = 'appointment' THEN
-		IF NOT EXISTS (SELECT * FROM appointment WHERE id = event_id) THEN
-			RAISE NOTICE 'Invalid appointment';
-			RETURN -1;
-		ELSE
-		INSERT INTO prescription(validity) VALUES (val) RETURNING id INTO prescription_id;
-		RETURN prescription_id;
-		END IF;
+		INSERT INTO prescription(validity)
+		VALUES (val)
+		RETURNING id INTO prescription_id;
+
+		INSERT INTO appointment_prescription
+		VALUES(prescription_id, event_id);
+
 	ELSEIF type = 'hospitalization' THEN
-		IF NOT EXISTS (SELECT * FROM hospitalization WHERE id = event_id) THEN
-			RAISE NOTICE 'Invalid hospitalization';
-			RETURN -1;
-		ELSE
-			INSERT INTO prescription(validity) VALUES (val) RETURNING id INTO prescription_id;
-			RETURN prescription_id;
-		END IF;
+		INSERT INTO prescription(validity)
+		VALUES (val)
+		RETURNING id INTO prescription_id;
+
+		INSERT INTO hospitalization_prescription
+		VALUES(prescription_id, event_id);
+
 	ELSE
 		RAISE EXCEPTION 'Invalid event';
 		RETURN -1;
 	END IF;
+	
+	RETURN prescription_id;
+
 	EXCEPTION
+		WHEN FOREIGN_KEY_VIOLATION THEN
+			RAISE EXCEPTION 'Event not found';
+			RETURN -1;
 		WHEN OTHERS THEN
 			RAISE EXCEPTION 'Error adding prescription: %', SQLERRM;
-	RETURN -1;
+			RETURN -1;
 END;
 $$;
 
-
-CREATE OR REPLACE PROCEDURE add_medicine(med_name VARCHAR, posology_dose VARCHAR, posology_freq VARCHAR, id_prescription BIGINT)
+CREATE OR REPLACE PROCEDURE add_medicine(
+	med_name VARCHAR,
+    posology_dose VARCHAR,
+    posology_freq VARCHAR,
+    prescription_id BIGINT
+)
 LANGUAGE plpgsql
 AS $$
 BEGIN
-	IF NOT EXISTS (SELECT * FROM prescription WHERE id = id_prescription) THEN
-		RAISE EXCEPTION 'Invalid prescription';
-	END IF;
-	IF NOT EXISTS (SELECT * FROM medicine WHERE name = med_name) THEN
-		INSERT INTO medicine(name)
-		VALUES(med_name);
-	END IF;
-	INSERT INTO medicine_dosage(quantity, frequency, medicine_name, prescription_id)
-	VALUES(posology_dose, posology_freq, med_name, id_prescription);
+    INSERT INTO medicine (name)
+    VALUES (med_name)
+    ON CONFLICT (name) DO NOTHING;
+
+    INSERT INTO medicine_dosage (quantity, frequency, medicine_name, prescription_id)
+    VALUES (posology_dose, posology_freq, med_name, prescription_id);
+
 	EXCEPTION
 		WHEN OTHERS THEN
 			RAISE EXCEPTION 'Error adding medicine: %', SQLERRM;
-END
+END;
 $$;
 
-
-
-CREATE OR REPLACE PROCEDURE add_side_effect(sideffect_occurrence VARCHAR, description VARCHAR, med_name VARCHAR, sideffect_degree VARCHAR) RETURNS VOID
+CREATE OR REPLACE PROCEDURE add_side_effect(
+    sideffect_occurrence VARCHAR,
+    description VARCHAR,
+    med_name VARCHAR,
+    sideffect_degree VARCHAR
+)
 LANGUAGE plpgsql
 AS $$
 BEGIN
-    IF NOT EXISTS (SELECT * FROM side_effect WHERE occurrence = sideffect_occurrence) THEN
-        INSERT INTO side_effect
-        VALUES(sideffect_occurrence, description);
-        INSERT INTO reaction_severity(degree, side_effect_occurrence, medicine_name)
-        VALUES(sideffect_degree, sideffect_occurrence, med_name);
-        RETURN;
-    ELSEIF NOT EXISTS (SELECT * FROM reaction_severity WHERE degree = sideffect_degree AND side_effect_occurrence = sideffect_occurrence AND medicine_name = medicine_name) THEN
-        INSERT INTO reaction_severity(degree, side_effect_occurrence, medicine_name)
-        VALUES(sideffect_degree, sideffect_occurrence, med_name);
-        RETURN;
-    ELSE
-        RAISE NOTICE 'Side effect already exists at that degree assigned to that medicine';
-        RETURN;	
-    END IF;
-    EXCEPTION 
-        WHEN OTHERS THEN
-            RAISE EXCEPTION 'Error adding side effect: %', SQLERRM;
+    INSERT INTO side_effect
+    VALUES (sideffect_occurrence, description)
+    ON CONFLICT (occurrence) DO NOTHING;
+
+    INSERT INTO reaction_severity (degree, side_effect_occurrence, medicine_name)
+    VALUES (sideffect_degree, sideffect_occurrence, med_name)
+    ON CONFLICT (side_effect_occurrence, medicine_name) DO NOTHING;
+
+	EXCEPTION
+		WHEN OTHERS THEN
+			RAISE EXCEPTION 'Error adding side effect: %', SQLERRM;
 END;
 $$;
+
 
 CREATE TYPE side_effect_type AS (
     occurrence VARCHAR,
@@ -482,20 +491,27 @@ CREATE TYPE side_effect_type AS (
     degree VARCHAR
 );
 
-CREATE OR REPLACE FUNCTION add_medicine_with_side_effects(med_name VARCHAR, posology_dose VARCHAR, posology_freq VARCHAR, id_prescription BIGINT, side_effects side_effect_type[])
-RETURNS VOID
+CREATE OR REPLACE PROCEDURE add_medicine_with_side_effects(
+    med_name VARCHAR,
+    posology_dose VARCHAR,
+    posology_freq VARCHAR,
+    prescription_id BIGINT,
+    side_effects side_effect_type[]
+)
 LANGUAGE plpgsql
 AS $$
 DECLARE
     side_effect side_effect_type;
 BEGIN
-    CALL add_medicine(med_name, posology_dose, posology_freq, id_prescription);
-    FOREACH side_effect IN ARRAY side_effects
-    LOOP
+    CALL add_medicine(med_name, posology_dose, posology_freq, prescription_id);
+
+    FOREACH side_effect IN ARRAY side_effects LOOP
         CALL add_side_effect(side_effect.occurrence, side_effect.description, med_name, side_effect.degree);
     END LOOP;
-EXCEPTION
-    WHEN OTHERS THEN
-        RAISE EXCEPTION 'Error adding medicine with side effects: %', SQLERRM;
+
+	EXCEPTION
+		WHEN OTHERS THEN
+			RAISE EXCEPTION 'Error adding medicine with side effects: %', SQLERRM;
 END;
 $$;
+
