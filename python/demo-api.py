@@ -101,8 +101,7 @@ def add_patient():
 
     logger.debug(f'POST /dbproj/register/patient - payload: {payload}')
 
-    # validate every argument
-    args = ['cc', 'username', 'password', 'health_number', 'emergency_contact', 'birthday', 'email']
+    args = ['cc', 'name', 'password', 'health_number', 'emergency_contact', 'birthday', 'email']
     for arg in args:
         if arg not in payload:
             response = {'status': StatusCodes['api_error'], 'errors': f'{arg} value not in payload'}
@@ -118,9 +117,8 @@ def add_patient():
     # generate password hash to store in the database
     hashed_password = generate_password_hash(payload['password'], method='sha256')
 
-    # parameterized queries, good for security and performance
     statement = 'CALL add_patient(%s, %s, %s, %s, %s, %s, %s)'
-    values = (payload['cc'], payload['username'], hashed_password, payload['health_number'], payload['emergency_contact'], payload['birthday'], payload['email'],)
+    values = (payload['cc'], payload['name'], hashed_password, payload['health_number'], payload['emergency_contact'], payload['birthday'], payload['email'],)
 
     conn = db_connection()
     cur = conn.cursor()
@@ -128,7 +126,6 @@ def add_patient():
     try:
         cur.execute(statement, values)
 
-        # commit the transaction
         conn.commit()
         response = {'status': StatusCodes['success'], 'results': payload['cc']}
 
@@ -136,7 +133,6 @@ def add_patient():
         logger.error(f'POST /dbproj/register/patient - error: {error}')
         response = {'status': StatusCodes['internal_error'], 'errors': str(error)}
 
-        # an error occurred, rollback
         conn.rollback()
 
     finally:
@@ -163,7 +159,7 @@ def add_assistant():
     logger.debug(f'POST /dbproj/register/assistant - payload: {payload}')
 
     # validate every argument
-    args = ['cc', 'username', 'password', 'contract_id', 'salary', 'contract_issue_date', 'contract_due_date', 'birthday', 'email']
+    args = ['cc', 'name', 'password', 'contract_id', 'salary', 'contract_issue_date', 'contract_due_date', 'birthday', 'email']
     for arg in args:
         if arg not in payload:
             response = {'status': StatusCodes['api_error'], 'errors': f'{arg} value not in payload'}
@@ -180,19 +176,18 @@ def add_assistant():
     hashed_password = generate_password_hash(payload['password'], method='sha256')
 
     # parameterized queries, good for security and performance
-    statement = 'SELECT add_assistant(%s, %s, %s, %s, %s, %s, %s, %s, %s)'
-    values = (payload['cc'], payload['username'], hashed_password, payload['contract_id'], payload['salary'], payload['contract_issue_date'], payload['contract_due_date'], payload['birthday'], payload['email'],)
+    statement = 'CALL add_assistant(%s, %s, %s, %s, %s, %s, %s, %s, %s)'
+    values = (payload['cc'], payload['name'], hashed_password, payload['contract_id'], payload['salary'], payload['contract_issue_date'], payload['contract_due_date'], payload['birthday'], payload['email'],)
 
     conn = db_connection()
     cur = conn.cursor()
 
     try:
         cur.execute(statement, values)
-        emp_num = cur.fetchone()[0]
 
         # commit the transaction
         conn.commit()
-        response = {'status': StatusCodes['success'], 'results': emp_num}
+        response = {'status': StatusCodes['success'], 'results': payload['email']}
 
     except (Exception, psycopg2.DatabaseError) as error:
         logger.error(f'POST /dbproj/register/assistant - error: {error}')
@@ -225,7 +220,7 @@ def add_nurse():
     logger.debug(f'POST /dbproj/register/nurse - payload: {payload}')
 
     # validate every argument
-    args = ['cc', 'username', 'password', 'contract_id', 'salary', 'contract_issue_date', 'contract_due_date', 'birthday', 'email']
+    args = ['cc', 'name', 'password', 'contract_id', 'salary', 'contract_issue_date', 'contract_due_date', 'birthday', 'email']
     for arg in args:
         if arg not in payload:
             response = {'status': StatusCodes['api_error'], 'errors': f'{arg} value not in payload'}
@@ -234,31 +229,29 @@ def add_nurse():
         payload['cc'] = int(payload['cc'])
         payload['contract_id'] = int(payload['contract_id'])
         payload['salary'] = int(payload['salary'])
-        if ('cc_superior' in payload):
-            payload['cc_superior'] = int(payload['cc_superior'])
-        else:
-            payload['cc_superior'] = None
     except ValueError:
-        response = {'status': StatusCodes['api_error'], 'errors': 'Invalid cc, contract_id, salary or cc_superior'}
+        response = {'status': StatusCodes['api_error'], 'errors': 'Invalid cc, contract_id or salary'}
         return flask.jsonify(response), response['status']
+    
+    if (payload['superior_email'] not in payload):
+        payload['superior_email'] = None
 
     # generate password hash to store in the database
     hashed_password = generate_password_hash(payload['password'], method='sha256')
 
     # parameterized queries, good for security and performance
-    statement = 'SELECT add_nurse(%s, %s, %s, %s, %s, %s, %s, %s, %s, %s)'
-    values = (payload['cc'], payload['username'], hashed_password, payload['contract_id'], payload['salary'], payload['contract_issue_date'], payload['contract_due_date'], payload['birthday'], payload['email'], payload['cc_superior'],)
+    statement = 'CALL add_nurse(%s, %s, %s, %s, %s, %s, %s, %s, %s, %s)'
+    values = (payload['cc'], payload['name'], hashed_password, payload['contract_id'], payload['salary'], payload['contract_issue_date'], payload['contract_due_date'], payload['birthday'], payload['email'], payload['superior_email'],)
 
     conn = db_connection()
     cur = conn.cursor()
 
     try:
         cur.execute(statement, values)
-        emp_num = cur.fetchone()[0]
 
         # commit the transaction
         conn.commit()
-        response = {'status': StatusCodes['success'], 'results': emp_num}
+        response = {'status': StatusCodes['success'], 'results': payload['email']}
 
     except (Exception, psycopg2.DatabaseError) as error:
         logger.error(f'POST /dbproj/register/nurse - error: {error}')
@@ -291,7 +284,7 @@ def add_doctor():
     logger.debug(f'POST /dbproj/register/doctor - payload: {payload}')
 
     # validate every argument
-    args = ['cc', 'username', 'password', 'contract_id', 'salary', 'contract_issue_date', 'contract_due_date', 'birthday', 'email', 'license_id', 'license_issue_date', 'license_due_date', 'specialty_name']
+    args = ['cc', 'name', 'password', 'contract_id', 'salary', 'contract_issue_date', 'contract_due_date', 'birthday', 'email', 'license_id', 'license_issue_date', 'license_due_date', 'specialty_name']
     for arg in args:
         if arg not in payload:
             response = {'status': StatusCodes['api_error'], 'errors': f'{arg} value not in payload'}
@@ -300,28 +293,26 @@ def add_doctor():
         payload['cc'] = int(payload['cc'])
         payload['contract_id'] = int(payload['contract_id'])
         payload['salary'] = int(payload['salary'])
-        payload['license_id'] = int(payload['license_id'])
     except ValueError:
-        response = {'status': StatusCodes['api_error'], 'errors': 'Invalid cc, contract_id, salary or license_id'}
+        response = {'status': StatusCodes['api_error'], 'errors': 'Invalid cc, contract_id or salary'}
         return flask.jsonify(response), response['status']
 
     # generate password hash to store in the database
     hashed_password = generate_password_hash(payload['password'], method='sha256')
 
     # parameterized queries, good for security and performance
-    statement = 'SELECT add_doctor(%s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s)'
-    values = (payload['cc'], payload['username'], hashed_password, payload['contract_id'], payload['salary'], payload['contract_issue_date'], payload['contract_due_date'], payload['birthday'], payload['email'], payload['license_id'], payload['license_issue_date'], payload['license_due_date'], payload['license_company'], payload['specialty_name'],)
+    statement = 'CALL add_doctor(%s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s)'
+    values = (payload['cc'], payload['name'], hashed_password, payload['contract_id'], payload['salary'], payload['contract_issue_date'], payload['contract_due_date'], payload['birthday'], payload['email'], payload['license_id'], payload['license_issue_date'], payload['license_due_date'], payload['license_company'], payload['specialty_name'],)
 
     conn = db_connection()
     cur = conn.cursor()
 
     try:
         cur.execute(statement, values)
-        emp_num = cur.fetchone()[0]
 
         # commit the transaction
         conn.commit()
-        response = {'status': StatusCodes['success'], 'results': emp_num}
+        response = {'status': StatusCodes['success'], 'results': payload['email']}
 
     except (Exception, psycopg2.DatabaseError) as error:
         logger.error(f'POST /dbproj/register/doctor - error: {error}')
@@ -343,7 +334,7 @@ def add_doctor():
 ## User login
 ## 
 ## For patients username = cc
-## For employees username = emp_num
+## For employees username = email
 ##
 ## To use it, access:
 ## 
@@ -363,46 +354,46 @@ def login():
             response = {'status': StatusCodes['api_error'], 'errors': f'{arg} value not in payload'}
             return flask.jsonify(response), response['status']
 
-    statement = 'SELECT hashcode \
-                FROM patient \
-                WHERE cc = %s'
+    is_patient = True
+    try:
+        int(payload['username'])
+    except ValueError:
+        is_patient = False
+
+    if (is_patient):
+        statement = 'SELECT hashcode \
+                    FROM patient \
+                    WHERE cc = %s'
+    else:
+        statement = 'SELECT * FROM login_employee(%s)'
+
     value = (payload['username'],)
-    user_type = None
 
     conn = db_connection()
     cur = conn.cursor()
 
     try:
         cur.execute(statement, value)
-        row = cur.fetchone()
 
-        if row and check_password_hash(row[0], payload['password']):
+        if (is_patient):
             user_type = 'patient'
-        elif row:
+            hashcode = cur.fetchone()[0]
+            if not hashcode:
+                response = {'status': StatusCodes['api_error'], 'errors': 'User not found'}
+                return flask.jsonify(response), response['status']
+        else:
+            user_type, hashcode = cur.fetchone()
+        
+        if not check_password_hash(hashcode, payload['password']):
             response = {'status': StatusCodes['api_error'], 'errors': 'Invalid password'}
             return flask.jsonify(response), response['status']
-
-        for worker_type in ['assistant', 'nurse', 'doctor']:
-            if (user_type):
-                break
-            statement = f'SELECT hashcode \
-                        FROM employee \
-                        JOIN {worker_type} ON {worker_type}.cc = employee.cc \
-                        WHERE emp_num = %s'
-            cur.execute(statement, value)
-            row = cur.fetchone()
-            if row and check_password_hash(row[0], payload['password']):
-                user_type = worker_type
-            elif row:
-                response = {'status': StatusCodes['api_error'], 'errors': 'Invalid password'}
-                return flask.jsonify(response), response['status']
 
         if not user_type:
             response = {'status': StatusCodes['api_error'], 'errors': 'User not found'}
             return flask.jsonify(response), response['status']
 
         # generate token
-        token = jwt.encode({'username': payload['username'], 'type': user_type, 'exp': time.time() + 3600}, app.config['SECRET_KEY'], algorithm='HS256')
+        token = jwt.encode({'username': payload['username'], 'type': user_type, 'exp': time.time() + 900}, app.config['SECRET_KEY'], algorithm='HS256')
         
         response = {'status': StatusCodes['success'], 'results': token}
 
@@ -448,23 +439,15 @@ def schedule_appointment(user_id, user_type):
         if arg not in payload:
             response = {'status': StatusCodes['api_error'], 'errors': f'{arg} value not in payload'}
             return flask.jsonify(response), response['status']
-    try:
-        payload['doctor_id'] = int(payload['doctor_id'])
-    except ValueError:
-        response = {'status': StatusCodes['api_error'], 'errors': 'Invalid doctor_id'}
-        return flask.jsonify(response), response['status']
 
     # parameterized queries, good for security and performance
-    if (payload['nurses']):
+    if ('nurses' in payload):
         nurse_ids = []
         nurse_roles = []
         try:
             for nurse in payload['nurses']:
                 nurse_ids.append(nurse[0])
                 nurse_roles.append(nurse[1])
-        except ValueError:
-            response = {'status': StatusCodes['api_error'], 'errors': 'Invalid nurse id'}
-            return flask.jsonify(response), response['status']
         except IndexError:
             response = {'status': StatusCodes['api_error'], 'errors': 'Invalid nurse information'}
             return flask.jsonify(response), response['status']
@@ -530,7 +513,7 @@ def get_appointments(patient_user_id, user_id, user_type):
     
     statement = 'SELECT a.id, e.emp_num, a.start_time \
                 FROM appointment AS a, employee AS e \
-                WHERE a.patient_cc = %s AND a.doctor_cc = e.cc'
+                WHERE a.patient_cc = %s AND a.doctor_email = e.email'
     value = (patient_user_id,)
 
     conn = db_connection()
@@ -592,9 +575,9 @@ def schedule_surgery(hospitalization_id, user_id, user_type):
 
     # validate every argument
     if (hospitalization_id):
-        args = ['patient_id', 'doctor', 'nurses', 'surgery_time']
+        args = ['patient_id', 'doctor', 'nurses', 'surgery_start', 'surgery_end']
     else:
-        args = ['patient_id', 'doctor', 'nurses', 'surgery_time', 'hospitalization_entry_time', 'hospitalization_exit_time', 'hospitalization_responsable_nurse']
+        args = ['patient_id', 'doctor', 'nurses', 'surgery_start', 'surgery_end', 'hospitalization_entry_time', 'hospitalization_exit_time', 'hospitalization_responsable_nurse']
     for arg in args:
         if arg not in payload:
             response = {'status': StatusCodes['api_error'], 'errors': f'{arg} value not in payload'}
@@ -602,21 +585,15 @@ def schedule_surgery(hospitalization_id, user_id, user_type):
     
     try:
         payload['patient_id'] = int(payload['patient_id'])
-        payload['doctor'] = int(payload['doctor'])
-        if (not hospitalization_id):
-            payload['hospitalization_entry_time'] = int(payload['hospitalization_entry_time'])
-            payload['hospitalization_exit_time'] = int(payload['hospitalization_exit_time'])
-            payload['hospitalization_responsable_nurse'] = int(payload['hospitalization_responsable_nurse'])
     except ValueError:
-        response = {'status': StatusCodes['api_error'], 'errors': 'Invalid patient_id, doctor, hospitalization_entry_time, hospitalization_exit_time or hospitalization_responsable_nurse'}
+        response = {'status': StatusCodes['api_error'], 'errors': 'Invalid patient_id'}
         return flask.jsonify(response), response['status']
     
     nurse_ids = []
     nurse_roles = []
     try:
         for nurse in payload['nurses']:
-            id = int(nurse[0])
-            nurse_ids.append(id)
+            nurse_ids.append(nurse[0])
             nurse_roles.append(nurse[1])
     except ValueError:
         response = {'status': StatusCodes['api_error'], 'errors': 'Invalid nurse id'}
@@ -625,19 +602,12 @@ def schedule_surgery(hospitalization_id, user_id, user_type):
         response = {'status': StatusCodes['api_error'], 'errors': 'Invalid nurse information'}
         return flask.jsonify(response), response['status']
 
-    print(payload['patient_id'])
-    print(payload['doctor'])
-    print(nurse_ids)
-    print(nurse_roles)
-    print(payload['surgery_time'])
-    print(hospitalization_id)
-
     if (hospitalization_id):
-        statement = 'SELECT * FROM schedule_surgery(%s, %s, %s, %s, %s, %s)'
-        values = (payload['patient_id'], payload['doctor'], nurse_ids, nurse_roles, payload['surgery_time'], hospitalization_id,)
+        statement = 'SELECT * FROM schedule_surgery(%s, %s, %s, %s, %s, %s, %s)'
+        values = (payload['patient_id'], payload['doctor'], nurse_ids, nurse_roles, payload['surgery_start'], payload['surgery_end'], hospitalization_id,)
     else:
-        statement = 'SELECT * FROM schedule_surgery(%s, %s, %s, %s, %s, %s, %s, %s, %s)'
-        values = (payload['patient_id'], payload['doctor'], nurse_ids, nurse_roles, payload['surgery_time'], None, payload['hospitalization_entry_time'], payload['hospitalization_exit_time'], payload['hospitalization_responsable_nurse'],)
+        statement = 'SELECT * FROM schedule_surgery(%s, %s, %s, %s, %s, %s, %s, %s, %s, %s)'
+        values = (payload['patient_id'], payload['doctor'], nurse_ids, nurse_roles, payload['surgery_start'], payload['surgery_end'], None, payload['hospitalization_entry_time'], payload['hospitalization_exit_time'], payload['hospitalization_responsable_nurse'],)
 
     conn = db_connection()
     cur = conn.cursor()
@@ -653,7 +623,7 @@ def schedule_surgery(hospitalization_id, user_id, user_type):
                                                                   'bill_id': bill_id, 
                                                                   'patient_id': payload['patient_id'], 
                                                                   'doctor_id': payload['doctor'], 
-                                                                  'date': payload['surgery_time']}}
+                                                                  'date': payload['surgery_start']}}
 
     except (Exception, psycopg2.DatabaseError) as error:
         logger.error(f'POST /dbproj/surgery - error: {error}')
@@ -819,12 +789,12 @@ def generate_monthly_report(user_id, user_type):
     statement = '''                                                                    
         WITH monthly_surgeries AS (
             SELECT
-                doctor_cc,
+                doctor_email,
                 TO_CHAR(DATE_TRUNC('month', start_time), 'YYYY-MM') AS surgery_month,
                 COUNT(id) AS surgery_count
             FROM surgery
             WHERE start_time >= (CURRENT_DATE - INTERVAL '1 year')                      
-            GROUP BY doctor_cc, DATE_TRUNC('month', start_time)                         
+            GROUP BY doctor_email, DATE_TRUNC('month', start_time)                         
         )                                                                               
         SELECT m.surgery_month, e.name, surgery_count                                   
         FROM monthly_surgeries AS m                                                     
@@ -836,10 +806,10 @@ def generate_monthly_report(user_id, user_type):
             GROUP BY surgery_month                                                      
         ) AS month_maxs                                                                 
         ON m.surgery_month = month_maxs.surgery_month                                  
-            AND m.surgery_count = month_maxs.max_surgery_count                          
+        AND m.surgery_count = month_maxs.max_surgery_count                          
         JOIN employee AS e                                                           
-        ON m.doctor_cc = e.cc                                                           
-        ORDER BY m.surgery_month;                                                       
+        ON m.doctor_email = e.email                                     
+        ORDER BY m.surgery_month;                                                     
     '''
 
     conn = db_connection()
