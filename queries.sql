@@ -1,126 +1,78 @@
-/* ADD_PATIENT
-Ter em atenção que os últimos 2 campos podem ser NULL
-TESTADO E FUNCIONAL NO ENDPOINT
-*/
+/* ADD PATIENT */
 CREATE OR REPLACE PROCEDURE add_patient(cc_num BIGINT, patient_name VARCHAR, hashcode VARCHAR, health_number BIGINT, sos_contact BIGINT, birthday DATE, email VARCHAR)
 LANGUAGE plpgsql
 AS $$
 BEGIN
 	INSERT INTO patient
-	VALUES (cc_num, patient_name, hashcode, health_number, sos_contact, birthday, email);
+	VALUES (cc_num, health_number, patient_name, hashcode, sos_contact, birthday, email);
 
 	EXCEPTION
 		WHEN UNIQUE_VIOLATION THEN
-			RAISE EXCEPTION 'Primary key already exists';
-		WHEN OTHERS THEN
-			RAISE EXCEPTION 'Error adding patient';
+			RAISE EXCEPTION 'CC or health number already exists in the database';
 END;
 $$;
 
-/* ADDING GENERAL EMPLOYEE INFORMATION
-Atenção com os campos que podem ser NULL
-TESTADO E FUNCIONAL NO ENDPOINT
-*/
-CREATE OR REPLACE FUNCTION add_emp(cc_num BIGINT, emp_name VARCHAR, hashcode VARCHAR, contract_id BIGINT, sal INT, contract_issue_date DATE, contract_due_date DATE, birthday DATE, email VARCHAR)
-RETURNS INTEGER
+/* ADD GENERAL EMPLOYEE INFORMATION */
+CREATE OR REPLACE PROCEDURE add_emp(cc_num BIGINT, emp_name VARCHAR, hashcode VARCHAR, contract_id BIGINT, sal INT, contract_issue_date DATE, contract_due_date DATE, birthday DATE, email VARCHAR)
 LANGUAGE plpgsql
 AS $$
-DECLARE
-    user_id INTEGER;
 BEGIN
 	INSERT INTO employee (cc, name, hashcode, contract_id, salary, contract_issue_date, contract_due_date, birthday, email)
-	VALUES (cc_num, emp_name, hashcode, contract_id, sal, contract_issue_date, contract_due_date, birthday, email)
-	RETURNING emp_num INTO user_id;
-
-	RETURN user_id;
+	VALUES (cc_num, emp_name, hashcode, contract_id, sal, contract_issue_date, contract_due_date, birthday, email);
 
 	EXCEPTION
-		WHEN OTHERS THEN
-			RAISE EXCEPTION 'error adding employee';
+		WHEN UNIQUE_VIOLATION THEN
+			RAISE EXCEPTION 'CC, email or contract id already exists in the database';
 END;
 $$;
 
-/* ADD_ASSISTANT
-Atenção com os campos que podem ser NULL
-TESTADO E FUNCIONAL NO ENDPOINT
-*/
-CREATE OR REPLACE FUNCTION add_assistant(cc_num BIGINT, name VARCHAR, hashcode VARCHAR, contract_id BIGINT, sal INT, contract_issue_date DATE, contract_due_date DATE, birthday DATE, email VARCHAR)
-RETURNS INTEGER
+/* ADD ASSISTANT */
+CREATE OR REPLACE PROCEDURE add_assistant(cc_num BIGINT, name VARCHAR, hashcode VARCHAR, contract_id BIGINT, sal INT, contract_issue_date DATE, contract_due_date DATE, birthday DATE, email VARCHAR)
 LANGUAGE plpgsql
 AS $$
-DECLARE
-    user_id INTEGER;
 BEGIN
-	user_id := add_emp(cc_num, name, hashcode, contract_id, sal, contract_issue_date, contract_due_date, birthday, email);
+	CALL add_emp(cc_num, name, hashcode, contract_id, sal, contract_issue_date, contract_due_date, birthday, email);
+
 	INSERT INTO assistant
-	VALUES(cc_num);
-
-	RETURN user_id;
-
-	EXCEPTION
-		WHEN OTHERS THEN
-			RAISE EXCEPTION 'error adding assistant';
+	VALUES(email);
 END;
 $$;
 
-/* ADD_NURSE
-Atenção com os campos que podem ser NULL
-TESTADO E FUNCIONAL NO ENDPOINT
-*/
-CREATE OR REPLACE FUNCTION add_nurse(cc_num BIGINT, name VARCHAR, hashcode VARCHAR, contract_id BIGINT, sal INT, contract_issue_date DATE, contract_due_date DATE, birthday DATE, email VARCHAR, cc_boss BIGINT)
-RETURNS INTEGER
+/* ADD NURSE */
+CREATE OR REPLACE PROCEDURE add_nurse(cc_num BIGINT, name VARCHAR, hashcode VARCHAR, contract_id BIGINT, sal INT, contract_issue_date DATE, contract_due_date DATE, birthday DATE, email VARCHAR, email_superior BIGINT)
 LANGUAGE plpgsql
 AS $$
-DECLARE
-    user_id INTEGER;
 BEGIN
-	user_id := add_emp(cc_num, name, hashcode, contract_id, sal, contract_issue_date, contract_due_date, birthday, email);
-	INSERT INTO nurse VALUES(cc_num);
-	IF (cc_boss IS NOT NULL) THEN
+	CALL add_emp(cc_num, name, hashcode, contract_id, sal, contract_issue_date, contract_due_date, birthday, email);
+	
+	INSERT INTO nurse VALUES(email);
+	IF (cc_superior IS NOT NULL) THEN
 		INSERT INTO nurse_hierarchy
-		VALUES(cc_num, cc_boss);
+		VALUES(email, email_superior);
 	END IF;
-
-	RETURN user_id;
-
-	EXCEPTION
-		WHEN OTHERS THEN
-			RAISE EXCEPTION 'error adding nurse';
 END;
 $$;
 
-/* ADDING DOCTOR
-Atenção com os campos que podem ser NULL 
-TESTADO E FUNCIONAL NO ENDPOINT
-*/
-CREATE OR REPLACE FUNCTION add_doctor(cc_num BIGINT, name VARCHAR, hashcode VARCHAR, contract_id BIGINT, sal INT, contract_issue_date DATE, contract_due_date DATE, birthday DATE, email VARCHAR, license_id VARCHAR, license_issue_date DATE, license_due_date DATE, license_comp VARCHAR, specialty_name VARCHAR)
-RETURNS INTEGER
+/* ADD DOCTOR */
+CREATE OR REPLACE PROCEDURE add_doctor(cc_num BIGINT, name VARCHAR, hashcode VARCHAR, contract_id BIGINT, sal INT, contract_issue_date DATE, contract_due_date DATE, birthday DATE, email VARCHAR, license_id VARCHAR, license_issue_date DATE, license_due_date DATE, license_comp VARCHAR, specialty_name VARCHAR)
 LANGUAGE plpgsql
 AS $$
-DECLARE
-    user_id INTEGER;
 BEGIN
-	user_id := add_emp(cc_num, name, hashcode, contract_id, sal, contract_issue_date, contract_due_date, birthday, email);
+	CALL add_emp(cc_num, name, hashcode, contract_id, sal, contract_issue_date, contract_due_date, birthday, email);
+	
 	INSERT INTO doctor
-	VALUES(cc_num, license_id, license_comp, license_issue_date, license_due_date);
+	VALUES(email, license_id, license_comp, license_issue_date, license_due_date);
 
 	IF (NOT specialty_exists(specialty_name)) THEN
 		CALL add_specialty(specialty_name, NULL);
 	END IF;
+
 	INSERT INTO doctor_specialty
-	VALUES(cc_num, specialty_name);
-
-	RETURN user_id;
-
-	EXCEPTION
-		WHEN OTHERS THEN
-			RAISE EXCEPTION 'error adding doctor';
+	VALUES(email, specialty_name);
 END;
 $$;
 
-/* ADDING SPECIALTY 
-TESTADO E FUNCIONAL NO ENDPOINT
-*/
+/* ADD SPECIALTY */
 CREATE OR REPLACE PROCEDURE add_specialty(specialty_name VARCHAR, specialty_parent VARCHAR)
 LANGUAGE plpgsql
 AS $$
@@ -138,7 +90,7 @@ BEGIN
 END;
 $$;
 
-/* CHECKING IF SPECIALTY EXISTS */
+/* CHECK IF SPECIALTY EXISTS */
 CREATE OR REPLACE FUNCTION specialty_exists(specialty_name VARCHAR) 
 RETURNS BOOLEAN
 LANGUAGE plpgsql
@@ -154,10 +106,46 @@ END;
 $$;
 
 
+/* LOGIN EMPLOYEE */
+CREATE OR REPLACE FUNCTION login_employee(emp_email VARCHAR)
+RETURNS TABLE
+(
+	type VARCHAR(128),
+	hashcode VARCHAR(128)
+)
+LANGUAGE plpgsql
+AS $$
+BEGIN
+	SELECT 'assistant', e.hashcode INTO type, hashcode
+	FROM employee AS e
+	JOIN assistant AS a ON e.email = a.email
+	WHERE e.email = emp_email;
 
-/* SCHEDULE APPOINTMENT
-TESTADO E FUNCIONAL NO ENDPOINT
-*/
+	IF (type IS NULL) THEN
+		SELECT 'nurse', e.hashcode INTO type, hashcode
+		FROM employee AS e
+		JOIN nurse AS n ON e.email = n.email
+		WHERE e.email = emp_email;
+	END IF;
+	
+	IF (type IS NULL) THEN
+		SELECT 'doctor', e.hashcode INTO type, hashcode
+		FROM employee AS e
+		JOIN doctor AS d ON e.email = d.email
+		WHERE e.email = emp_email;
+	END IF;
+
+	IF (type IS NOT NULL) THEN
+		RETURN QUERY
+		SELECT type, hashcode;
+	ELSE
+		RAISE EXCEPTION 'Employee not found';
+	END IF;
+END;
+$$;
+
+
+/* SCHEDULE APPOINTMENT */
 CREATE OR REPLACE FUNCTION appointment_trig() RETURNS TRIGGER
 LANGUAGE plpgsql
 AS $$
@@ -174,44 +162,53 @@ BEFORE INSERT ON appointment
 FOR EACH ROW
 EXECUTE FUNCTION appointment_trig();
 
-CREATE OR REPLACE FUNCTION schedule_appointment(appointment_time TIMESTAMP, doctor_id BIGINT, patient_id BIGINT, nurse_id BIGINT[] DEFAULT NULL, nurse_role VARCHAR(128)[] DEFAULT NULL)
+CREATE OR REPLACE FUNCTION schedule_appointment(appointment_time TIMESTAMP, doctor_id VARCHAR(128), patient_id BIGINT, nurse_id VARCHAR(128)[] DEFAULT NULL, nurse_role VARCHAR(128)[] DEFAULT NULL)
 RETURNS INTEGER
 LANGUAGE plpgsql
 AS $$
 DECLARE
 	appointment_id INTEGER;
-	doc_cc INTEGER;
 BEGIN
-	SELECT cc INTO doc_cc
-	FROM employee
-	WHERE emp_num = doctor_id;
-
-	IF (doc_cc IS NULL) THEN
-		RAISE EXCEPTION 'Doctor not found';
-	END IF;
-
 	IF (appointment_time < CURRENT_TIMESTAMP) THEN
 		RAISE EXCEPTION 'Cannot schedule appointment in the past';
 	ELSEIF (appointment_time > CURRENT_TIMESTAMP + INTERVAL '3 months') THEN
 		RAISE EXCEPTION 'Cannot schedule appointment more than 3 months in advance';
-	ELSEIF (EXISTS (SELECT *
-					FROM appointment
-					WHERE start_time = appointment_time
-					AND (doctor_cc = doc_cc OR patient_cc = patient_id))
-			) THEN
-		RAISE EXCEPTION 'Doctor or patient already has an appointment at this time';
-	ELSEIF (EXISTS (SELECT *
-					FROM surgery
-					WHERE start_time
-					BETWEEN appointment_time - INTERVAL '2 hours' + '1 second' AND appointment_time
-					AND doctor_cc = doc_cc)
-			) THEN
-		RAISE EXCEPTION 'Doctor already has a surgery at this time';
-	-- TODO: check if the nurses are available
 	END IF;
 
-	INSERT INTO appointment(start_time, doctor_cc, patient_cc)
-	VALUES(appointment_time, doc_cc, patient_id)
+	IF (EXISTS (SELECT 1
+				FROM appointment
+				WHERE start_time = appointment_time
+				AND (doctor_email = doctor_id OR patient_cc = patient_id))
+		) THEN
+		RAISE EXCEPTION 'Doctor or patient already has an appointment at this time';
+	ELSEIF (EXISTS (SELECT 1
+					FROM surgery
+					WHERE start_time
+					BETWEEN appointment_time - INTERVAL '2 hours' + INTERVAL '1 second' AND appointment_time
+					AND doctor_email = doctor_id)
+			) THEN
+		RAISE EXCEPTION 'Doctor already has a surgery at this time';
+	END IF;
+
+	IF (EXISTS (SELECT 1
+				FROM surgery AS s
+				JOIN surgery_role AS sr ON s.id = sr.surgery_id
+				WHERE s.start_time
+				BETWEEN appointment_time - INTERVAL '2 hours' + INTERVAL '1 second' AND appointment_time
+				AND sr.nurse_email = ANY(nurse_id))
+		) THEN
+		RAISE EXCEPTION 'One or more nurses are already involved in surgeries at this time';
+	ELSEIF (EXISTS (SELECT 1
+					FROM appointment AS a
+					JOIN appointment_role AS ar ON a.id = ar.appointment_id
+					WHERE a.start_time = appointment_time
+					AND ar.nurse_email = ANY(nurse_id))
+			) THEN
+		RAISE EXCEPTION 'One or more nurses are already involved in appointments at this time';
+	END IF;
+
+	INSERT INTO appointment(start_time, doctor_email, patient_cc)
+	VALUES(appointment_time, doctor_id, patient_id)
 	RETURNING id INTO appointment_id;
 
 	IF (nurse_id IS NOT NULL) THEN
@@ -224,6 +221,7 @@ END;
 $$;
 
 
+/* SCHEDULE SURGERY */
 CREATE OR REPLACE FUNCTION hospitalization_trig() RETURNS TRIGGER
 LANGUAGE plpgsql
 AS $$
@@ -263,60 +261,71 @@ BEFORE INSERT ON surgery
 FOR EACH ROW
 EXECUTE FUNCTION surgery_trig();
 
-/* SCHEDULE SURGERY
-TESTADO E FUNCIONAL NO ENDPOINT
-*/
-CREATE OR REPLACE FUNCTION schedule_surgery(patient_id BIGINT, doctor_id BIGINT, nurse_id BIGINT[], nurse_role VARCHAR(128)[], surgery_time TIMESTAMP, hospitalization_id BIGINT, hosp_entry_time TIMESTAMP DEFAULT NULL, hosp_exit_time TIMESTAMP DEFAULT NULL, hosp_nurse BIGINT DEFAULT NULL)
+CREATE OR REPLACE FUNCTION schedule_surgery(patient_id BIGINT, doctor_id VARCHAR(128), nurse_id VARCHAR(128)[], nurse_role VARCHAR(128)[], surgery_start TIMESTAMP, surgery_end TIMESTAMP, hospitalization_id BIGINT, hosp_entry_time TIMESTAMP DEFAULT NULL, hosp_exit_time TIMESTAMP DEFAULT NULL, hosp_nurse VARCHAR(128) DEFAULT NULL)
 RETURNS TABLE (
     surg_id BIGINT,
     hosp_id BIGINT,
-    bill_id INTEGER
+    bill_id BIGINT
 )
 LANGUAGE plpgsql
 AS $$
 DECLARE
 	surgery_id BIGINT;
-	doc_cc BIGINT;
-	hosp_bill_id INTEGER DEFAULT NULL;
+	hosp_bill_id BIGINT DEFAULT NULL;
 BEGIN
-	SELECT cc INTO doc_cc
-	FROM employee
-	WHERE emp_num = doctor_id;
 
-	IF (surgery_time < CURRENT_TIMESTAMP) THEN
+	IF (surgery_start < CURRENT_TIMESTAMP) THEN
 		RAISE EXCEPTION 'Cannot schedule surgery in the past';
-	ELSEIF (surgery_time > CURRENT_TIMESTAMP + INTERVAL '6 months') THEN
+	ELSEIF (surgery_start > CURRENT_TIMESTAMP + INTERVAL '6 months') THEN
 		RAISE EXCEPTION 'Cannot schedule surgery more than 6 months in advance';
-	ELSEIF (EXISTS (SELECT start_time
-					FROM surgery AS s, hospitalization AS h
-					WHERE start_time
-					BETWEEN surgery_time - INTERVAL '2 hours' + INTERVAL '1 second' 
-					AND surgery_time + INTERVAL '2 hours' - INTERVAL '1 second'
-					AND (doctor_cc = doc_cc OR patient_cc = patient_id))
+	ELSEIF (EXISTS (SELECT 1
+					FROM surgery AS s
+					WHERE doctor_email = doctor_id
+					AND (surgery_start < s.end_time AND surgery_start > s.start_time)
+					OR (surgery_end > s.start_time AND surgery_end < s.end_time)
+					OR (surgery_start <= s.start_time AND surgery_end >= s.end_time))
 			) THEN
-		RAISE EXCEPTION 'Doctor or patient already has a surgery at this time';
-	ELSEIF (EXISTS (SELECT *
+		RAISE EXCEPTION 'Doctor already has a surgery at this time';
+	ELSEIF (EXISTS (SELECT 1
 					FROM appointment
 					WHERE start_time
-					BETWEEN surgery_time AND surgery_time + INTERVAL '2 hours' - INTERVAL '1 second'
-					AND (doctor_cc = doc_cc OR patient_cc = patient_id))
+					BETWEEN surgery_start AND surgery_end + INTERVAL '30 minutes'
+					AND (doctor_email = doctor_id OR patient_cc = patient_id))
 			) THEN
 		RAISE EXCEPTION 'Doctor or patient already has an appointment at this time';
-	-- TODO: check if the nurses are available
+	END IF;
+
+	IF (EXISTS (SELECT 1
+				FROM surgery AS s
+				JOIN surgery_role AS sr ON s.id = sr.surgery_id
+				WHERE  sr.nurse_email = ANY(nurse_id)
+				AND (surgery_start < s.end_time AND surgery_start > s.start_time)
+				OR (surgery_end > s.start_time AND surgery_end < s.end_time)
+				OR (surgery_start <= s.start_time AND surgery_end >= s.end_time))
+		) THEN
+		RAISE EXCEPTION 'One or more nurses are already involved in surgeries at this time';
+	ELSEIF (EXISTS (SELECT 1
+					FROM appointment AS a
+					JOIN appointment_role AS ar ON a.id = ar.appointment_id
+					WHERE a.start_time
+					BETWEEN surgery_start AND surgery_end + INTERVAL '30 minutes'
+					AND ar.nurse_email = ANY(nurse_id))
+			) THEN
+		RAISE EXCEPTION 'One or more nurses are already involved in appointments at this time';
 	END IF;
 
 	IF (hosp_entry_time IS NOT NULL) THEN
-		INSERT INTO hospitalization(entry_time, exit_time, nurse_cc, patient_cc)
+		INSERT INTO hospitalization(entry_time, exit_time, nurse_email, patient_cc)
 		VALUES(hosp_entry_time, hosp_exit_time, hosp_nurse, patient_id)
-		RETURNING id, bill_id INTO hospitalization_id, hosp_bill_id;
+		RETURNING id, hospitalization.bill_id INTO hospitalization_id, hosp_bill_id;
 	ELSE
 		SELECT h.bill_id INTO hosp_bill_id
 		FROM hospitalization AS h
 		WHERE h.id = hospitalization_id;
 	END IF;
 
-	INSERT INTO surgery(start_time, doctor_cc, hospitalization_id)
-	VALUES(surgery_time, doc_cc, hospitalization_id)
+	INSERT INTO surgery(start_time, end_time, doctor_email, hospitalization_id)
+	VALUES(surgery_start, surgery_end, doctor_id, hospitalization_id)
 	RETURNING id INTO surgery_id;
 
 	IF (nurse_id IS NOT NULL) THEN
@@ -325,13 +334,12 @@ BEGIN
 	END IF;
 	
 	RETURN QUERY
-	SELECT  surgery_id, hospitalization_id, hosp_bill_id;
+	SELECT surgery_id, hospitalization_id, hosp_bill_id;
 END;
 $$;
 
-/* EXECUTE PAYMENT
-TESTADO E FUNCIONAL NO ENDPOINT
-*/
+
+/* EXECUTE PAYMENT */
 CREATE OR REPLACE FUNCTION execute_payment(id_bill BIGINT, payment_amount INTEGER, payment_method VARCHAR, user_id BIGINT)
 RETURNS INTEGER
 LANGUAGE plpgsql
@@ -381,15 +389,14 @@ BEGIN
 		WHERE id = id_bill;
 	END IF;
 
-	INSERT INTO payment(amount, method, bill_id)
-	VALUES(payment_amount, payment_method, id_bill);
+	INSERT INTO payment(amount, method, bill_id, date_time)
+	VALUES(payment_amount, payment_method, id_bill, CURRENT_TIMESTAMP);
 
 	RETURN bill_amount - paid_amount - payment_amount;
 END;
 $$;
 
--- ADD_PRESCRIPTIONS AND MEDICINE
-
+/* ADD PRESCRIPTIONS AND MEDICINE */
 CREATE OR REPLACE FUNCTION add_prescription(type VARCHAR, val DATE, event_id BIGINT) RETURNS INTEGER
 LANGUAGE plpgsql
 AS $$

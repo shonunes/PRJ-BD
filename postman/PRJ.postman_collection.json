@@ -28,7 +28,7 @@
 				"header": [],
 				"body": {
 					"mode": "raw",
-					"raw": "{\n\t\"cc\": 67493769,\n    \"username\": \"Sebastião Bugalho\",\n    \"password\": \"sebastiaobugalho\",\n    \"emergency_contact\": 916426778,\n    \"birthday\": \"1985-05-09\",\n    \"email\": \"sugalho@gmail.com\"\n}",
+					"raw": "{\n\t\"cc\": 21345483,\n    \"name\": \"Carlos Godinho\",\n    \"password\": \"carlosgodinho\",\n    \"health_number\": 67493673,\n    \"emergency_contact\": 963456836,\n    \"birthday\": \"1985-05-09\",\n    \"email\": \"godinho@gmail.com\"\n}",
 					"options": {
 						"raw": {
 							"language": "json"
@@ -74,7 +74,7 @@
 				"header": [],
 				"body": {
 					"mode": "raw",
-					"raw": "{\n\t\"cc\": 67493265,\n    \"username\": \"Nuno Nunes\",\n    \"password\": \"nunonunes\",\n    \"contract_id\": 268,\n    \"salary\": 23000,\n    \"contract_issue_date\": \"2022-08-13\",\n    \"contract_due_date\": \"2025-08-13\",\n    \"birthday\": \"1999-05-15\",\n    \"email\": \"nunoes@gmail.com\"\n}",
+					"raw": "{\n\t\"cc\": 67493269,\n    \"name\": \"Carlos Simões\",\n    \"password\": \"carlossimoes\",\n    \"contract_id\": 443,\n    \"salary\": 30000,\n    \"contract_issue_date\": \"2022-07-04\",\n    \"contract_due_date\": \"2025-07-04\",\n    \"birthday\": \"1985-01-12\",\n    \"email\": \"carlossimoes@gmail.com\"\n}",
 					"options": {
 						"raw": {
 							"language": "json"
@@ -120,7 +120,7 @@
 				"header": [],
 				"body": {
 					"mode": "raw",
-					"raw": "{\n    \"cc\": 77679347,\n    \"username\": \"Tiago Silva\",\n    \"password\": \"tiagosilva\",\n    \"contract_id\": 545,\n    \"salary\": 300000,\n    \"contract_issue_date\": \"2024-05-15\",\n    \"contract_due_date\": \"2028-05-15\",\n    \"birthday\": \"2004-09-02\",\n    \"email\": \"tsnaprozis@gmail.com\",\n    \"cc_superior\": 77679347\n}",
+					"raw": "{\n    \"cc\": 77679347,\n    \"name\": \"Tiago Silva\",\n    \"password\": \"tiagosilva\",\n    \"contract_id\": 545,\n    \"salary\": 300000,\n    \"contract_issue_date\": \"2024-05-15\",\n    \"contract_due_date\": \"2028-05-15\",\n    \"birthday\": \"2004-09-02\",\n    \"email\": \"tsnaprozis@gmail.com\",\n    \"cc_superior\": 77679347\n}",
 					"options": {
 						"raw": {
 							"language": "json"
@@ -166,7 +166,7 @@
 				"header": [],
 				"body": {
 					"mode": "raw",
-					"raw": "{\n    \"cc\": 67349265,\n    \"username\": \"Magda Nunes\",\n    \"password\": \"magdanunes\",\n    \"contract_id\": 556,\n    \"salary\": 500000,\n    \"contract_issue_date\": \"2023-03-30\",\n    \"contract_due_date\": \"2033-03-30\",\n    \"birthday\": \"1979-08-15\",\n    \"email\": \"magdanunes@gmail.com\",\n    \"license_id\": \"grb4598gdr\",\n    \"license_company\": \"Pfizer\",\n    \"license_issue_date\": \"1998-05-08\",\n    \"license_due_date\": \"2028-05-08\",\n    \"specialty_name\": \"oftalmologista\"\n}",
+					"raw": "{\n    \"cc\": 67349265,\n    \"name\": \"Magda Nunes\",\n    \"password\": \"magdanunes\",\n    \"contract_id\": 556,\n    \"salary\": 500000,\n    \"contract_issue_date\": \"2023-03-30\",\n    \"contract_due_date\": \"2033-03-30\",\n    \"birthday\": \"1979-08-15\",\n    \"email\": \"magdanunes@gmail.com\",\n    \"license_id\": \"grb4598gdr\",\n    \"license_company\": \"Pfizer\",\n    \"license_issue_date\": \"1998-05-08\",\n    \"license_due_date\": \"2028-05-08\",\n    \"specialty_name\": \"oftalmologista\"\n}",
 					"options": {
 						"raw": {
 							"language": "json"
@@ -212,7 +212,7 @@
 				"header": [],
 				"body": {
 					"mode": "raw",
-					"raw": "{\n\t\"username\": 7,\n    \"password\": \"antoniomarcal\"\n}",
+					"raw": "{\n\t\"username\": \"carlossimoes@gmail.com\",\n    \"password\": \"carlossimoes\"\n}",
 					"options": {
 						"raw": {
 							"language": "json"
@@ -257,13 +257,13 @@
 				"header": [
 					{
 						"key": "Authorization",
-						"value": "eyJ0eXAiOiJKV1QiLCJhbGciOiJIUzI1NiJ9.eyJ1c2VybmFtZSI6MTU3ODIwOTUsInR5cGUiOiJwYXRpZW50IiwiZXhwIjoxNzE2Mzc1ODU0Ljc5MTIyNjF9.ed7mWLNDgoUzEK2sXWhPNjlaSj41kMi2Ob9t3h-jnXo",
+						"value": "eyJ0eXAiOiJKV1QiLCJhbGciOiJIUzI1NiJ9.eyJ1c2VybmFtZSI6MjEzNDU0ODMsInR5cGUiOiJwYXRpZW50IiwiZXhwIjoxNzE2NjQxMTY0LjEyNjE3NjR9.S6h2fw1XbEE4UGl6JT8Mw1pDtgLioPGZ64-Ca3QlLRo",
 						"type": "text"
 					}
 				],
 				"body": {
 					"mode": "raw",
-					"raw": "{\n    \"doctor_id\": 25,\n    \"appointment_time\": \"2024-05-26 07:00:00\"\n}",
+					"raw": "{\n    \"doctor_id\": \"magdanunes@gmail.com\",\n    \"appointment_time\": \"2024-06-01 07:00:00\",\n    \"nurses\": [[\"tsnaprozis@gmail.com\", \"some role\"]]\n}",
 					"options": {
 						"raw": {
 							"language": "json"
@@ -307,12 +307,12 @@
 				"header": [
 					{
 						"key": "Authorization",
-						"value": "eyJ0eXAiOiJKV1QiLCJhbGciOiJIUzI1NiJ9.eyJ1c2VybmFtZSI6MTU3ODIwOTUsInR5cGUiOiJwYXRpZW50IiwiZXhwIjoxNzE2Mzc1ODU0Ljc5MTIyNjF9.ed7mWLNDgoUzEK2sXWhPNjlaSj41kMi2Ob9t3h-jnXo",
+						"value": "eyJ0eXAiOiJKV1QiLCJhbGciOiJIUzI1NiJ9.eyJ1c2VybmFtZSI6MjEzNDU0ODMsInR5cGUiOiJwYXRpZW50IiwiZXhwIjoxNzE2NjQxMTY0LjEyNjE3NjR9.S6h2fw1XbEE4UGl6JT8Mw1pDtgLioPGZ64-Ca3QlLRo",
 						"type": "text"
 					}
 				],
 				"url": {
-					"raw": "http://localhost:8080/dbproj/appointments/15782095",
+					"raw": "http://localhost:8080/dbproj/appointments/21345483",
 					"protocol": "http",
 					"host": [
 						"localhost"
@@ -321,7 +321,7 @@
 					"path": [
 						"dbproj",
 						"appointments",
-						"15782095"
+						"21345483"
 					]
 				},
 				"description": "This is a GET request and it is used to \"get\" data from an endpoint. There is no request body for a GET request, but you can use query parameters to help specify the resource you want data on (e.g., in this request, we have `id=1`).\n\nA successful GET response will have a `200 OK` status, and should include some kind of response body - for example, HTML web content or JSON data."
@@ -350,13 +350,13 @@
 				"header": [
 					{
 						"key": "Authorization",
-						"value": "eyJ0eXAiOiJKV1QiLCJhbGciOiJIUzI1NiJ9.eyJ1c2VybmFtZSI6NywidHlwZSI6ImFzc2lzdGFudCIsImV4cCI6MTcxNjQxMDg0MS4zNjcyODE0fQ.B2pKul5AruT_TeixNnueNMv401_snApE_Dz9u63Rl_A",
+						"value": "eyJ0eXAiOiJKV1QiLCJhbGciOiJIUzI1NiJ9.eyJ1c2VybmFtZSI6ImNhcmxvc3NpbW9lc0BnbWFpbC5jb20iLCJ0eXBlIjoiYXNzaXN0YW50IiwiZXhwIjoxNzE2NjQ4ODA0LjUwOTE3Njd9.iz2RSruMi2dTT-nJxLizXQu8GRp0y7J_gLvnaRKDBls",
 						"type": "text"
 					}
 				],
 				"body": {
 					"mode": "raw",
-					"raw": "{\n    \"patient_id\": 15782095,\n    \"doctor\": 28,\n    \"nurses\": [],\n    \"surgery_time\": \"2024-05-27 23:00:00\",\n    \"hospitalization_entry_time\": \"2024-06-28 01:00:00\",\n    \"hospitalization_exit_time\": \"2024-06-27 03:00:00\",\n    \"hospitalization_responsable_nurse\": 14\n}",
+					"raw": "{\n    \"patient_id\": 21345483,\n    \"doctor\": \"magdanunes@gmail.com\",\n    \"nurses\": [[\"tsnaprozis@gmail.com\",  \"a role\"]],\n    \"surgery_start\": \"2024-06-10 07:00:00\",\n    \"surgery_end\": \"2024-06-10 07:30:00\"\n}",
 					"options": {
 						"raw": {
 							"language": "json"
@@ -364,7 +364,7 @@
 					}
 				},
 				"url": {
-					"raw": "http://localhost:8080/dbproj/surgery",
+					"raw": "http://localhost:8080/dbproj/surgery/7",
 					"protocol": "http",
 					"host": [
 						"localhost"
@@ -372,7 +372,8 @@
 					"port": "8080",
 					"path": [
 						"dbproj",
-						"surgery"
+						"surgery",
+						"7"
 					]
 				},
 				"description": "This is a POST request, submitting data to an API via the request body. This request submits JSON data, and the data is reflected in the response.\n\nA successful POST request typically returns a `200 OK` or `201 Created` response code."
@@ -401,13 +402,13 @@
 				"header": [
 					{
 						"key": "Authorization",
-						"value": "eyJ0eXAiOiJKV1QiLCJhbGciOiJIUzI1NiJ9.eyJ1c2VybmFtZSI6MTU3ODIwOTUsInR5cGUiOiJwYXRpZW50IiwiZXhwIjoxNzE2MzI0OTg5LjU2ODUyOTF9.-9IkckRpLtb_qowst28zB8FBNaL3gnhaPrMhaIE7BWA",
+						"value": "eyJ0eXAiOiJKV1QiLCJhbGciOiJIUzI1NiJ9.eyJ1c2VybmFtZSI6MjEzNDU0ODMsInR5cGUiOiJwYXRpZW50IiwiZXhwIjoxNzE2NjQ4OTI5Ljc3MDM1ODN9.EhI_sm17eBFALbxW9i5hIgbCg6AtWR4oFkxod95c1bU",
 						"type": "text"
 					}
 				],
 				"body": {
 					"mode": "raw",
-					"raw": "{\n    \"amount\": 15,\n    \"payment_method\": \"card\"\n}",
+					"raw": "{\n    \"amount\": 45,\n    \"payment_method\": \"card\"\n}",
 					"options": {
 						"raw": {
 							"language": "json"
@@ -415,7 +416,7 @@
 					}
 				},
 				"url": {
-					"raw": "http://localhost:8080/dbproj/bills/8",
+					"raw": "http://localhost:8080/dbproj/bills/1",
 					"protocol": "http",
 					"host": [
 						"localhost"
@@ -424,10 +425,52 @@
 					"path": [
 						"dbproj",
 						"bills",
-						"8"
+						"1"
 					]
 				},
 				"description": "This is a POST request, submitting data to an API via the request body. This request submits JSON data, and the data is reflected in the response.\n\nA successful POST request typically returns a `200 OK` or `201 Created` response code."
+			},
+			"response": []
+		},
+		{
+			"name": "Daily Summary",
+			"event": [
+				{
+					"listen": "test",
+					"script": {
+						"exec": [
+							"pm.test(\"Status code is 200\", function () {",
+							"    pm.response.to.have.status(200);",
+							"});"
+						],
+						"type": "text/javascript",
+						"packages": {}
+					}
+				}
+			],
+			"request": {
+				"method": "GET",
+				"header": [
+					{
+						"key": "Authorization",
+						"value": "eyJ0eXAiOiJKV1QiLCJhbGciOiJIUzI1NiJ9.eyJ1c2VybmFtZSI6ImNhcmxvc3NpbW9lc0BnbWFpbC5jb20iLCJ0eXBlIjoiYXNzaXN0YW50IiwiZXhwIjoxNzE2NjUwNDYwLjI5MzI4ODV9.lJrmf3sWAf79g80sz7dJvu2z7qwcFuf3vfyaU8FigXo",
+						"type": "text"
+					}
+				],
+				"url": {
+					"raw": "http://localhost:8080/dbproj/daily/2024-06-06",
+					"protocol": "http",
+					"host": [
+						"localhost"
+					],
+					"port": "8080",
+					"path": [
+						"dbproj",
+						"daily",
+						"2024-06-06"
+					]
+				},
+				"description": "This is a GET request and it is used to \"get\" data from an endpoint. There is no request body for a GET request, but you can use query parameters to help specify the resource you want data on (e.g., in this request, we have `id=1`).\n\nA successful GET response will have a `200 OK` status, and should include some kind of response body - for example, HTML web content or JSON data."
 			},
 			"response": []
 		},
@@ -452,7 +495,7 @@
 				"header": [
 					{
 						"key": "Authorization",
-						"value": "eyJ0eXAiOiJKV1QiLCJhbGciOiJIUzI1NiJ9.eyJ1c2VybmFtZSI6NywidHlwZSI6ImFzc2lzdGFudCIsImV4cCI6MTcxNjQxMTk0MS4yNzg0MzEyfQ.Fyga8KHAJXgcD1EX_NU6I6uMJ3dD3UqK4cO9t0jPbwE",
+						"value": "eyJ0eXAiOiJKV1QiLCJhbGciOiJIUzI1NiJ9.eyJ1c2VybmFtZSI6ImNhcmxvc3NpbW9lc0BnbWFpbC5jb20iLCJ0eXBlIjoiYXNzaXN0YW50IiwiZXhwIjoxNzE2NjUwNDYwLjI5MzI4ODV9.lJrmf3sWAf79g80sz7dJvu2z7qwcFuf3vfyaU8FigXo",
 						"type": "text"
 					}
 				],

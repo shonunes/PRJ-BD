@@ -33,6 +33,8 @@ StatusCodes = {
     'internal_error': 500
 }
 
+
+
 ##########################################################
 ## DATABASE ACCESS
 ##########################################################
@@ -64,8 +66,6 @@ def token_required(allowed_roles):
                 if (data['type'] not in allowed_roles):
                     return flask.jsonify({'status': StatusCodes['api_error'], 'errors': 'Unauthorized'}), StatusCodes['api_error']
                 kwargs['user_type'] = data['type']
-
-            ## TODO: check if user really exists in the database
 
             except jwt.ExpiredSignatureError:
                 return flask.jsonify({'status': StatusCodes['api_error'], 'errors': 'Token is expired'}), StatusCodes['api_error']
