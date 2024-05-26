@@ -722,7 +722,7 @@ def execute_payment(bill_id, user_id, user_type):
 ##
 ## Only assistants can use this endpoint
 ##
-## To use it, access: 
+## To use it, access:
 ##
 ## http://localhost:8080/dbproj/daily/<year-month-day>
 ##
@@ -734,26 +734,13 @@ def daily_summary(date, user_id, user_type):
     logger.debug(f'GET /dbproj/daily/{date} - token_id: {user_id}, token_type: {user_type}')
 
     statement = '''
-        WITH counts AS (
-            SELECT h.id, COUNT(DISTINCT s.id) AS surgery_count, COUNT(DISTINCT hp.prescription_id) AS prescription_count
-            FROM hospitalization AS h
-            LEFT JOIN surgery AS s ON h.id = s.hospitalization_id
-            LEFT JOIN hospitalization_prescription AS hp ON h.id = hp.hospitalization_id
-            GROUP BY h.id
-        ),
-        payment_data AS (
-            SELECT h.id, COALESCE(SUM(p.amount), 0) AS total_amount_spent
-            FROM hospitalization AS h
-            LEFT JOIN payment AS p ON h.bill_id = p.bill_id
-            GROUP BY h.id
-        )
         SELECT
-            COALESCE(SUM(pd.total_amount_spent), 0) AS amount_spent,
-            COALESCE(SUM(c.surgery_count), 0) AS surgeries,
-            COALESCE(SUM(c.prescription_count), 0) AS prescriptions
+            COALESCE(SUM(hms.total_amount_spent), 0) AS amount_spent,
+            COALESCE(SUM(hc.surgery_count), 0) AS surgeries,
+            COALESCE(SUM(hc.prescription_count), 0) AS prescriptions
         FROM hospitalization AS h
-        LEFT JOIN counts AS c ON h.id = c.id
-        LEFT JOIN payment_data AS pd ON h.id = pd.id
+        LEFT JOIN hospitalization_counts AS hc ON h.id = hc.id
+        LEFT JOIN hospitalization_money_spent AS hms ON h.id = hms.id
         WHERE h.entry_time::date = %s;
     '''
     values = (date,)
@@ -802,30 +789,15 @@ def generate_monthly_report(user_id, user_type):
 
     logger.debug(f'token_id: {user_id}, token_type: {user_type}')
 
-    statement = '''                                                                    
-        WITH monthly_surgeries AS (
-            SELECT
-                doctor_email,
-                TO_CHAR(DATE_TRUNC('month', start_time), 'YYYY-MM') AS surgery_month,
-                COUNT(id) AS surgery_count
-            FROM surgery
-            WHERE start_time >= (CURRENT_DATE - INTERVAL '1 year')                      
-            GROUP BY doctor_email, DATE_TRUNC('month', start_time)                         
-        )                                                                               
-        SELECT m.surgery_month, e.name, surgery_count                                   
-        FROM monthly_surgeries AS m                                                     
-        JOIN (                                                                          
-            SELECT                                                                      
-                surgery_month,                                                          
-                MAX(surgery_count) AS max_surgery_count                                 
-            FROM monthly_surgeries                                                      
-            GROUP BY surgery_month                                                      
-        ) AS month_maxs                                                                 
-        ON m.surgery_month = month_maxs.surgery_month                                  
-        AND m.surgery_count = month_maxs.max_surgery_count                          
-        JOIN employee AS e                                                           
-        ON m.doctor_email = e.email                                     
-        ORDER BY m.surgery_month;                                                     
+    statement = '''
+        SELECT dms.surgery_month, e.name, dms.surgery_count
+        FROM doctor_monthly_surgeries AS dms
+        JOIN max_monthly_surgery_count AS month_maxs
+            ON dms.surgery_month = month_maxs.surgery_month
+            AND dms.surgery_count = month_maxs.max_surgery_count
+        JOIN employee AS e
+            ON dms.doctor_email = e.email
+        ORDER BY dms.surgery_month;
     '''
 
     conn = db_connection()
@@ -863,77 +835,83 @@ def generate_monthly_report(user_id, user_type):
     return flask.jsonify(response), response['status']
 
 
-
-
-@app.route('/dbproj/top3/', methods=['GET'])
+##
+## GET
+##
+## List Top 3 patients
+##
+## Only assistants can use this endpoint
+##
+## To use it, access: 
+##
+## http://localhost:8080/dbproj/top3
+##
+@app.route('/dbproj/top3', methods=['GET'])
 def get_top3():
     logger.info('GET /dbproj/top3')
 
     conn = db_connection()
     cur = conn.cursor()
 
+    statement = '''
+        WITH MonthlyPayments AS (
+            SELECT
+                p.cc AS patient_id,
+                SUM(pay.amount) AS total_amount
+            FROM
+                payment pay
+                LEFT JOIN appointment a ON a.bill_id = pay.bill_id
+                LEFT JOIN hospitalization h ON h.bill_id = pay.bill_id
+                LEFT JOIN patient p ON p.cc = a.patient_cc OR p.cc = h.patient_cc
+            WHERE 
+                EXTRACT(YEAR FROM pay.date_time) = EXTRACT(YEAR FROM CURRENT_DATE)
+                AND EXTRACT(MONTH FROM pay.date_time) = EXTRACT(MONTH FROM CURRENT_DATE)
+            GROUP BY 
+                p.cc
+        ),
+        TopPatients AS (
+            SELECT TOP 3
+                patient_id,
+                total_amount
+            FROM 
+                MonthlyPayments
+            ORDER BY 
+                total_amount DESC
+        )
+        SELECT 
+            patient.name AS patient_name,
+            patient.cc AS patient_id,
+            tp.total_amount AS total_amount,
+
+            appointment.id AS appointment_id,
+            appointment.start_time AS appointment_start,
+            appointment_doctor.name AS doctor_name,
+            appointment_doctor.email AS doctor_id,
+            appointment_nurse.name AS nurse_name,
+
+            surgery.id AS surgery_id,
+            surgery.start_time AS surgery_start,
+            surgery_doctor.name AS surgery_doctor,
+            surgery_doctor.email AS surgery_doctor_id,
+            surgery_nurse.name AS surgery_nurse,
+            surgery_nurse.email AS surgery_nurse_id
+        FROM 
+            TopPatients tp
+            JOIN patient ON tp.patient_id = patient.cc
+            LEFT JOIN appointment ON patient.cc = appointment.patient_cc
+            LEFT JOIN employee appointment_doctor ON appointment_doctor.email = appointment.doctor_email
+            LEFT JOIN appointment_role ON appointment.id = appointment_role.appointment_id
+            LEFT JOIN employee appointment_nurse ON appointment_role.nurse_email = appointment_nurse.email
+            LEFT JOIN hospitalization ON patient.cc = hospitalization.patient_cc
+            LEFT JOIN surgery ON hospitalization.id = surgery.hospitalization_id
+            LEFT JOIN surgery_role ON surgery.id = surgery_role.surgery_id
+            LEFT JOIN employee surgery_nurse ON surgery_nurse.email = surgery_role.nurse_email
+            LEFT JOIN employee surgery_doctor ON surgery_doctor.email = surgery.doctor_email
+        ORDER BY 
+            tp.total_amount, patient_id, hospitalization.id, surgery.id DESC;
+    '''
+
     try:
-
-        statement = statement = """WITH MonthlyPayments AS (
-                                    SELECT
-                                        p.cc AS patient_id,
-                                        SUM(pay.amount) AS total_amount
-                                    FROM
-                                        payment pay
-                                        LEFT JOIN appointment a ON a.bill_id = pay.bill_id
-                                        LEFT JOIN hospitalization h ON h.bill_id = pay.bill_id
-                                        LEFT JOIN patient p ON p.cc = a.patient_cc OR p.cc = h.patient_cc
-                                    WHERE 
-                                        EXTRACT(YEAR FROM pay.date_time) = EXTRACT(YEAR FROM CURRENT_DATE)
-                                        AND EXTRACT(MONTH FROM pay.date_time) = EXTRACT(MONTH FROM CURRENT_DATE)
-                                    GROUP BY 
-                                        p.cc
-                                    ),
-                                    TopPatients AS (
-                                        SELECT 
-                                            patient_id,
-                                            total_amount
-                                        FROM 
-                                            MonthlyPayments
-                                        ORDER BY 
-                                            total_amount DESC
-                                        LIMIT 3
-                                    )
-                                    SELECT 
-                                        patient.name AS patient_name,
-                                        patient.cc AS patient_id,
-                                        tp.total_amount AS total_amount,
-
-                                        appointment.id AS appointment_id,
-                                        appointment.start_time AS appointment_start,
-                                        appointment_doctor.name AS doctor_name,
-                                        appointment_doctor.email AS doctor_id,
-                                        appointment_nurse.name AS nurse_name,
-
-                                        surgery.id AS surgery_id,
-                                        surgery.start_time AS surgery_start,
-                                        surgery_doctor.name AS surgery_doctor,
-                                        surgery_doctor.email AS surgery_doctor_id,
-                                        surgery_nurse.name AS surgery_nurse,
-                                        surgery_nurse.email AS surgery_nurse_id
-                                    FROM 
-                                        TopPatients tp
-                                        JOIN patient ON tp.patient_id = patient.cc
-                                        LEFT JOIN appointment ON patient.cc = appointment.patient_cc
-
-
-                                        LEFT JOIN employee appointment_doctor ON appointment_doctor.email = appointment.doctor_email
-                                        LEFT JOIN appointment_role ON appointment.id = appointment_role.appointment_id
-                                        LEFT JOIN employee appointment_nurse ON appointment_role.nurse_email = appointment_nurse.email
-
-                                        LEFT JOIN hospitalization ON patient.cc = hospitalization.patient_cc
-
-                                        LEFT JOIN surgery ON hospitalization.id = surgery.hospitalization_id
-                                        LEFT JOIN surgery_role ON surgery.id = surgery_role.surgery_id
-                                        LEFT JOIN employee surgery_nurse ON surgery_nurse.email = surgery_role.nurse_email
-                                        LEFT JOIN employee surgery_doctor ON surgery_doctor.email = surgery.doctor_email
-                                    ORDER BY 
-                                        tp.total_amount, patient_id, hospitalization.id, surgery.id DESC;"""
         cur.execute(statement)
         rows = cur.fetchall()
         print(rows)
@@ -1009,7 +987,7 @@ def validate_side_effects(side_effects):
 ##
 ## To use it, access:
 ##
-## http://localhost:8080/dbproj/prescription/
+## http://localhost:8080/dbproj/prescription
 ##
 @app.route('/dbproj/prescription', methods=['POST'])
 @token_required(['assistant'])
@@ -1064,6 +1042,7 @@ def add_prescription(user_id, user_type):
         if conn is not None:
             conn.close()
     return flask.jsonify(response), response['status']
+
 
 
 ##########################################################

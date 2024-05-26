@@ -515,3 +515,34 @@ BEGIN
 END;
 $$;
 
+
+
+
+CREATE OR REPLACE VIEW hospitalization_counts AS
+SELECT h.id, COUNT(DISTINCT s.id) AS surgery_count, COUNT(DISTINCT hp.prescription_id) AS prescription_count
+FROM hospitalization AS h
+LEFT JOIN surgery AS s ON h.id = s.hospitalization_id
+LEFT JOIN hospitalization_prescription AS hp ON h.id = hp.hospitalization_id
+GROUP BY h.id;
+
+CREATE OR REPLACE VIEW hospitalization_money_spent AS
+SELECT h.id, COALESCE(SUM(p.amount), 0) AS total_amount_spent
+FROM hospitalization AS h
+LEFT JOIN payment AS p ON h.bill_id = p.bill_id
+GROUP BY h.id;
+
+CREATE OR REPLACE VIEW doctor_monthly_surgeries AS
+SELECT
+	doctor_email,
+	TO_CHAR(DATE_TRUNC('month', start_time), 'YYYY-MM') AS surgery_month,
+	COUNT(id) AS surgery_count
+FROM surgery
+WHERE start_time >= (CURRENT_DATE - INTERVAL '1 year')
+GROUP BY doctor_email, DATE_TRUNC('month', start_time);
+
+CREATE OR REPLACE VIEW max_monthly_surgery_count AS
+SELECT
+	surgery_month,
+	MAX(surgery_count) AS max_surgery_count
+FROM doctor_monthly_surgeries
+GROUP BY surgery_month;

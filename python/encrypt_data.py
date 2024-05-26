@@ -1,5 +1,6 @@
 from cryptography.fernet import Fernet
 import json
+import os
 
 def generate_key(file_path="secret.key"):
     key = Fernet.generate_key()
@@ -21,6 +22,7 @@ def encrypt_file(key, file_path="config.json"):
     with open("config.enc", "wb") as enc_file:
         enc_file.write(encrypted_data)
 
+    os.remove(file_path)
 
 
 if __name__ == "__main__":
