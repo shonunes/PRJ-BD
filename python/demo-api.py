@@ -457,7 +457,7 @@ def schedule_appointment(user_id, user_type):
             return flask.jsonify(response), response['status']
 
     # parameterized queries, good for security and performance
-    if ('nurses' in payload):
+    if ('nurses' in payload and payload['nurses'] != []):
         nurse_ids = []
         nurse_roles = []
         try:
@@ -914,34 +914,31 @@ def get_top3():
     try:
         cur.execute(statement)
         rows = cur.fetchall()
-        print(rows)
         logger.debug('GET /dbproj/top3 - parse')
         i = 0
         result = [] 
         appointment_idx = 3
-        hospitalization_idx = 8
-        surgery_idx = 13
+        surgery_idx = 7
         while i < len(rows):
             client = rows[i][0]
             total_amount = rows[i][1]
             result.append({'client': client, 'total_amount': total_amount, 'procedures': []})
             while i < len(rows) and rows[i][0] == client:
                 if rows[i][appointment_idx]:
-                    result[-1]['procedures'].append({'type': 'appointment', 'id': rows[i][appointment_idx], 'start_time': rows[i][appointment_idx + 1], 'doctor': rows[i][appointment_idx + 2], 'doctor_id': rows[i][appointment_idx + 3], 'nurse': rows[i][appointment_idx + 4]})
-                if rows[i][hospitalization_idx]:
-                    hosp_id = rows[i][hospitalization_idx]
-                    result[-1]['procedures'].append({'type': 'hospitalization', 'id': rows[i][hospitalization_idx], 'entry_time': rows[i][hospitalization_idx + 1], 'exit_time': rows[i][hospitalization_idx + 2], 'nurses': [rows[i][hospitalization_idx + 3]]})
+                    result[-1]['procedures'].append({'type': 'appointment', 'id': rows[i][appointment_idx], 'start_time': rows[i][appointment_idx + 1], 'doctor_email': rows[i][appointment_idx + 2], 'nurses_email': rows[i][appointment_idx + 3]})
                     i += 1
-                    while i < len(rows) and rows[i][hospitalization_idx] == hosp_id:
-                        result[-1]['procedures'][-1]['nurses'].append(rows[i][hospitalization_idx + 3])
+                    while i < len(rows) and rows[i][appointment_idx] == result[-1]['procedures'][-1]['id']:
+                        result[-1]['procedures'][-1]['nurses_email'].append(rows[i][appointment_idx + 3])
                         i += 1
+                    continue
                 if rows[i][surgery_idx]:
                     surg_id = rows[i][surgery_idx]
-                    result[-1]['procedures'].append({'type': 'surgery', 'id': rows[i][surgery_idx], 'start_time': rows[i][surgery_idx + 1], 'doctor': rows[i][surgery_idx + 2], 'doctor_id': rows[i][surgery_idx + 3], 'nurse': rows[i][surgery_idx + 4]})
+                    result[-1]['procedures'].append({'type': 'surgery', 'id': rows[i][surgery_idx], 'start_time': rows[i][surgery_idx + 1], 'doctor_email': rows[i][surgery_idx + 2], 'nurses_email': rows[i][surgery_idx + 3]})
                     i += 1
                     while i < len(rows) and rows[i][surgery_idx] == surg_id:
-                        result[-1]['procedures'][-1]['nurse'] = rows[i][surgery_idx + 4]
+                        result[-1]['procedures'][-1]['nurses_email'].append(rows[i][surgery_idx + 3])
                         i += 1
+                    continue
 
     except (Exception, psycopg2.DatabaseError) as error:
         logger.error(f'GET /departments/<ndep> - error: {error}')
