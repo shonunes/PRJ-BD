@@ -873,66 +873,67 @@ def get_top3():
     cur = conn.cursor()
 
     try:
-        statement = 'WITH MonthlyPayments AS (\
-        SELECT\
-            p.cc AS patient_id,\
-            SUM(pay.amount) AS total_amount\
-        FROM\
-            payment pay\
-            JOIN bill b ON pay.bill_id = b.id\
-            JOIN hospitalization h ON b.id = h.bill_id\
-            JOIN patient p ON h.patient_cc = p.cc\
-        WHERE \
-            EXTRACT(YEAR FROM pay.date_time) = EXTRACT(YEAR FROM CURRENT_DATE)\
-            AND EXTRACT(MONTH FROM pay.date_time) = EXTRACT(MONTH FROM CURRENT_DATE)\
-        GROUP BY \
-            p.cc\
-        ),\
-        TopPatients AS (\
-        SELECT \
-            patient_id,\
-            total_amount\
-        FROM \
-            MonthlyPayments\
-        ORDER BY \
-            total_amount DESC\
-        LIMIT 3\
-        )\
-        SELECT \
-            patient.name AS patient_name,\
-            patient.cc AS patient_id,\
-            tp.total_amount AS total_amount,\
-            appointment.id AS appointment_id,\
-            appointment.start_time AS appointment_start,\
-            appointment_doctor.name AS doctor_name,\
-            appointment_doctor.cc AS doctor_id,\
-            appointment_nurse.name AS nurse_name,\
-            hospitalization.id AS hospitalization_id,\
-            hospitalization.entry_time AS hospitalization_entry_date,\
-            hospitalization.exit_time AS hospitalization_exit_date,\
-            hospitalization_nurse.name AS responsible_nurse_name,\
-            hospitalization_nurse.cc AS responsible_nurse_id,\
-            surgery.id AS surgery_id,\
-            surgery.start_time AS surgery_start,\
-            surgery_doctor.name AS surgery_doctor,\
-            surgery_doctor.cc AS surgery_doctor_id,\
-            surgery_nurse.name AS surgery_nurse,\
-            surgery_nurse.cc AS surgery_nurse_id\
-        FROM \
-        TopPatients tp\
-        JOIN patient ON tp.patient_id = patient.cc\
-        LEFT JOIN appointment ON patient.cc = appointment.patient_cc\
-        LEFT JOIN employee appointment_doctor ON appointment_doctor.cc = appointment.doctor_cc\
-        LEFT JOIN appointment_role ON appointment.id = appointment_role.appointment_id\
-        LEFT JOIN employee appointment_nurse ON appointment_role.nurse_cc = appointment_nurse.cc\
-        LEFT JOIN hospitalization ON patient.cc = hospitalization.patient_cc\
-        LEFT JOIN employee hospitalization_nurse ON hospitalization.nurse_cc = hospitalization_nurse.cc\
-        LEFT JOIN surgery ON hospitalization.id = surgery.hospitalization_id\
-        LEFT JOIN surgery_role ON surgery.id = surgery_role.surgery_id\
-        LEFT JOIN employee surgery_nurse ON surgery_nurse.cc = surgery_role.nurse_cc\
-        LEFT JOIN employee surgery_doctor ON surgery_doctor.cc = surgery.doctor_cc\
-        ORDER BY \
-        tp.total_amount, patient_id, hospitalization.id, surgery.id DESC;'
+
+        statement = statement = """WITH MonthlyPayments AS (
+                                    SELECT
+                                        p.cc AS patient_id,
+                                        SUM(pay.amount) AS total_amount
+                                    FROM
+                                        payment pay
+                                        LEFT JOIN appointment a ON a.bill_id = pay.bill_id
+                                        LEFT JOIN hospitalization h ON h.bill_id = pay.bill_id
+                                        LEFT JOIN patient p ON p.cc = a.patient_cc OR p.cc = h.patient_cc
+                                    WHERE 
+                                        EXTRACT(YEAR FROM pay.date_time) = EXTRACT(YEAR FROM CURRENT_DATE)
+                                        AND EXTRACT(MONTH FROM pay.date_time) = EXTRACT(MONTH FROM CURRENT_DATE)
+                                    GROUP BY 
+                                        p.cc
+                                    ),
+                                    TopPatients AS (
+                                        SELECT 
+                                            patient_id,
+                                            total_amount
+                                        FROM 
+                                            MonthlyPayments
+                                        ORDER BY 
+                                            total_amount DESC
+                                        LIMIT 3
+                                    )
+                                    SELECT 
+                                        patient.name AS patient_name,
+                                        patient.cc AS patient_id,
+                                        tp.total_amount AS total_amount,
+
+                                        appointment.id AS appointment_id,
+                                        appointment.start_time AS appointment_start,
+                                        appointment_doctor.name AS doctor_name,
+                                        appointment_doctor.email AS doctor_id,
+                                        appointment_nurse.name AS nurse_name,
+
+                                        surgery.id AS surgery_id,
+                                        surgery.start_time AS surgery_start,
+                                        surgery_doctor.name AS surgery_doctor,
+                                        surgery_doctor.email AS surgery_doctor_id,
+                                        surgery_nurse.name AS surgery_nurse,
+                                        surgery_nurse.email AS surgery_nurse_id
+                                    FROM 
+                                        TopPatients tp
+                                        JOIN patient ON tp.patient_id = patient.cc
+                                        LEFT JOIN appointment ON patient.cc = appointment.patient_cc
+
+
+                                        LEFT JOIN employee appointment_doctor ON appointment_doctor.email = appointment.doctor_email
+                                        LEFT JOIN appointment_role ON appointment.id = appointment_role.appointment_id
+                                        LEFT JOIN employee appointment_nurse ON appointment_role.nurse_email = appointment_nurse.email
+
+                                        LEFT JOIN hospitalization ON patient.cc = hospitalization.patient_cc
+
+                                        LEFT JOIN surgery ON hospitalization.id = surgery.hospitalization_id
+                                        LEFT JOIN surgery_role ON surgery.id = surgery_role.surgery_id
+                                        LEFT JOIN employee surgery_nurse ON surgery_nurse.email = surgery_role.nurse_email
+                                        LEFT JOIN employee surgery_doctor ON surgery_doctor.email = surgery.doctor_email
+                                    ORDER BY 
+                                        tp.total_amount, patient_id, hospitalization.id, surgery.id DESC;"""
         cur.execute(statement)
         rows = cur.fetchall()
         print(rows)
