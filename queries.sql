@@ -350,6 +350,7 @@ DECLARE
 	bill_patient INTEGER;
 	bill_amount INTEGER;
 	paid_amount INTEGER;
+	bill_paid BOOLEAN;
 BEGIN
 	IF (payment_amount <= 0) THEN
 		RAISE EXCEPTION 'Payment must be positive';
@@ -371,6 +372,13 @@ BEGIN
 		RAISE EXCEPTION 'Only the patient can pay the bill';
 	END IF;
 
+	SELECT paid INTO bill_paid
+	FROM bill
+	WHERE id = id_bill;
+
+	IF (bill_paid) THEN
+		RAISE EXCEPTION 'Bill already paid';
+	END IF;
 
 	SELECT SUM(amount) INTO paid_amount
 	FROM payment
