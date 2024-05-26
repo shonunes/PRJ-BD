@@ -23,9 +23,10 @@ import psycopg2
 import time
 from functools import wraps
 from werkzeug.security import generate_password_hash, check_password_hash
+from cryptography.fernet import Fernet
+import json
 
 app = flask.Flask(__name__)
-app.config['SECRET_KEY'] = 'jyrcv1+lR#acVxK'
 
 StatusCodes = {
     'success': 200,
@@ -33,6 +34,20 @@ StatusCodes = {
     'internal_error': 500
 }
 
+def load_config(file_path="secret.key"):
+    with open(file_path, "rb") as key_file:
+        key = key_file.read()
+
+    cipher_suite = Fernet(key)
+
+    with open("config.enc", "rb") as enc_file:
+        encrypted_data = enc_file.read()
+
+    decrypted_data = cipher_suite.decrypt(encrypted_data)
+
+    config_data = json.loads(decrypted_data.decode())
+
+    return config_data
 
 
 ##########################################################
@@ -40,12 +55,13 @@ StatusCodes = {
 ##########################################################
 
 def db_connection():
+    credentials = load_config()
     db = psycopg2.connect(
-        user='postgres',
-        password='postgres',
-        host='127.0.0.1',
-        port='5432',
-        database='prjDB'
+        user = credentials['user'],
+        password = credentials['password'],
+        host = credentials['host'],
+        port = credentials['port'],
+        database = credentials['database']
     )
 
     return db
@@ -1054,13 +1070,15 @@ def add_prescription(user_id, user_type):
 ##########################################################
 
 if __name__ == '__main__':
-
     # set up logging
     logging.basicConfig(filename='log_file.log')
     logger = logging.getLogger('logger')
     logger.setLevel(logging.DEBUG)
     ch = logging.StreamHandler()
     ch.setLevel(logging.DEBUG)
+    
+    config = load_config()
+    app.config['SECRET_KEY'] = config['SECRET_KEY']
 
     # create formatter
     formatter = logging.Formatter('%(asctime)s [%(levelname)s]:  %(message)s', '%H:%M:%S')
