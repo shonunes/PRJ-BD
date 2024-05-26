@@ -347,7 +347,8 @@ RETURNS INTEGER
 LANGUAGE plpgsql
 AS $$
 DECLARE
-	bill_patient INTEGER;
+	appt_cc BIGINT;
+	hosp_cc BIGINT;
 	bill_amount INTEGER;
 	paid_amount INTEGER;
 	bill_paid BOOLEAN;
@@ -356,15 +357,23 @@ BEGIN
 		RAISE EXCEPTION 'Payment must be positive';
 	END IF;
 
-	SELECT patient_cc INTO bill_patient
-	FROM appointment
-	WHERE bill_id = id_bill;
-
-	IF (bill_patient IS NULL) THEN
-		SELECT patient_cc INTO bill_patient
-		FROM hospitalization
-		WHERE bill_id = id_bill;
-	END IF;
+	SELECT
+		sum,
+		b.amount,
+		paid,
+		appt.patient_cc,
+		hosp.patient_cc
+	INTO 
+		paid_amount, 
+		bill_amount,
+		bill_paid,
+		appt_cc,
+		hosp_cc
+	FROM payment_sum AS ps
+	LEFT JOIN bill AS b ON b.id = ps.id
+	LEFT JOIN appointment AS appt ON appt.bill_id = ps.id
+	LEFT JOIN hospitalization AS hosp ON hosp.bill_id = ps.id
+	WHERE ps.id = id_bill;
 
 	IF (bill_patient IS NULL) THEN
 		RAISE EXCEPTION 'Bill not found';
@@ -372,24 +381,9 @@ BEGIN
 		RAISE EXCEPTION 'Only the patient can pay the bill';
 	END IF;
 
-	SELECT paid INTO bill_paid
-	FROM bill
-	WHERE id = id_bill;
-
 	IF (bill_paid) THEN
 		RAISE EXCEPTION 'Bill already paid';
 	END IF;
-
-	SELECT SUM(amount) INTO paid_amount
-	FROM payment
-	WHERE bill_id = id_bill;
-	IF (paid_amount IS NULL) THEN
-		paid_amount = 0;
-	END IF;
-
-	SELECT amount INTO bill_amount
-	FROM bill
-	WHERE id = id_bill;
 
 	IF (paid_amount + payment_amount > bill_amount) THEN
 		RAISE EXCEPTION 'Payment amount exceeds bill amount';
@@ -405,6 +399,7 @@ BEGIN
 	RETURN bill_amount - paid_amount - payment_amount;
 END;
 $$;
+
 
 /* ADD PRESCRIPTIONS AND MEDICINE */
 CREATE OR REPLACE FUNCTION add_prescription(type VARCHAR, val DATE, event_id BIGINT) 
@@ -524,6 +519,16 @@ END;
 $$;
 
 
+/* VIEWS */
+CREATE OR REPLACE VIEW appt_prescriptions AS
+SELECT ap.prescription_id AS id, a.patient_cc
+FROM appointment_prescription AS ap
+JOIN appointment AS a ON a.id = ap.appointment_id;
+
+CREATE OR REPLACE VIEW hosp_prescriptions AS
+SELECT hp.prescription_id AS id, h.patient_cc
+FROM hospitalization_prescription AS hp
+JOIN hospitalization AS h ON h.id = hp.hospitalization_id;
 
 
 CREATE OR REPLACE VIEW hospitalization_counts AS
@@ -545,7 +550,7 @@ SELECT
 	TO_CHAR(DATE_TRUNC('month', start_time), 'YYYY-MM') AS surgery_month,
 	COUNT(id) AS surgery_count
 FROM surgery
-WHERE start_time >= (CURRENT_DATE - INTERVAL '1 year')
+WHERE start_time >= (CURRENT_DATE - INTERVAL '1 year') AND start_time < CURRENT_DATE
 GROUP BY doctor_email, DATE_TRUNC('month', start_time);
 
 CREATE OR REPLACE VIEW max_monthly_surgery_count AS
@@ -554,3 +559,9 @@ SELECT
 	MAX(surgery_count) AS max_surgery_count
 FROM doctor_monthly_surgeries
 GROUP BY surgery_month;
+
+CREATE OR REPLACE VIEW payment_sum AS
+SELECT COALESCE(SUM(p.amount), 0) AS sum, b.id
+FROM bill AS b
+LEFT JOIN payment AS p ON p.bill_id = b.id
+GROUP BY b.id;

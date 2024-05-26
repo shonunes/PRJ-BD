@@ -3,7 +3,7 @@
 ## ============== Bases de Dados ===============
 ## ============== LEI  2023/2024 ===============
 ## =============================================
-## =================== Demo ====================
+## ============== Course Project ===============
 ## =============================================
 ## =============================================
 ## === Department of Informatics Engineering ===
@@ -870,13 +870,14 @@ def get_top3():
                 p.cc
         ),
         TopPatients AS (
-            SELECT TOP 3
+            SELECT
                 patient_id,
                 total_amount
             FROM 
                 MonthlyPayments
             ORDER BY 
                 total_amount DESC
+            LIMIT 3
         )
         SELECT 
             patient.name AS patient_name,
@@ -973,6 +974,76 @@ def validate_side_effects(side_effects):
             if field not in side_effect:
                 return False
     return True
+
+
+##
+## GET
+##
+## Get Prescriptions
+##
+## Only employees and the target patient can use this endpoint
+##
+## To use it, access:
+##
+## http://localhost:8080/dbproj/prescriptions/<person_id>
+##
+@app.route('/dbproj/prescriptions/<person_id>', methods=['GET'])
+@token_required(['assistant', 'nurse', 'doctor', 'patient'])
+def get_prescriptions(person_id, user_id, user_type):
+    logger.info('GET /dbproj/prescriptions/<person_id>')
+
+    logger.debug(f'person_id: {person_id}, token_id: {user_id}, token_type: {user_type}')
+
+    try:
+        person_id = int(person_id)
+    except ValueError:
+        response = {'status': StatusCodes['api_error'], 'errors': 'Invalid person_id'}
+        return flask.jsonify(response), response['status']
+
+    if (user_type == 'patient' and user_id != person_id):
+        response = {'status': StatusCodes['api_error'], 'errors': 'Unauthorized'}
+        return flask.jsonify(response), response['status']
+
+    statement = '''
+        SELECT p.id, p.validity, md.quantity, md.frequency, md.medicine_name
+        FROM prescription AS p
+        JOIN medicine_dosage AS md ON md.prescription_id = p.id
+        LEFT JOIN appt_prescriptions AS ap ON ap.id = p.id
+        LEFT JOIN hosp_prescriptions AS hp ON hp.id = p.id
+        WHERE (ap.patient_cc = %s OR hp.patient_cc = %s)
+        AND p.validity >= CURRENT_DATE
+        ORDER BY p.id;
+    '''
+    value = (person_id, person_id,)
+
+    conn = db_connection()
+    cur = conn.cursor()
+
+    try:
+        cur.execute(statement, value)
+        rows = cur.fetchall()
+
+        prescriptions = []
+        for row in rows:
+            prescriptions.append({'id': int(row[0]), 'validity': row[1], 'posology': [{'dose': row[2], 'frequency': row[3], 'medicine': row[4]}]})
+
+        response = {'status': StatusCodes['success'], 'results': prescriptions}
+
+        # commit the transaction
+        conn.commit()
+
+    except (Exception, psycopg2.DatabaseError) as error:
+        logger.error(f'GET /dbproj/prescriptions/<person_id> - error: {error}')
+        response = {'status': StatusCodes['internal_error'], 'errors': str(error)}
+
+        # an error occurred, rollback
+        conn.rollback()
+
+    finally:
+        if conn is not None:
+            conn.close()
+
+    return flask.jsonify(response), response['status']
 
 
 ##

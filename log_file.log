@@ -1,0 +1,283 @@
+INFO:werkzeug:[31m[1mWARNING: This is a development server. Do not use it in a production deployment. Use a production WSGI server instead.[0m
+ * Running on http://127.0.0.1:8080
+INFO:werkzeug:[33mPress CTRL+C to quit[0m
+INFO:werkzeug: * Restarting with watchdog (windowsapi)
+WARNING:werkzeug: * Debugger is active!
+INFO:werkzeug: * Debugger PIN: 137-437-087
+INFO:werkzeug:127.0.0.1 - - [26/May/2024 12:45:45] "[31m[1mPOST /dbproj/prescription HTTP/1.1[0m" 400 -
+INFO:logger:PUT /dbproj/user
+DEBUG:logger:PUT /dbproj/user - payload: {'username': 'carlossimoes@gmail.com', 'password': 'carlossimoes'}
+INFO:werkzeug:127.0.0.1 - - [26/May/2024 12:45:55] "PUT /dbproj/user HTTP/1.1" 200 -
+INFO:logger:POST /dbproj/prescription
+DEBUG:logger:POST /dbproj/prescription - payload: {'type': 'hospitalization', 'event_id': 5, 'validity': '2024-12-31', 'medicines': [{'name': 'medicine1', 'posology_dose': '1 pill', 'posology_frequency': 'every 3 hours', 'side_effects': [{'occurrence': 'diarrhea', 'description': 'diabolical diarrhea', 'severity': 'the worst'}]}]}, token_id: carlossimoes@gmail.com, token_type: assistant
+INFO:werkzeug:127.0.0.1 - - [26/May/2024 12:46:10] "POST /dbproj/prescription HTTP/1.1" 200 -
+INFO:logger:API v1.0 online: http://127.0.0.1:8080
+INFO:logger:API v1.0 online: http://127.0.0.1:8080
+INFO:werkzeug:[31m[1mWARNING: This is a development server. Do not use it in a production deployment. Use a production WSGI server instead.[0m
+ * Running on http://127.0.0.1:8080
+INFO:werkzeug:[33mPress CTRL+C to quit[0m
+INFO:werkzeug: * Restarting with watchdog (windowsapi)
+WARNING:werkzeug: * Debugger is active!
+INFO:werkzeug: * Debugger PIN: 137-437-087
+INFO:logger:PUT /dbproj/user
+DEBUG:logger:PUT /dbproj/user - payload: {'username': 'carlossimoes@gmail.com', 'password': 'carlossimoes'}
+INFO:werkzeug:127.0.0.1 - - [26/May/2024 12:47:22] "PUT /dbproj/user HTTP/1.1" 200 -
+INFO:logger:GET /dbproj/daily/<date>
+DEBUG:logger:GET /dbproj/daily/2024-06-06 - token_id: carlossimoes@gmail.com, token_type: assistant
+INFO:werkzeug:127.0.0.1 - - [26/May/2024 12:47:38] "GET /dbproj/daily/2024-06-06 HTTP/1.1" 200 -
+INFO:logger:GET /dbproj/daily/<date>
+DEBUG:logger:GET /dbproj/daily/2024-06-07 - token_id: carlossimoes@gmail.com, token_type: assistant
+INFO:werkzeug:127.0.0.1 - - [26/May/2024 12:47:49] "GET /dbproj/daily/2024-06-07 HTTP/1.1" 200 -
+INFO:logger:GET /dbproj/daily/<date>
+DEBUG:logger:GET /dbproj/daily/2024-06-05 - token_id: carlossimoes@gmail.com, token_type: assistant
+INFO:werkzeug:127.0.0.1 - - [26/May/2024 12:47:54] "GET /dbproj/daily/2024-06-05 HTTP/1.1" 200 -
+INFO:logger:GET /dbproj/daily/<date>
+DEBUG:logger:GET /dbproj/daily/2024-06-04 - token_id: carlossimoes@gmail.com, token_type: assistant
+INFO:werkzeug:127.0.0.1 - - [26/May/2024 12:47:59] "GET /dbproj/daily/2024-06-04 HTTP/1.1" 200 -
+INFO:logger:GET /dbproj/daily/<date>
+DEBUG:logger:GET /dbproj/daily/2024-06-08 - token_id: carlossimoes@gmail.com, token_type: assistant
+INFO:werkzeug:127.0.0.1 - - [26/May/2024 12:48:02] "GET /dbproj/daily/2024-06-08 HTTP/1.1" 200 -
+INFO:logger:GET /dbproj/daily/<date>
+DEBUG:logger:GET /dbproj/daily/2024-06-09 - token_id: carlossimoes@gmail.com, token_type: assistant
+INFO:werkzeug:127.0.0.1 - - [26/May/2024 12:48:12] "GET /dbproj/daily/2024-06-09 HTTP/1.1" 200 -
+INFO:logger:GET /dbproj/daily/<date>
+DEBUG:logger:GET /dbproj/daily/2024-06-08 - token_id: carlossimoes@gmail.com, token_type: assistant
+INFO:werkzeug:127.0.0.1 - - [26/May/2024 12:48:16] "GET /dbproj/daily/2024-06-08 HTTP/1.1" 200 -
+INFO:logger:API v1.0 online: http://127.0.0.1:8080
+INFO:logger:API v1.0 online: http://127.0.0.1:8080
+INFO:werkzeug:[31m[1mWARNING: This is a development server. Do not use it in a production deployment. Use a production WSGI server instead.[0m
+ * Running on http://127.0.0.1:8080
+INFO:werkzeug:[33mPress CTRL+C to quit[0m
+INFO:werkzeug: * Restarting with watchdog (windowsapi)
+WARNING:werkzeug: * Debugger is active!
+INFO:werkzeug: * Debugger PIN: 137-437-087
+INFO:werkzeug:127.0.0.1 - - [26/May/2024 13:09:13] "[31m[1mGET /dbproj/report HTTP/1.1[0m" 400 -
+INFO:logger:PUT /dbproj/user
+DEBUG:logger:PUT /dbproj/user - payload: {'username': 'carlossimoes@gmail.com', 'password': 'carlossimoes'}
+INFO:werkzeug:127.0.0.1 - - [26/May/2024 13:09:18] "PUT /dbproj/user HTTP/1.1" 200 -
+INFO:logger:GET /dbproj/report
+DEBUG:logger:token_id: carlossimoes@gmail.com, token_type: assistant
+INFO:werkzeug:127.0.0.1 - - [26/May/2024 13:09:29] "GET /dbproj/report HTTP/1.1" 200 -
+INFO:logger:API v1.0 online: http://127.0.0.1:8080
+INFO:logger:API v1.0 online: http://127.0.0.1:8080
+INFO:werkzeug:[31m[1mWARNING: This is a development server. Do not use it in a production deployment. Use a production WSGI server instead.[0m
+ * Running on http://127.0.0.1:8080
+INFO:werkzeug:[33mPress CTRL+C to quit[0m
+INFO:werkzeug: * Restarting with watchdog (windowsapi)
+WARNING:werkzeug: * Debugger is active!
+INFO:werkzeug: * Debugger PIN: 137-437-087
+INFO:logger:PUT /dbproj/user
+DEBUG:logger:PUT /dbproj/user - payload: {'username': 'carlossimoes@gmail.com', 'password': 'carlossimoes'}
+INFO:werkzeug:127.0.0.1 - - [26/May/2024 14:08:45] "PUT /dbproj/user HTTP/1.1" 200 -
+INFO:werkzeug:127.0.0.1 - - [26/May/2024 14:09:02] "[31m[1mGET /dbproj/daily/2024-06-08 HTTP/1.1[0m" 400 -
+INFO:logger:GET /dbproj/daily/<date>
+DEBUG:logger:GET /dbproj/daily/2024-06-08 - token_id: carlossimoes@gmail.com, token_type: assistant
+INFO:werkzeug:127.0.0.1 - - [26/May/2024 14:09:09] "GET /dbproj/daily/2024-06-08 HTTP/1.1" 200 -
+INFO:logger:GET /dbproj/report
+DEBUG:logger:token_id: carlossimoes@gmail.com, token_type: assistant
+INFO:werkzeug:127.0.0.1 - - [26/May/2024 14:09:18] "GET /dbproj/report HTTP/1.1" 200 -
+INFO:logger:API v1.0 online: http://127.0.0.1:8080
+INFO:logger:API v1.0 online: http://127.0.0.1:8080
+INFO:werkzeug:[31m[1mWARNING: This is a development server. Do not use it in a production deployment. Use a production WSGI server instead.[0m
+ * Running on http://127.0.0.1:8080
+INFO:werkzeug:[33mPress CTRL+C to quit[0m
+INFO:werkzeug: * Restarting with watchdog (windowsapi)
+WARNING:werkzeug: * Debugger is active!
+INFO:werkzeug: * Debugger PIN: 137-437-087
+INFO:logger:GET /dbproj/report
+DEBUG:logger:token_id: carlossimoes@gmail.com, token_type: assistant
+INFO:werkzeug:127.0.0.1 - - [26/May/2024 14:11:18] "GET /dbproj/report HTTP/1.1" 200 -
+INFO:logger:API v1.0 online: http://127.0.0.1:8080
+INFO:logger:API v1.0 online: http://127.0.0.1:8080
+INFO:werkzeug:[31m[1mWARNING: This is a development server. Do not use it in a production deployment. Use a production WSGI server instead.[0m
+ * Running on http://127.0.0.1:8080
+INFO:werkzeug:[33mPress CTRL+C to quit[0m
+INFO:werkzeug: * Restarting with watchdog (windowsapi)
+WARNING:werkzeug: * Debugger is active!
+INFO:werkzeug: * Debugger PIN: 137-437-087
+INFO:logger:PUT /dbproj/user
+DEBUG:logger:PUT /dbproj/user - payload: {'username': 'carlossimoes@gmail.com', 'password': 'carlossimoes'}
+INFO:werkzeug:127.0.0.1 - - [26/May/2024 15:42:07] "PUT /dbproj/user HTTP/1.1" 200 -
+INFO:logger:GET /dbproj/prescriptions/<person_id>
+DEBUG:logger:person_id: 21345483, token_id: carlossimoes@gmail.com, token_type: assistant
+INFO:werkzeug:127.0.0.1 - - [26/May/2024 15:43:16] "GET /dbproj/prescriptions/21345483 HTTP/1.1" 200 -
+INFO:logger:API v1.0 online: http://127.0.0.1:8080
+INFO:logger:API v1.0 online: http://127.0.0.1:8080
+INFO:werkzeug:[31m[1mWARNING: This is a development server. Do not use it in a production deployment. Use a production WSGI server instead.[0m
+ * Running on http://127.0.0.1:8080
+INFO:werkzeug:[33mPress CTRL+C to quit[0m
+INFO:werkzeug: * Restarting with watchdog (windowsapi)
+WARNING:werkzeug: * Debugger is active!
+INFO:werkzeug: * Debugger PIN: 137-437-087
+INFO:logger:GET /dbproj/prescriptions/<person_id>
+DEBUG:logger:person_id: 21345483, token_id: carlossimoes@gmail.com, token_type: assistant
+INFO:werkzeug:127.0.0.1 - - [26/May/2024 15:43:59] "GET /dbproj/prescriptions/21345483 HTTP/1.1" 200 -
+INFO:logger:GET /dbproj/prescriptions/<person_id>
+DEBUG:logger:person_id: 2134548, token_id: carlossimoes@gmail.com, token_type: assistant
+INFO:werkzeug:127.0.0.1 - - [26/May/2024 15:44:05] "GET /dbproj/prescriptions/2134548 HTTP/1.1" 200 -
+INFO:logger:GET /dbproj/prescriptions/<person_id>
+DEBUG:logger:person_id: 21345483, token_id: carlossimoes@gmail.com, token_type: assistant
+INFO:werkzeug:127.0.0.1 - - [26/May/2024 15:44:08] "GET /dbproj/prescriptions/21345483 HTTP/1.1" 200 -
+INFO:logger:API v1.0 online: http://127.0.0.1:8080
+INFO:logger:API v1.0 online: http://127.0.0.1:8080
+INFO:werkzeug:[31m[1mWARNING: This is a development server. Do not use it in a production deployment. Use a production WSGI server instead.[0m
+ * Running on http://127.0.0.1:8080
+INFO:werkzeug:[33mPress CTRL+C to quit[0m
+INFO:werkzeug: * Restarting with watchdog (windowsapi)
+WARNING:werkzeug: * Debugger is active!
+INFO:werkzeug: * Debugger PIN: 137-437-087
+INFO:logger:PUT /dbproj/user
+DEBUG:logger:PUT /dbproj/user - payload: {'username': 21345483, 'password': 'carlosgodinho'}
+INFO:werkzeug:127.0.0.1 - - [26/May/2024 19:24:47] "PUT /dbproj/user HTTP/1.1" 200 -
+INFO:logger:POST /dbproj/bills/<bill_id>
+DEBUG:logger:POST /dbproj/bills/8 - payload: {'amount': 45, 'payment_method': 'card'}, token_id: 21345483, token_type: patient
+ERROR:logger:POST /dbproj/bills/<bill_id> - error: ERRO:  Bill not found
+CONTEXT:  função PL/pgSQL execute_payment(bigint,integer,character varying,bigint) linha 38 em RAISE
+
+INFO:werkzeug:127.0.0.1 - - [26/May/2024 19:25:00] "[35m[1mPOST /dbproj/bills/8 HTTP/1.1[0m" 500 -
+INFO:logger:API v1.0 online: http://127.0.0.1:8080
+INFO:logger:API v1.0 online: http://127.0.0.1:8080
+INFO:werkzeug:[31m[1mWARNING: This is a development server. Do not use it in a production deployment. Use a production WSGI server instead.[0m
+ * Running on http://127.0.0.1:8080
+INFO:werkzeug:[33mPress CTRL+C to quit[0m
+INFO:werkzeug: * Restarting with watchdog (windowsapi)
+WARNING:werkzeug: * Debugger is active!
+INFO:werkzeug: * Debugger PIN: 137-437-087
+INFO:logger:POST /dbproj/bills/<bill_id>
+DEBUG:logger:POST /dbproj/bills/8 - payload: {'amount': 45, 'payment_method': 'card'}, token_id: 21345483, token_type: patient
+ERROR:logger:POST /dbproj/bills/<bill_id> - error: ERRO:  referência à coluna "bill_id" é ambígua
+LINE 9:  WHERE bill_id = id_bill
+               ^
+QUERY:  WITH payment_sum AS (
+		SELECT SUM(amount) AS sum, bill_id
+		FROM payment
+		GROUP BY bill_id
+	)
+	SELECT sum, bill.amount, paid, patient_cc                                                         FROM payment_sum
+	LEFT JOIN bill ON bill.id = payment_sum.bill_id
+	LEFT JOIN appointment ON appointment.bill_id = payment_sum.bill_id
+	WHERE bill_id = id_bill
+CONTEXT:  função PL/pgSQL execute_payment(bigint,integer,character varying,bigint) linha 12 em comando SQL
+
+INFO:werkzeug:127.0.0.1 - - [26/May/2024 19:29:50] "[35m[1mPOST /dbproj/bills/8 HTTP/1.1[0m" 500 -
+INFO:logger:POST /dbproj/bills/<bill_id>
+DEBUG:logger:POST /dbproj/bills/8 - payload: {'amount': 45, 'payment_method': 'card'}, token_id: 21345483, token_type: patient
+ERROR:logger:POST /dbproj/bills/<bill_id> - error: ERRO:  Bill not found
+CONTEXT:  função PL/pgSQL execute_payment(bigint,integer,character varying,bigint) linha 37 em RAISE
+
+INFO:werkzeug:127.0.0.1 - - [26/May/2024 19:31:12] "[35m[1mPOST /dbproj/bills/8 HTTP/1.1[0m" 500 -
+INFO:logger:POST /dbproj/bills/<bill_id>
+DEBUG:logger:POST /dbproj/bills/8 - payload: {'amount': 45, 'payment_method': 'card'}, token_id: 21345483, token_type: patient
+ERROR:logger:POST /dbproj/bills/<bill_id> - error: ERRO:  coluna p.bill_id não existe
+LINE 10:  LEFT JOIN prescription AS p ON p.bill_id = ps.id
+                                         ^
+QUERY:  WITH payment_sum AS (
+		SELECT COALESCE(SUM(p.amount), 0) AS sum, b.id
+		FROM bill AS b
+		LEFT JOIN payment AS p ON p.bill_id = b.id
+		GROUP BY b.id
+	)
+	SELECT sum, b.amount, paid, patient_cc
+	FROM payment_sum AS ps
+	LEFT JOIN bill AS b ON b.id = ps.id
+	LEFT JOIN prescription AS p ON p.bill_id = ps.id
+	WHERE ps.id = id_bill
+CONTEXT:  função PL/pgSQL execute_payment(bigint,integer,character varying,bigint) linha 12 em comando SQL
+
+INFO:werkzeug:127.0.0.1 - - [26/May/2024 19:37:53] "[35m[1mPOST /dbproj/bills/8 HTTP/1.1[0m" 500 -
+INFO:logger:POST /dbproj/bills/<bill_id>
+DEBUG:logger:POST /dbproj/bills/8 - payload: {'amount': 45, 'payment_method': 'card'}, token_id: 21345483, token_type: patient
+ERROR:logger:POST /dbproj/bills/<bill_id> - error: ERRO:  coluna presc.bill_id não existe
+LINE 10:  LEFT JOIN prescription AS presc ON presc.bill_id = ps.id
+                                             ^
+QUERY:  WITH payment_sum AS (
+		SELECT COALESCE(SUM(p.amount), 0) AS sum, b.id
+		FROM bill AS b
+		LEFT JOIN payment AS p ON p.bill_id = b.id
+		GROUP BY b.id
+	)
+	SELECT sum, b.amount, paid, patient_cc
+	FROM payment_sum AS ps
+	LEFT JOIN bill AS b ON b.id = ps.id
+	LEFT JOIN prescription AS presc ON presc.bill_id = ps.id
+	WHERE ps.id = id_bill
+CONTEXT:  função PL/pgSQL execute_payment(bigint,integer,character varying,bigint) linha 12 em comando SQL
+
+INFO:werkzeug:127.0.0.1 - - [26/May/2024 19:38:31] "[35m[1mPOST /dbproj/bills/8 HTTP/1.1[0m" 500 -
+INFO:werkzeug:127.0.0.1 - - [26/May/2024 19:39:55] "[31m[1mPOST /dbproj/bills/8 HTTP/1.1[0m" 400 -
+INFO:logger:PUT /dbproj/user
+DEBUG:logger:PUT /dbproj/user - payload: {'username': 21345483, 'password': 'carlosgodinho'}
+INFO:werkzeug:127.0.0.1 - - [26/May/2024 19:40:00] "PUT /dbproj/user HTTP/1.1" 200 -
+INFO:logger:POST /dbproj/bills/<bill_id>
+DEBUG:logger:POST /dbproj/bills/8 - payload: {'amount': 45, 'payment_method': 'card'}, token_id: 21345483, token_type: patient
+ERROR:logger:POST /dbproj/bills/<bill_id> - error: ERRO:  consulta não tem destino para os dados resultantes
+HINT:  Se você quer descartar os resultados de um SELECT, utilize PERFORM.
+CONTEXT:  função PL/pgSQL execute_payment(bigint,integer,character varying,bigint) linha 12 em comando SQL
+
+INFO:werkzeug:127.0.0.1 - - [26/May/2024 19:40:12] "[35m[1mPOST /dbproj/bills/8 HTTP/1.1[0m" 500 -
+INFO:logger:POST /dbproj/bills/<bill_id>
+DEBUG:logger:POST /dbproj/bills/8 - payload: {'amount': 45, 'payment_method': 'card'}, token_id: 21345483, token_type: patient
+INFO:werkzeug:127.0.0.1 - - [26/May/2024 19:41:24] "POST /dbproj/bills/8 HTTP/1.1" 200 -
+INFO:logger:POST /dbproj/bills/<bill_id>
+DEBUG:logger:POST /dbproj/bills/8 - payload: {'amount': 45, 'payment_method': 'card'}, token_id: 21345483, token_type: patient
+INFO:werkzeug:127.0.0.1 - - [26/May/2024 19:41:34] "POST /dbproj/bills/8 HTTP/1.1" 200 -
+INFO:logger:POST /dbproj/bills/<bill_id>
+DEBUG:logger:POST /dbproj/bills/8 - payload: {'amount': 4000, 'payment_method': 'card'}, token_id: 21345483, token_type: patient
+ERROR:logger:POST /dbproj/bills/<bill_id> - error: ERRO:  Payment amount exceeds bill amount
+CONTEXT:  função PL/pgSQL execute_payment(bigint,integer,character varying,bigint) linha 51 em RAISE
+
+INFO:werkzeug:127.0.0.1 - - [26/May/2024 19:41:42] "[35m[1mPOST /dbproj/bills/8 HTTP/1.1[0m" 500 -
+INFO:logger:POST /dbproj/bills/<bill_id>
+DEBUG:logger:POST /dbproj/bills/8 - payload: {'amount': 3000, 'payment_method': 'cash'}, token_id: 21345483, token_type: patient
+INFO:werkzeug:127.0.0.1 - - [26/May/2024 19:41:49] "POST /dbproj/bills/8 HTTP/1.1" 200 -
+INFO:logger:POST /dbproj/bills/<bill_id>
+DEBUG:logger:POST /dbproj/bills/8 - payload: {'amount': 910, 'payment_method': 'card'}, token_id: 21345483, token_type: patient
+INFO:werkzeug:127.0.0.1 - - [26/May/2024 19:42:06] "POST /dbproj/bills/8 HTTP/1.1" 200 -
+INFO:logger:POST /dbproj/bills/<bill_id>
+DEBUG:logger:POST /dbproj/bills/8 - payload: {'amount': 10, 'payment_method': 'card'}, token_id: 21345483, token_type: patient
+ERROR:logger:POST /dbproj/bills/<bill_id> - error: ERRO:  Bill already paid
+CONTEXT:  função PL/pgSQL execute_payment(bigint,integer,character varying,bigint) linha 45 em RAISE
+
+INFO:werkzeug:127.0.0.1 - - [26/May/2024 19:42:11] "[35m[1mPOST /dbproj/bills/8 HTTP/1.1[0m" 500 -
+INFO:logger:API v1.0 online: http://127.0.0.1:8080
+INFO:logger:API v1.0 online: http://127.0.0.1:8080
+INFO:werkzeug:[31m[1mWARNING: This is a development server. Do not use it in a production deployment. Use a production WSGI server instead.[0m
+ * Running on http://127.0.0.1:8080
+INFO:werkzeug:[33mPress CTRL+C to quit[0m
+INFO:werkzeug: * Restarting with watchdog (windowsapi)
+WARNING:werkzeug: * Debugger is active!
+INFO:werkzeug: * Debugger PIN: 137-437-087
+INFO:logger:POST /dbproj/bills/<bill_id>
+DEBUG:logger:POST /dbproj/bills/8 - payload: {'amount': 10, 'payment_method': 'card'}, token_id: 21345483, token_type: patient
+ERROR:logger:POST /dbproj/bills/<bill_id> - error: ERRO:  coluna p.bill_id não existe
+LINE 4:  LEFT JOIN prescription AS p ON p.bill_id = ps.id
+                                        ^
+QUERY:  SELECT sum, b.amount, paid, patient_cc
+	FROM payment_sum AS ps
+	LEFT JOIN bill AS b ON b.id = ps.id
+	LEFT JOIN prescription AS p ON p.bill_id = ps.id
+	WHERE ps.id = id_bill
+CONTEXT:  função PL/pgSQL execute_payment(bigint,integer,character varying,bigint) linha 13 em comando SQL
+
+INFO:werkzeug:127.0.0.1 - - [26/May/2024 19:43:55] "[35m[1mPOST /dbproj/bills/8 HTTP/1.1[0m" 500 -
+INFO:logger:POST /dbproj/bills/<bill_id>
+DEBUG:logger:POST /dbproj/bills/8 - payload: {'amount': 10, 'payment_method': 'card'}, token_id: 21345483, token_type: patient
+ERROR:logger:POST /dbproj/bills/<bill_id> - error: ERRO:  consulta não tem destino para os dados resultantes
+HINT:  Se você quer descartar os resultados de um SELECT, utilize PERFORM.
+CONTEXT:  função PL/pgSQL execute_payment(bigint,integer,character varying,bigint) linha 13 em comando SQL
+
+INFO:werkzeug:127.0.0.1 - - [26/May/2024 19:44:41] "[35m[1mPOST /dbproj/bills/8 HTTP/1.1[0m" 500 -
+INFO:logger:POST /dbproj/bills/<bill_id>
+DEBUG:logger:POST /dbproj/bills/8 - payload: {'amount': 10, 'payment_method': 'card'}, token_id: 21345483, token_type: patient
+ERROR:logger:POST /dbproj/bills/<bill_id> - error: ERRO:  Bill already paid
+CONTEXT:  função PL/pgSQL execute_payment(bigint,integer,character varying,bigint) linha 33 em RAISE
+
+INFO:werkzeug:127.0.0.1 - - [26/May/2024 19:45:26] "[35m[1mPOST /dbproj/bills/8 HTTP/1.1[0m" 500 -
+INFO:logger:POST /dbproj/bills/<bill_id>
+DEBUG:logger:POST /dbproj/bills/7 - payload: {'amount': 10, 'payment_method': 'card'}, token_id: 21345483, token_type: patient
+INFO:werkzeug:127.0.0.1 - - [26/May/2024 19:45:31] "POST /dbproj/bills/7 HTTP/1.1" 200 -
+INFO:logger:POST /dbproj/bills/<bill_id>
+DEBUG:logger:POST /dbproj/bills/7 - payload: {'amount': 1900, 'payment_method': 'card'}, token_id: 21345483, token_type: patient
+INFO:werkzeug:127.0.0.1 - - [26/May/2024 19:45:38] "POST /dbproj/bills/7 HTTP/1.1" 200 -
+INFO:logger:API v1.0 online: http://127.0.0.1:8080
+INFO:logger:API v1.0 online: http://127.0.0.1:8080

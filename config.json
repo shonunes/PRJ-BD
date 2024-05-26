@@ -1,8 +1,0 @@
-{
-    "SECRET_KEY": "jyrcv1+lR#acVxK",
-    "user": "postgres",
-    "password": "postgres",
-    "host": "127.0.0.1",
-    "port": "5432",
-    "database": "prjDB"
-}
