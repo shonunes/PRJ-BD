@@ -462,24 +462,9 @@ def schedule_appointment(user_id, user_type):
     statement = '''
         LOCK TABLE appointment IN EXCLUSIVE MODE;
         LOCK TABLE surgery IN EXCLUSIVE MODE;
+        SELECT schedule_appointment(%s, %s, %s)
     '''
-    # parameterized queries, good for security and performance
-    if ('nurses' in payload and payload['nurses'] != []):
-        nurse_ids = []
-        nurse_roles = []
-        try:
-            for nurse in payload['nurses']:
-                nurse_ids.append(nurse[0])
-                nurse_roles.append(nurse[1])
-        except IndexError:
-            response = {'status': StatusCodes['api_error'], 'errors': 'Invalid nurse information'}
-            return flask.jsonify(response), response['status']
-
-        statement += 'SELECT schedule_appointment(%s, %s, %s, %s, %s)'
-        values = (payload['appointment_time'], payload['doctor_id'], user_id, nurse_ids, nurse_roles,)
-    else:
-        statement += 'SELECT schedule_appointment(%s, %s, %s)'
-        values = (payload['appointment_time'], payload['doctor_id'], user_id,)
+    values = (payload['appointment_time'], payload['doctor_id'], user_id,)
 
     try:
         conn = db_connection()

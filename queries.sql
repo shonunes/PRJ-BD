@@ -162,12 +162,12 @@ BEFORE INSERT ON appointment
 FOR EACH ROW
 EXECUTE FUNCTION appointment_trig();
 
-CREATE OR REPLACE FUNCTION schedule_appointment(appointment_time TIMESTAMP, doctor_id VARCHAR(128), patient_id BIGINT, nurse_id VARCHAR(128)[] DEFAULT NULL, nurse_role VARCHAR(128)[] DEFAULT NULL)
-RETURNS INTEGER
+CREATE OR REPLACE FUNCTION schedule_appointment(appointment_time TIMESTAMP, doctor_id VARCHAR(128), patient_id BIGINT)
+RETURNS BIGINT
 LANGUAGE plpgsql
 AS $$
 DECLARE
-	appointment_id INTEGER;
+	appointment_id BIGINT;
 BEGIN
 	IF (appointment_time < CURRENT_TIMESTAMP) THEN
 		RAISE EXCEPTION 'Cannot schedule appointment in the past';
@@ -175,46 +175,23 @@ BEGIN
 		RAISE EXCEPTION 'Cannot schedule appointment more than 3 months in advance';
 	END IF;
 
-	IF (EXISTS (SELECT 1
-				FROM appointment
-				WHERE start_time = appointment_time
-				AND (doctor_email = doctor_id OR patient_cc = patient_id))
+	IF EXISTS (
+			SELECT 1
+			FROM appointment AS a
+			FULL OUTER JOIN surgery AS s ON TRUE
+			WHERE a.start_time = appointment_time
+			AND (a.doctor_email = doctor_id OR a.patient_cc = patient_id)
+			OR 
+			appointment_time
+			BETWEEN s.start_time AND s.end_time - INTERVAL '30 minutes'
+			AND s.doctor_email = doctor_id
 		) THEN
-		RAISE EXCEPTION 'Doctor or patient already has an appointment at this time';
-	ELSEIF (EXISTS (SELECT 1
-					FROM surgery
-					WHERE start_time
-					BETWEEN appointment_time - INTERVAL '2 hours' + INTERVAL '1 second' AND appointment_time
-					AND doctor_email = doctor_id)
-			) THEN
-		RAISE EXCEPTION 'Doctor already has a surgery at this time';
-	END IF;
-
-	IF (EXISTS (SELECT 1
-				FROM surgery AS s
-				JOIN surgery_role AS sr ON s.id = sr.surgery_id
-				WHERE s.start_time
-				BETWEEN appointment_time - INTERVAL '2 hours' + INTERVAL '1 second' AND appointment_time
-				AND sr.nurse_email = ANY(nurse_id))
-		) THEN
-		RAISE EXCEPTION 'One or more nurses are already involved in surgeries at this time';
-	ELSEIF (EXISTS (SELECT 1
-					FROM appointment AS a
-					JOIN appointment_role AS ar ON a.id = ar.appointment_id
-					WHERE a.start_time = appointment_time
-					AND ar.nurse_email = ANY(nurse_id))
-			) THEN
-		RAISE EXCEPTION 'One or more nurses are already involved in appointments at this time';
-	END IF;
+			RAISE EXCEPTION 'Doctor or patient occupied at this time';
+		END IF;
 
 	INSERT INTO appointment(start_time, doctor_email, patient_cc)
 	VALUES(appointment_time, doctor_id, patient_id)
 	RETURNING id INTO appointment_id;
-
-	IF (nurse_id IS NOT NULL) THEN
-		INSERT INTO appointment_role
-		VALUES(UNNEST(nurse_role), appointment_id, UNNEST(nurse_id));
-	END IF;
 
 	RETURN appointment_id;
 END;
