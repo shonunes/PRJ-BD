@@ -459,6 +459,10 @@ def schedule_appointment(user_id, user_type):
             response = {'status': StatusCodes['api_error'], 'errors': f'{arg} value not in payload'}
             return flask.jsonify(response), response['status']
 
+    statement = '''
+        LOCK TABLE appointment IN EXCLUSIVE MODE;
+        LOCK TABLE surgery IN EXCLUSIVE MODE;
+    '''
     # parameterized queries, good for security and performance
     if ('nurses' in payload and payload['nurses'] != []):
         nurse_ids = []
@@ -470,11 +474,11 @@ def schedule_appointment(user_id, user_type):
         except IndexError:
             response = {'status': StatusCodes['api_error'], 'errors': 'Invalid nurse information'}
             return flask.jsonify(response), response['status']
-        
-        statement = 'SELECT schedule_appointment(%s, %s, %s, %s, %s)'
+
+        statement += 'SELECT schedule_appointment(%s, %s, %s, %s, %s)'
         values = (payload['appointment_time'], payload['doctor_id'], user_id, nurse_ids, nurse_roles,)
     else:
-        statement = 'SELECT schedule_appointment(%s, %s, %s)'
+        statement += 'SELECT schedule_appointment(%s, %s, %s)'
         values = (payload['appointment_time'], payload['doctor_id'], user_id,)
 
     try:
@@ -607,7 +611,7 @@ def schedule_surgery(hospitalization_id, user_id, user_type):
     except ValueError:
         response = {'status': StatusCodes['api_error'], 'errors': 'Invalid patient_id'}
         return flask.jsonify(response), response['status']
-    
+
     nurse_ids = []
     nurse_roles = []
     try:
@@ -621,11 +625,15 @@ def schedule_surgery(hospitalization_id, user_id, user_type):
         response = {'status': StatusCodes['api_error'], 'errors': 'Invalid nurse information'}
         return flask.jsonify(response), response['status']
 
+    statement = '''
+        LOCK TABLE appointment IN EXCLUSIVE MODE;
+        LOCK TABLE surgery IN EXCLUSIVE MODE;
+    '''
     if (hospitalization_id):
-        statement = 'SELECT * FROM schedule_surgery(%s, %s, %s, %s, %s, %s, %s)'
+        statement += 'SELECT * FROM schedule_surgery(%s, %s, %s, %s, %s, %s, %s)'
         values = (payload['patient_id'], payload['doctor'], nurse_ids, nurse_roles, payload['surgery_start'], payload['surgery_end'], hospitalization_id,)
     else:
-        statement = 'SELECT * FROM schedule_surgery(%s, %s, %s, %s, %s, %s, %s, %s, %s, %s)'
+        statement += 'SELECT * FROM schedule_surgery(%s, %s, %s, %s, %s, %s, %s, %s, %s, %s)'
         values = (payload['patient_id'], payload['doctor'], nurse_ids, nurse_roles, payload['surgery_start'], payload['surgery_end'], None, payload['hospitalization_entry_time'], payload['hospitalization_exit_time'], payload['hospitalization_responsable_nurse'],)
 
     try:
@@ -637,12 +645,14 @@ def schedule_surgery(hospitalization_id, user_id, user_type):
 
         # commit the transaction
         conn.commit()
-        response = {'status': StatusCodes['success'], 'results': {'surgery_id': surgery_id, 
-                                                                  'hospitalization_id': hospitalization_id, 
-                                                                  'bill_id': bill_id, 
-                                                                  'patient_id': payload['patient_id'], 
-                                                                  'doctor_id': payload['doctor'], 
-                                                                  'date': payload['surgery_start']}}
+        response = {'status': StatusCodes['success'], 'results': {
+            'surgery_id': surgery_id, 
+            'hospitalization_id': hospitalization_id, 
+            'bill_id': bill_id, 
+            'patient_id': payload['patient_id'], 
+            'doctor_id': payload['doctor'], 
+            'date': payload['surgery_start']}
+        }
 
     except (Exception, psycopg2.DatabaseError) as error:
         logger.error(f'POST /dbproj/surgery - error: {error}')
@@ -793,6 +803,7 @@ def generate_monthly_report(user_id, user_type):
     logger.debug(f'token_id: {user_id}, token_type: {user_type}')
 
     statement = '''
+        LOCK TABLE surgery IN SHARE MODE;
         SELECT dms.surgery_month, e.name, dms.surgery_count
         FROM doctor_monthly_surgeries AS dms
         JOIN max_monthly_surgery_count AS month_maxs
