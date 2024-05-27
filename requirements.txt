@@ -1,0 +1,5 @@
+flask
+pyjwt
+psycopg2
+werkzeug
+cryptography
