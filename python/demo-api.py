@@ -249,7 +249,7 @@ def add_nurse():
         response = {'status': StatusCodes['api_error'], 'errors': 'Invalid cc, contract_id or salary'}
         return flask.jsonify(response), response['status']
     
-    if (payload['superior_email'] not in payload):
+    if ('superior_email' not in payload):
         payload['superior_email'] = None
 
     # generate password hash to store in the database

@@ -39,14 +39,14 @@ END;
 $$;
 
 /* ADD NURSE */
-CREATE OR REPLACE PROCEDURE add_nurse(cc_num BIGINT, name VARCHAR, hashcode VARCHAR, contract_id BIGINT, sal INT, contract_issue_date DATE, contract_due_date DATE, birthday DATE, email VARCHAR, email_superior BIGINT)
+CREATE OR REPLACE PROCEDURE add_nurse(cc_num BIGINT, name VARCHAR, hashcode VARCHAR, contract_id BIGINT, sal INT, contract_issue_date DATE, contract_due_date DATE, birthday DATE, email VARCHAR, email_superior VARCHAR)
 LANGUAGE plpgsql
 AS $$
 BEGIN
 	CALL add_emp(cc_num, name, hashcode, contract_id, sal, contract_issue_date, contract_due_date, birthday, email);
 	
 	INSERT INTO nurse VALUES(email);
-	IF (cc_superior IS NOT NULL) THEN
+	IF (email_superior IS NOT NULL) THEN
 		INSERT INTO nurse_hierarchy
 		VALUES(email, email_superior);
 	END IF;
