@@ -59,7 +59,7 @@ LANGUAGE plpgsql
 AS $$
 BEGIN
 	CALL add_emp(cc_num, name, hashcode, contract_id, sal, contract_issue_date, contract_due_date, birthday, email);
-	
+
 	INSERT INTO doctor
 	VALUES(email, license_id, license_comp, license_issue_date, license_due_date);
 
@@ -86,7 +86,7 @@ BEGIN
 
 	EXCEPTION
 		WHEN OTHERS THEN
-			RAISE EXCEPTION 'error adding specialty';
+			RAISE EXCEPTION 'error adding specialty: %', SQLERRM;
 END;
 $$;
 
@@ -115,32 +115,31 @@ RETURNS TABLE
 )
 LANGUAGE plpgsql
 AS $$
+DECLARE
+	assistant_email VARCHAR(128);
+	nurse_email VARCHAR(128);
+	doctor_email VARCHAR(128);
 BEGIN
-	SELECT 'assistant', e.hashcode INTO type, hashcode
+	SELECT e.hashcode, a.email, n.email, d.email 
+	INTO hashcode, assistant_email, nurse_email, doctor_email
 	FROM employee AS e
-	JOIN assistant AS a ON e.email = a.email
+	LEFT JOIN assistant AS a ON e.email = a.email
+	LEFT JOIN nurse AS n ON e.email = n.email
+	LEFT JOIN doctor AS d ON e.email = d.email
 	WHERE e.email = emp_email;
 
-	IF (type IS NULL) THEN
-		SELECT 'nurse', e.hashcode INTO type, hashcode
-		FROM employee AS e
-		JOIN nurse AS n ON e.email = n.email
-		WHERE e.email = emp_email;
-	END IF;
-	
-	IF (type IS NULL) THEN
-		SELECT 'doctor', e.hashcode INTO type, hashcode
-		FROM employee AS e
-		JOIN doctor AS d ON e.email = d.email
-		WHERE e.email = emp_email;
-	END IF;
-
-	IF (type IS NOT NULL) THEN
-		RETURN QUERY
-		SELECT type, hashcode;
+	IF (assistant_email IS NOT NULL) THEN
+		type := 'assistant';
+	ELSEIF (nurse_email IS NOT NULL) THEN
+		type := 'nurse';
+	ELSEIF (doctor_email IS NOT NULL) THEN
+		type := 'doctor';
 	ELSE
 		RAISE EXCEPTION 'Employee not found';
 	END IF;
+
+	RETURN QUERY
+	SELECT type, hashcode;
 END;
 $$;
 
@@ -379,13 +378,9 @@ BEGIN
 		RAISE EXCEPTION 'Bill not found';
 	ELSEIF (bill_patient != user_id) THEN
 		RAISE EXCEPTION 'Only the patient can pay the bill';
-	END IF;
-
-	IF (bill_paid) THEN
+	ELSEIF (bill_paid) THEN
 		RAISE EXCEPTION 'Bill already paid';
-	END IF;
-
-	IF (paid_amount + payment_amount > bill_amount) THEN
+	ELSEIF (paid_amount + payment_amount > bill_amount) THEN
 		RAISE EXCEPTION 'Payment amount exceeds bill amount';
 	ELSEIF (paid_amount + payment_amount = bill_amount) THEN
 		UPDATE bill
@@ -529,7 +524,6 @@ CREATE OR REPLACE VIEW hosp_prescriptions AS
 SELECT hp.prescription_id AS id, h.patient_cc
 FROM hospitalization_prescription AS hp
 JOIN hospitalization AS h ON h.id = hp.hospitalization_id;
-
 
 CREATE OR REPLACE VIEW hospitalization_counts AS
 SELECT h.id, COUNT(DISTINCT s.id) AS surgery_count, COUNT(DISTINCT hp.prescription_id) AS prescription_count

@@ -136,10 +136,10 @@ def add_patient():
     statement = 'CALL add_patient(%s, %s, %s, %s, %s, %s, %s)'
     values = (payload['cc'], payload['name'], hashed_password, payload['health_number'], payload['emergency_contact'], payload['birthday'], payload['email'],)
 
-    conn = db_connection()
-    cur = conn.cursor()
-
     try:
+        conn = db_connection()
+        cur = conn.cursor()
+
         cur.execute(statement, values)
 
         conn.commit()
@@ -195,10 +195,10 @@ def add_assistant():
     statement = 'CALL add_assistant(%s, %s, %s, %s, %s, %s, %s, %s, %s)'
     values = (payload['cc'], payload['name'], hashed_password, payload['contract_id'], payload['salary'], payload['contract_issue_date'], payload['contract_due_date'], payload['birthday'], payload['email'],)
 
-    conn = db_connection()
-    cur = conn.cursor()
-
     try:
+        conn = db_connection()
+        cur = conn.cursor()
+
         cur.execute(statement, values)
 
         # commit the transaction
@@ -263,6 +263,9 @@ def add_nurse():
     cur = conn.cursor()
 
     try:
+        conn = db_connection()
+        cur = conn.cursor()
+
         cur.execute(statement, values)
 
         # commit the transaction
@@ -320,10 +323,10 @@ def add_doctor():
     statement = 'CALL add_doctor(%s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s)'
     values = (payload['cc'], payload['name'], hashed_password, payload['contract_id'], payload['salary'], payload['contract_issue_date'], payload['contract_due_date'], payload['birthday'], payload['email'], payload['license_id'], payload['license_issue_date'], payload['license_due_date'], payload['license_company'], payload['specialty_name'],)
 
-    conn = db_connection()
-    cur = conn.cursor()
-
     try:
+        conn = db_connection()
+        cur = conn.cursor()
+
         cur.execute(statement, values)
 
         # commit the transaction
@@ -385,10 +388,10 @@ def login():
 
     value = (payload['username'],)
 
-    conn = db_connection()
-    cur = conn.cursor()
-
     try:
+        conn = db_connection()
+        cur = conn.cursor()
+
         cur.execute(statement, value)
 
         if (is_patient):
@@ -399,7 +402,7 @@ def login():
                 return flask.jsonify(response), response['status']
         else:
             user_type, hashcode = cur.fetchone()
-        
+
         if not check_password_hash(hashcode, payload['password']):
             response = {'status': StatusCodes['api_error'], 'errors': 'Invalid password'}
             return flask.jsonify(response), response['status']
@@ -410,7 +413,7 @@ def login():
 
         # generate token
         token = jwt.encode({'username': payload['username'], 'type': user_type, 'exp': time.time() + 900}, app.config['SECRET_KEY'], algorithm='HS256')
-        
+
         response = {'status': StatusCodes['success'], 'results': token}
 
         # commit the transaction
@@ -474,10 +477,10 @@ def schedule_appointment(user_id, user_type):
         statement = 'SELECT schedule_appointment(%s, %s, %s)'
         values = (payload['appointment_time'], payload['doctor_id'], user_id,)
 
-    conn = db_connection()
-    cur = conn.cursor()
-
     try:
+        conn = db_connection()
+        cur = conn.cursor()
+
         cur.execute(statement, values)
         appointment_id = cur.fetchone()[0]
 
@@ -532,10 +535,10 @@ def get_appointments(patient_user_id, user_id, user_type):
                 WHERE a.patient_cc = %s AND a.doctor_email = e.email'
     value = (patient_user_id,)
 
-    conn = db_connection()
-    cur = conn.cursor()
-
     try:
+        conn = db_connection()
+        cur = conn.cursor()
+
         cur.execute(statement, value)
         rows = cur.fetchall()
 
@@ -625,10 +628,10 @@ def schedule_surgery(hospitalization_id, user_id, user_type):
         statement = 'SELECT * FROM schedule_surgery(%s, %s, %s, %s, %s, %s, %s, %s, %s, %s)'
         values = (payload['patient_id'], payload['doctor'], nurse_ids, nurse_roles, payload['surgery_start'], payload['surgery_end'], None, payload['hospitalization_entry_time'], payload['hospitalization_exit_time'], payload['hospitalization_responsable_nurse'],)
 
-    conn = db_connection()
-    cur = conn.cursor()
-
     try:
+        conn = db_connection()
+        cur = conn.cursor()
+
         cur.execute(statement, values)
         surgery_id, hospitalization_id, bill_id = cur.fetchone()
 
@@ -689,10 +692,10 @@ def execute_payment(bill_id, user_id, user_type):
     statement = 'SELECT execute_payment(%s, %s, %s, %s)'
     values = (bill_id, payload['amount'], payload['payment_method'], user_id,)
 
-    conn = db_connection()
-    cur = conn.cursor()
-
     try:
+        conn = db_connection()
+        cur = conn.cursor()
+
         cur.execute(statement, values)
         remaining_amount = cur.fetchone()[0]
 
@@ -745,10 +748,10 @@ def daily_summary(date, user_id, user_type):
     '''
     values = (date,)
 
-    conn = db_connection()
-    cur = conn.cursor()
-
     try:
+        conn = db_connection()
+        cur = conn.cursor()
+
         cur.execute(statement, values)
         amount_spent, surgeries, prescriptions = cur.fetchone()
 
@@ -800,10 +803,10 @@ def generate_monthly_report(user_id, user_type):
         ORDER BY dms.surgery_month;
     '''
 
-    conn = db_connection()
-    cur = conn.cursor()
-
     try:
+        conn = db_connection()
+        cur = conn.cursor()
+
         cur.execute(statement)
         rows = cur.fetchall()
 
@@ -1016,10 +1019,10 @@ def get_prescriptions(person_id, user_id, user_type):
     '''
     value = (person_id, person_id,)
 
-    conn = db_connection()
-    cur = conn.cursor()
-
     try:
+        conn = db_connection()
+        cur = conn.cursor()
+
         cur.execute(statement, value)
         rows = cur.fetchall()
 
