@@ -659,6 +659,140 @@ def schedule_surgery(hospitalization_id, user_id, user_type):
 
 
 ##
+## GET
+##
+## Get Prescriptions
+##
+## Only employees and the target patient can use this endpoint
+##
+## To use it, access:
+##
+## http://localhost:8080/dbproj/prescriptions/<person_id>
+##
+@app.route('/dbproj/prescriptions/<person_id>', methods=['GET'])
+@token_required(['assistant', 'nurse', 'doctor', 'patient'])
+def get_prescriptions(person_id, user_id, user_type):
+    logger.info('GET /dbproj/prescriptions/<person_id>')
+
+    logger.debug(f'person_id: {person_id}, token_id: {user_id}, token_type: {user_type}')
+
+    try:
+        person_id = int(person_id)
+    except ValueError:
+        response = {'status': StatusCodes['api_error'], 'errors': 'Invalid person_id'}
+        return flask.jsonify(response), response['status']
+
+    if (user_type == 'patient' and user_id != person_id):
+        response = {'status': StatusCodes['api_error'], 'errors': 'Unauthorized'}
+        return flask.jsonify(response), response['status']
+
+    statement = '''
+        SELECT p.id, p.validity, md.quantity, md.frequency, md.medicine_name
+        FROM prescription AS p
+        JOIN medicine_dosage AS md ON md.prescription_id = p.id
+        LEFT JOIN appt_prescriptions AS ap ON ap.id = p.id
+        LEFT JOIN hosp_prescriptions AS hp ON hp.id = p.id
+        WHERE (ap.patient_cc = %s OR hp.patient_cc = %s)
+        AND p.validity >= CURRENT_DATE
+        ORDER BY p.id;
+    '''
+    value = (person_id, person_id,)
+
+    try:
+        conn = db_connection()
+        conn.autocommit = False
+        cur = conn.cursor()
+
+        cur.execute(statement, value)
+        rows = cur.fetchall()
+
+        prescriptions = []
+        for row in rows:
+            prescriptions.append({'id': int(row[0]), 'validity': row[1], 'posology': [{'dose': row[2], 'frequency': row[3], 'medicine': row[4]}]})
+
+        response = {'status': StatusCodes['success'], 'results': prescriptions}
+
+        # commit the transaction
+        conn.commit()
+
+    except (Exception, psycopg2.DatabaseError) as error:
+        logger.error(f'GET /dbproj/prescriptions/<person_id> - error: {error}')
+        response = {'status': StatusCodes['internal_error'], 'errors': str(error)}
+
+        # an error occurred, rollback
+        conn.rollback()
+
+    finally:
+        if conn is not None:
+            conn.close()
+
+    return flask.jsonify(response), response['status']
+
+
+##
+## POST
+##
+## Add Prescription
+##
+## Only doctors can use this endpoint
+##
+## To use it, access:
+##
+## http://localhost:8080/dbproj/prescription
+##
+@app.route('/dbproj/prescription', methods=['POST'])
+@token_required(['doctor'])
+def add_prescription(user_id, user_type):
+    logger.info('POST /dbproj/prescription')
+
+    payload = flask.request.get_json()
+
+    logger.debug(f'POST /dbproj/prescription - payload: {payload}, token_id: {user_id}, token_type: {user_type}')
+
+    for arg in ['type', 'event_id', 'validity']:
+        if arg not in payload:
+            response = {'status': StatusCodes['api_error'], 'results': f'{arg} value not in payload'}
+            return flask.jsonify(response), response['status']
+
+    required_med_fields = ['name', 'posology_dose', 'posology_frequency']
+    for medicine in payload['medicines']:
+        for field in required_med_fields:
+            if field not in medicine:
+                response = {'status': StatusCodes['api_error'], 'results': f'{field} value not in medicine'}
+                return flask.jsonify(response), response['status']
+
+    medicine_info = ", ".join(
+                    f"({med['name']}, {med['posology_dose']}, {med['posology_frequency']})" for med in payload['medicines']
+                )
+    print(medicine_info)
+
+    statement = 'SELECT add_prescription(%s, %s, %s, ARRAY[%s]::medicine_type[])'
+    values = (payload['type'], payload['validity'], payload['event_id'], medicine_info,)
+
+    try:
+        conn = db_connection()
+        conn.autocommit = False
+        cur = conn.cursor()
+        
+        cur.execute(statement, values)
+        prescription_id = cur.fetchone()[0]
+
+        response = {'status': StatusCodes['success'], 'results': prescription_id}
+
+        conn.commit()
+
+    except (Exception, psycopg2.DatabaseError) as error:
+        logger.error(f'POST /dbproj/prescription - error: {error}')
+        response = {'status': StatusCodes['internal_error'], 'errors': str(error)}
+        # an error occurred, rollback
+        conn.rollback()
+    finally:
+        if conn is not None:
+            conn.close()
+    return flask.jsonify(response), response['status']
+
+
+##
 ## POST
 ##
 ## Execute payment
@@ -962,170 +1096,6 @@ def get_top3():
         if conn is not None:
             conn.close()
     return flask.jsonify(result)
-
-
-
-def validate_medicines_payload(payload):
-    for medicine in payload['medicines']:
-        if not validate_medicine(medicine):
-            return {'status': StatusCodes['api_error'], 'results': 'Invalid medicine payload'}, StatusCodes['api_error']
-    return None, StatusCodes['success']
-
-def validate_medicine(medicine):
-    required_fields = ['name', 'posology_dose', 'posology_frequency']
-    for field in required_fields:
-        if field not in medicine:
-            return False
-    if 'side_effects' in medicine and not validate_side_effects(medicine['side_effects']):
-        return False
-    return True
-
-def validate_side_effects(side_effects):
-    for side_effect in side_effects:
-        required_fields = ['occurrence', 'description', 'severity']
-        for field in required_fields:
-            if field not in side_effect:
-                return False
-    return True
-
-
-##
-## GET
-##
-## Get Prescriptions
-##
-## Only employees and the target patient can use this endpoint
-##
-## To use it, access:
-##
-## http://localhost:8080/dbproj/prescriptions/<person_id>
-##
-@app.route('/dbproj/prescriptions/<person_id>', methods=['GET'])
-@token_required(['assistant', 'nurse', 'doctor', 'patient'])
-def get_prescriptions(person_id, user_id, user_type):
-    logger.info('GET /dbproj/prescriptions/<person_id>')
-
-    logger.debug(f'person_id: {person_id}, token_id: {user_id}, token_type: {user_type}')
-
-    try:
-        person_id = int(person_id)
-    except ValueError:
-        response = {'status': StatusCodes['api_error'], 'errors': 'Invalid person_id'}
-        return flask.jsonify(response), response['status']
-
-    if (user_type == 'patient' and user_id != person_id):
-        response = {'status': StatusCodes['api_error'], 'errors': 'Unauthorized'}
-        return flask.jsonify(response), response['status']
-
-    statement = '''
-        SELECT p.id, p.validity, md.quantity, md.frequency, md.medicine_name
-        FROM prescription AS p
-        JOIN medicine_dosage AS md ON md.prescription_id = p.id
-        LEFT JOIN appt_prescriptions AS ap ON ap.id = p.id
-        LEFT JOIN hosp_prescriptions AS hp ON hp.id = p.id
-        WHERE (ap.patient_cc = %s OR hp.patient_cc = %s)
-        AND p.validity >= CURRENT_DATE
-        ORDER BY p.id;
-    '''
-    value = (person_id, person_id,)
-
-    try:
-        conn = db_connection()
-        conn.autocommit = False
-        cur = conn.cursor()
-
-        cur.execute(statement, value)
-        rows = cur.fetchall()
-
-        prescriptions = []
-        for row in rows:
-            prescriptions.append({'id': int(row[0]), 'validity': row[1], 'posology': [{'dose': row[2], 'frequency': row[3], 'medicine': row[4]}]})
-
-        response = {'status': StatusCodes['success'], 'results': prescriptions}
-
-        # commit the transaction
-        conn.commit()
-
-    except (Exception, psycopg2.DatabaseError) as error:
-        logger.error(f'GET /dbproj/prescriptions/<person_id> - error: {error}')
-        response = {'status': StatusCodes['internal_error'], 'errors': str(error)}
-
-        # an error occurred, rollback
-        conn.rollback()
-
-    finally:
-        if conn is not None:
-            conn.close()
-
-    return flask.jsonify(response), response['status']
-
-
-##
-## POST
-##
-## Add Prescription
-##
-## Only assistants can use this endpoint
-##
-## To use it, access:
-##
-## http://localhost:8080/dbproj/prescription
-##
-@app.route('/dbproj/prescription', methods=['POST'])
-@token_required(['assistant'])
-def add_prescription(user_id, user_type):
-    logger.info('POST /dbproj/prescription')
-
-    payload = flask.request.get_json()
-
-    logger.debug(f'POST /dbproj/prescription - payload: {payload}, token_id: {user_id}, token_type: {user_type}')
-
-    for arg in ['type', 'event_id', 'validity']:
-        if arg not in payload:
-            response = {'status': StatusCodes['api_error'], 'results': f'{arg} value not in payload'}
-            return flask.jsonify(response), response['status']
-
-    validation_result, status_code = validate_medicines_payload(payload)
-    if validation_result is not None:
-        return flask.jsonify(validation_result), status_code
-
-    try:
-        conn = db_connection()
-        conn.autocommit = False
-        cur = conn.cursor()
-
-        cur.execute('SELECT add_prescription(%s, %s, %s)', (payload['type'], payload['validity'], payload['event_id'],))
-        prescription_id = cur.fetchone()[0]
-
-        if prescription_id == -1:
-            response = {'status': StatusCodes['api_error'], 'errors': 'Invalid event_id'}
-            return flask.jsonify(response), response['status']
-
-        response = {'status': StatusCodes['success'], 'results': prescription_id}
-        for medicine in payload['medicines']:
-            if ('side_effects' not in medicine):
-                side_effects = ''
-            else:
-                side_effects = ", ".join(
-                    f"({se['occurrence']}, {se['description']}, {se['severity']})" for se in medicine['side_effects']
-                )
-
-            statement = 'CALL add_medicine_with_side_effects(%s, %s, %s, %s, ARRAY[%s]::side_effect_type[])'
-            values = (medicine['name'], medicine['posology_dose'], medicine['posology_frequency'], prescription_id, side_effects,)
-            cur.execute(statement, values)
-
-        conn.commit()
-
-    except (Exception, psycopg2.DatabaseError) as error:
-        logger.error(f'POST /dbproj/prescription - error: {error}')
-        response = {'status': StatusCodes['internal_error'], 'errors': str(error)}
-        # an error occurred, rollback
-        conn.rollback()
-    finally:
-        if conn is not None:
-            conn.close()
-    return flask.jsonify(response), response['status']
-
 
 
 ##########################################################
