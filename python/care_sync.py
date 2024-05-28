@@ -906,72 +906,57 @@ def execute_payment(bill_id, user_id, user_type):
 def get_top3(user_id, user_type):
     logger.info('GET /dbproj/top3')
 
-    conn = db_connection()
-    conn.autocommit = False
-    cur = conn.cursor()
-
     statement = '''
-        SELECT 
-            patient.name AS patient_name,
-            patient.cc AS patient_id,
-            tp.total_amount AS total_amount,
-
-            appointment.id AS appointment_id,
-            appointment.start_time AS appointment_start,
-            appointment_doctor.name AS doctor_name,
-            appointment_doctor.email AS doctor_id,
-            appointment_nurse.name AS nurse_name,
-
-            surgery.id AS surgery_id,
-            surgery.start_time AS surgery_start,
-            surgery_doctor.name AS surgery_doctor,
-            surgery_doctor.email AS surgery_doctor_id,
-            surgery_nurse.name AS surgery_nurse,
-            surgery_nurse.email AS surgery_nurse_id
-        FROM 
-            top_patients tp
-            JOIN patient ON tp.patient_id = patient.cc
-            LEFT JOIN appointment ON patient.cc = appointment.patient_cc
-            LEFT JOIN employee appointment_doctor ON appointment_doctor.email = appointment.doctor_email
-            LEFT JOIN appointment_role ON appointment.id = appointment_role.appointment_id
-            LEFT JOIN employee appointment_nurse ON appointment_role.nurse_email = appointment_nurse.email
-            LEFT JOIN hospitalization ON patient.cc = hospitalization.patient_cc
-            LEFT JOIN surgery ON hospitalization.id = surgery.hospitalization_id
-            LEFT JOIN surgery_role ON surgery.id = surgery_role.surgery_id
-            LEFT JOIN employee surgery_nurse ON surgery_nurse.email = surgery_role.nurse_email
-            LEFT JOIN employee surgery_doctor ON surgery_doctor.email = surgery.doctor_email
-        ORDER BY 
-            tp.total_amount, patient_id, hospitalization.id, surgery.id DESC;
+        SELECT
+            top.name AS patient_name,
+            top.amount_spent,
+            appt.id AS appointment_id,
+            appt.start_time AS appointment_start,
+            appt.doctor_email AS doctor_id,
+            surg.id AS surgery_id,
+            surg.start_time AS surgery_start,
+            surg.end_time AS surgery_end,
+            surg.doctor_email AS surgery_doctor_id,
+            surg.hospitalization_id
+        FROM
+            top_patients AS top
+            LEFT JOIN appointment AS appt 
+                ON top.cc = appt.patient_cc
+            LEFT JOIN hospitalization AS hosp 
+                ON top.cc = hosp.patient_cc
+            LEFT JOIN surgery AS surg 
+                ON hosp.id = surg.hospitalization_id
+            LEFT JOIN payment AS p
+                ON p.bill_id = hosp.bill_id OR p.bill_id = appt.bill_id
+        WHERE 
+            TO_CHAR(DATE_TRUNC('month', p.date_time), 'YYYY-MM') = TO_CHAR(CURRENT_DATE, 'YYYY-MM')
+            AND (appt.id IS NULL OR surg.id IS NULL)
+        ORDER BY top.amount_spent DESC;
     '''
 
     try:
+        conn = db_connection()
+        conn.autocommit = False
+        cur = conn.cursor()
+
         cur.execute(statement)
         rows = cur.fetchall()
-        logger.debug('GET /dbproj/top3 - parse')
-        i = 0
-        result = [] 
-        appointment_idx = 3
-        surgery_idx = 7
-        while i < len(rows):
-            client = rows[i][0]
-            total_amount = rows[i][1]
-            result.append({'client': client, 'total_amount': total_amount, 'procedures': []})
-            while i < len(rows) and rows[i][0] == client:
-                if rows[i][appointment_idx]:
-                    result[-1]['procedures'].append({'type': 'appointment', 'id': rows[i][appointment_idx], 'start_time': rows[i][appointment_idx + 1], 'doctor_email': rows[i][appointment_idx + 2], 'nurses_email': rows[i][appointment_idx + 3]})
-                    i += 1
-                    while i < len(rows) and rows[i][appointment_idx] == result[-1]['procedures'][-1]['id']:
-                        result[-1]['procedures'][-1]['nurses_email'].append(rows[i][appointment_idx + 3])
-                        i += 1
-                    continue
-                if rows[i][surgery_idx]:
-                    surg_id = rows[i][surgery_idx]
-                    result[-1]['procedures'].append({'type': 'surgery', 'id': rows[i][surgery_idx], 'start_time': rows[i][surgery_idx + 1], 'doctor_email': rows[i][surgery_idx + 2], 'nurses_email': rows[i][surgery_idx + 3]})
-                    i += 1
-                    while i < len(rows) and rows[i][surgery_idx] == surg_id:
-                        result[-1]['procedures'][-1]['nurses_email'].append(rows[i][surgery_idx + 3])
-                        i += 1
-                    continue
+
+        result = []
+        last_name = ''
+        last_amount = -1
+        for row in rows:
+            if (row[0] != last_name or row[1] != last_amount):
+                last_name = row[0]
+                last_amount = row[1]
+                result += [{'patient_name': row[0], 'amount_spent': row[1], 'procedures': []}]
+
+            if (row[5] is None):
+                type = 'appointment'
+                result[-1]['procedures'].append({'type': type, 'id': row[2], 'start_time': row[3], 'doctor_id': row[4]})
+            else:
+                type = 'surgery'
+                result[-1]['procedures'].append({'type': type, 'id': row[5], 'start_time': row[6], 'end_time': row[7], 'doctor_id': row[8], 'hospitalization_id': row[9]})    
 
     except (Exception, psycopg2.DatabaseError) as error:
         logger.error(f'GET /departments/<ndep> - error: {error}')
@@ -980,6 +965,7 @@ def get_top3(user_id, user_type):
     finally:
         if conn is not None:
             conn.close()
+
     return flask.jsonify(result)
 
 
