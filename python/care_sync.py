@@ -66,6 +66,11 @@ def db_connection():
 
     return db
 
+
+##########################################################
+## LOGGING
+##########################################################
+
 def token_required(allowed_roles):
     def decorator(f):
         @wraps(f)

@@ -1,8 +1,8 @@
 {
-    "SECRET_KEY": "mysecretkey",
+    "SECRET_KEY": "rbF^46j-rgF06~P+4",
     "user": "prjadmin",
     "password": "prjadmin",
     "host": "127.0.0.1",
     "port": "5432",
-    "database": "prjDB"
+    "database": "prjdb"
 }

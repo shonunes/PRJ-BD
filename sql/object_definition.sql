@@ -83,6 +83,10 @@ BEGIN
     SELECT unnest(specialty_names)
     ON CONFLICT (name) DO NOTHING;
 
+	INSERT INTO specialty(name)
+    SELECT unnest(specialty_parents)
+    ON CONFLICT (name) DO NOTHING;
+
     INSERT INTO specialty_hierarchy(specialty_name, specialty_parent)
     SELECT s_name, s_parent
     FROM unnest(specialty_names) AS s_name
