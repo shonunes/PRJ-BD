@@ -937,7 +937,7 @@ def get_top3(user_id, user_type):
             AND EXTRACT(MONTH FROM payment.date_time) = EXTRACT(MONTH FROM CURRENT_DATE)
             AND EXTRACT(YEAR FROM payment.date_time) = EXTRACT(YEAR FROM CURRENT_DATE)
 
-        UNION ALL
+        UNION 
 
         SELECT DISTINCT ON (payment.bill_id)
             patient.name AS patient_name,
