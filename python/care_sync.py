@@ -979,14 +979,12 @@ def get_top3(user_id, user_type):
         result = [] 
         appointment_idx = 3
         surgery_idx = 7
-        print(rows)
         while i < len(rows):
             client = rows[i][0]
             client_id = rows[i][1]
             total_amount = rows[i][2]
             result.append({'client': client, 'cc': client_id, 'total_amount': total_amount, 'procedures': []})
             while i < len(rows) and rows[i][0] == client:
-                print(i, rows[i])
                 if rows[i][appointment_idx]:
                     result[-1]['procedures'].append({'type': 'appointment', 'id': rows[i][appointment_idx], 'start_time': rows[i][appointment_idx + 1], 'doctor_name': rows[i][appointment_idx + 2], 'doctor_email': rows[i][appointment_idx + 3]})
                     i += 1
