@@ -1,3 +1,5 @@
+\c prjdb;
+
 CREATE TABLE doctor (
 	email VARCHAR(128),
 	license_id		 VARCHAR(64) NOT NULL,
