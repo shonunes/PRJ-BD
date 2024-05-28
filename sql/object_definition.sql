@@ -457,6 +457,27 @@ SELECT hp.prescription_id AS id, h.patient_cc
 FROM hospitalization_prescription AS hp
 JOIN hospitalization AS h ON h.id = hp.hospitalization_id;
 
+
+CREATE OR REPLACE VIEW monthly_payments AS
+SELECT
+	p.cc AS patient_id,
+	SUM(pay.amount) AS total_amount
+FROM payment pay
+LEFT JOIN appointment a ON a.bill_id = pay.bill_id
+LEFT JOIN hospitalization h ON h.bill_id = pay.bill_id
+LEFT JOIN patient p ON p.cc = a.patient_cc OR p.cc = h.patient_cc
+WHERE
+	EXTRACT(YEAR FROM pay.date_time) = EXTRACT(YEAR FROM CURRENT_DATE)
+	AND EXTRACT(MONTH FROM pay.date_time) = EXTRACT(MONTH FROM CURRENT_DATE)
+GROUP BY p.cc;
+
+CREATE OR REPLACE VIEW top_patients AS
+SELECT patient_id, total_amount
+FROM monthly_payments
+ORDER BY total_amount DESC
+LIMIT 3;
+
+
 CREATE OR REPLACE VIEW hospitalization_counts AS
 SELECT h.id, COUNT(DISTINCT s.id) AS surgery_count, COUNT(DISTINCT hp.prescription_id) AS prescription_count
 FROM hospitalization AS h
@@ -469,6 +490,7 @@ SELECT h.id, COALESCE(SUM(p.amount), 0) AS total_amount_spent
 FROM hospitalization AS h
 LEFT JOIN payment AS p ON h.bill_id = p.bill_id
 GROUP BY h.id;
+
 
 CREATE OR REPLACE VIEW doctor_monthly_surgeries AS
 SELECT
