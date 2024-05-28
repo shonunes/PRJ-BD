@@ -932,9 +932,7 @@ def get_top3(user_id, user_type):
             LEFT JOIN payment ON appointment.bill_id = payment.bill_id
             LEFT JOIN employee appointment_doctor ON appointment_doctor.email = appointment.doctor_email
         WHERE
-            EXTRACT(MONTH FROM appointment.start_time) = EXTRACT(MONTH FROM CURRENT_DATE) 
-            AND EXTRACT(YEAR FROM appointment.start_time) = EXTRACT(YEAR FROM CURRENT_DATE)
-            AND EXTRACT(MONTH FROM payment.date_time) = EXTRACT(MONTH FROM CURRENT_DATE)
+            EXTRACT(MONTH FROM payment.date_time) = EXTRACT(MONTH FROM CURRENT_DATE)
             AND EXTRACT(YEAR FROM payment.date_time) = EXTRACT(YEAR FROM CURRENT_DATE)
 
         UNION 
@@ -961,9 +959,7 @@ def get_top3(user_id, user_type):
             LEFT JOIN payment ON hospitalization.bill_id = payment.bill_id
             LEFT JOIN employee surgery_doctor ON surgery_doctor.email = surgery.doctor_email
         WHERE
-            EXTRACT(MONTH FROM surgery.start_time) = EXTRACT(MONTH FROM CURRENT_DATE) 
-            AND EXTRACT(YEAR FROM surgery.start_time) = EXTRACT(YEAR FROM CURRENT_DATE)
-            AND EXTRACT(MONTH FROM payment.date_time) = EXTRACT(MONTH FROM CURRENT_DATE)
+            EXTRACT(MONTH FROM payment.date_time) = EXTRACT(MONTH FROM CURRENT_DATE)
             AND EXTRACT(YEAR FROM payment.date_time) = EXTRACT(YEAR FROM CURRENT_DATE)
 
         ORDER BY 
