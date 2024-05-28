@@ -890,6 +890,7 @@ def execute_payment(bill_id, user_id, user_type):
     return flask.jsonify(response), response['status']
 
 
+
 ##
 ## GET
 ##
@@ -906,57 +907,96 @@ def execute_payment(bill_id, user_id, user_type):
 def get_top3(user_id, user_type):
     logger.info('GET /dbproj/top3')
 
-    statement = '''
-        SELECT
-            top.name AS patient_name,
-            top.amount_spent,
-            appt.id AS appointment_id,
-            appt.start_time AS appointment_start,
-            appt.doctor_email AS doctor_id,
-            surg.id AS surgery_id,
-            surg.start_time AS surgery_start,
-            surg.end_time AS surgery_end,
-            surg.doctor_email AS surgery_doctor_id,
-            surg.hospitalization_id
-        FROM
-            top_patients AS top
-            LEFT JOIN appointment AS appt 
-                ON top.cc = appt.patient_cc
-            LEFT JOIN hospitalization AS hosp 
-                ON top.cc = hosp.patient_cc
-            LEFT JOIN surgery AS surg 
-                ON hosp.id = surg.hospitalization_id
-            LEFT JOIN payment AS p
-                ON p.bill_id = hosp.bill_id OR p.bill_id = appt.bill_id
-        WHERE 
-            TO_CHAR(DATE_TRUNC('month', p.date_time), 'YYYY-MM') = TO_CHAR(CURRENT_DATE, 'YYYY-MM')
-            AND (appt.id IS NULL OR surg.id IS NULL)
-        ORDER BY top.amount_spent DESC;
-    '''
+    conn = db_connection()
+    conn.autocommit = False
+    cur = conn.cursor()
+    statement = ''' 
+        SELECT DISTINCT ON (payment.bill_id)
+            patient.name AS patient_name,
+            tp.patient_id AS patient_id,
+            tp.total_amount AS total_amount,
+
+            appointment.id AS appointment_id,
+            appointment.start_time AS appointment_start,
+            appointment_doctor.name AS doctor_name,
+            appointment_doctor.email AS doctor_id,
+
+            NULL AS surgery_id,
+            NULL AS surgery_start,
+            NULL AS surgery_doctor,
+            NULL AS surgery_doctor_id
+        FROM 
+            top_patients tp
+            JOIN patient ON tp.patient_id = patient.cc
+            LEFT JOIN appointment ON patient.cc = appointment.patient_cc
+            LEFT JOIN payment ON appointment.bill_id = payment.bill_id
+            LEFT JOIN employee appointment_doctor ON appointment_doctor.email = appointment.doctor_email
+        WHERE
+            EXTRACT(MONTH FROM appointment.start_time) = EXTRACT(MONTH FROM CURRENT_DATE) 
+            AND EXTRACT(YEAR FROM appointment.start_time) = EXTRACT(YEAR FROM CURRENT_DATE)
+            AND EXTRACT(MONTH FROM payment.date_time) = EXTRACT(MONTH FROM CURRENT_DATE)
+            AND EXTRACT(YEAR FROM payment.date_time) = EXTRACT(YEAR FROM CURRENT_DATE)
+
+        UNION ALL
+
+        SELECT DISTINCT ON (payment.bill_id)
+            patient.name AS patient_name,
+            tp.patient_id AS patient_id,
+            tp.total_amount AS total_amount,
+
+            NULL AS appointment_id,
+            NULL AS appointment_start,
+            NULL AS doctor_name,
+            NULL AS doctor_id,
+
+            surgery.id AS surgery_id,
+            surgery.start_time AS surgery_start,
+            surgery_doctor.name AS surgery_doctor,
+            surgery_doctor.email AS surgery_doctor_id
+        FROM 
+            top_patients tp
+            JOIN patient ON tp.patient_id = patient.cc
+            LEFT JOIN hospitalization ON patient.cc = hospitalization.patient_cc
+            LEFT JOIN surgery ON hospitalization.id = surgery.hospitalization_id
+            LEFT JOIN payment ON hospitalization.bill_id = payment.bill_id
+            LEFT JOIN employee surgery_doctor ON surgery_doctor.email = surgery.doctor_email
+        WHERE
+            EXTRACT(MONTH FROM surgery.start_time) = EXTRACT(MONTH FROM CURRENT_DATE) 
+            AND EXTRACT(YEAR FROM surgery.start_time) = EXTRACT(YEAR FROM CURRENT_DATE)
+            AND EXTRACT(MONTH FROM payment.date_time) = EXTRACT(MONTH FROM CURRENT_DATE)
+            AND EXTRACT(YEAR FROM payment.date_time) = EXTRACT(YEAR FROM CURRENT_DATE)
+
+        ORDER BY 
+            total_amount DESC, patient_id;
+        '''
+
 
     try:
-        conn = db_connection()
-        conn.autocommit = False
-        cur = conn.cursor()
-
         cur.execute(statement)
         rows = cur.fetchall()
-
-        result = []
-        last_name = ''
-        last_amount = -1
-        for row in rows:
-            if (row[0] != last_name or row[1] != last_amount):
-                last_name = row[0]
-                last_amount = row[1]
-                result += [{'patient_name': row[0], 'amount_spent': row[1], 'procedures': []}]
-
-            if (row[5] is None):
-                type = 'appointment'
-                result[-1]['procedures'].append({'type': type, 'id': row[2], 'start_time': row[3], 'doctor_id': row[4]})
-            else:
-                type = 'surgery'
-                result[-1]['procedures'].append({'type': type, 'id': row[5], 'start_time': row[6], 'end_time': row[7], 'doctor_id': row[8], 'hospitalization_id': row[9]})    
+        logger.debug('GET /dbproj/top3 - parse')
+        i = 0
+        result = [] 
+        appointment_idx = 3
+        surgery_idx = 7
+        print(rows)
+        while i < len(rows):
+            client = rows[i][0]
+            client_id = rows[i][1]
+            total_amount = rows[i][2]
+            result.append({'client': client, 'cc': client_id, 'total_amount': total_amount, 'procedures': []})
+            while i < len(rows) and rows[i][0] == client:
+                print(i, rows[i])
+                if rows[i][appointment_idx]:
+                    result[-1]['procedures'].append({'type': 'appointment', 'id': rows[i][appointment_idx], 'start_time': rows[i][appointment_idx + 1], 'doctor_name': rows[i][appointment_idx + 2], 'doctor_email': rows[i][appointment_idx + 3]})
+                    i += 1
+                    continue
+                if rows[i][surgery_idx]:
+                    result[-1]['procedures'].append({'type': 'surgery', 'id': rows[i][surgery_idx], 'start_time': rows[i][surgery_idx + 1], 'doctor_name': rows[i][surgery_idx + 2], 'doctor_email': rows[i][surgery_idx + 3]})
+                    i += 1
+        for i in range(len(result)):
+            if result[i]['total_amount'] == 0:
+                result.pop(i)
 
     except (Exception, psycopg2.DatabaseError) as error:
         logger.error(f'GET /departments/<ndep> - error: {error}')
@@ -965,8 +1005,10 @@ def get_top3(user_id, user_type):
     finally:
         if conn is not None:
             conn.close()
-
+        if result == []:
+            result ={'status': StatusCodes['success'], 'results': 'No data found'}
     return flask.jsonify(result)
+
 
 
 ##
