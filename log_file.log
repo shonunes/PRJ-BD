@@ -281,3 +281,581 @@ DEBUG:logger:POST /dbproj/bills/7 - payload: {'amount': 1900, 'payment_method': 
 INFO:werkzeug:127.0.0.1 - - [26/May/2024 19:45:38] "POST /dbproj/bills/7 HTTP/1.1" 200 -
 INFO:logger:API v1.0 online: http://127.0.0.1:8080
 INFO:logger:API v1.0 online: http://127.0.0.1:8080
+INFO:werkzeug:[31m[1mWARNING: This is a development server. Do not use it in a production deployment. Use a production WSGI server instead.[0m
+ * Running on http://127.0.0.1:8080
+INFO:werkzeug:[33mPress CTRL+C to quit[0m
+INFO:werkzeug: * Restarting with watchdog (windowsapi)
+WARNING:werkzeug: * Debugger is active!
+INFO:werkzeug: * Debugger PIN: 137-437-087
+INFO:logger:API v1.0 online: http://127.0.0.1:8080
+INFO:logger:API v1.0 online: http://127.0.0.1:8080
+INFO:werkzeug:[31m[1mWARNING: This is a development server. Do not use it in a production deployment. Use a production WSGI server instead.[0m
+ * Running on http://127.0.0.1:8080
+INFO:werkzeug:[33mPress CTRL+C to quit[0m
+INFO:werkzeug: * Restarting with watchdog (windowsapi)
+WARNING:werkzeug: * Debugger is active!
+INFO:werkzeug: * Debugger PIN: 137-437-087
+INFO:logger:PUT /dbproj/user
+DEBUG:logger:PUT /dbproj/user - payload: {'username': 21345483, 'password': 'carlosgodinho'}
+INFO:werkzeug:127.0.0.1 - - [26/May/2024 20:21:54] "PUT /dbproj/user HTTP/1.1" 200 -
+INFO:logger:PUT /dbproj/user
+DEBUG:logger:PUT /dbproj/user - payload: {'username': 'tsnaprozis@gmail.com', 'password': 'tiagosilva'}
+ERROR:logger:POST /dbproj/user - error: ERRO:  faltando entrada para tabela "a" na cláusula FROM
+LINE 1: (a.email IS NOT NULL)
+         ^
+QUERY:  (a.email IS NOT NULL)
+CONTEXT:  função PL/pgSQL login_employee(character varying) linha 15 em IF
+
+INFO:werkzeug:127.0.0.1 - - [26/May/2024 20:22:20] "[35m[1mPUT /dbproj/user HTTP/1.1[0m" 500 -
+INFO:logger:PUT /dbproj/user
+DEBUG:logger:PUT /dbproj/user - payload: {'username': 'tsnaprozis@gmail.com', 'password': 'tiagosilva'}
+ERROR:logger:POST /dbproj/user - error: ERRO:  faltando entrada para tabela "a" na cláusula FROM
+LINE 1: (a.assistant_email IS NOT NULL)
+         ^
+QUERY:  (a.assistant_email IS NOT NULL)
+CONTEXT:  função PL/pgSQL login_employee(character varying) linha 15 em IF
+
+INFO:werkzeug:127.0.0.1 - - [26/May/2024 20:23:35] "[35m[1mPUT /dbproj/user HTTP/1.1[0m" 500 -
+INFO:logger:PUT /dbproj/user
+DEBUG:logger:PUT /dbproj/user - payload: {'username': 'tsnaprozis@gmail.com', 'password': 'tiagosilva'}
+INFO:werkzeug:127.0.0.1 - - [26/May/2024 20:23:57] "PUT /dbproj/user HTTP/1.1" 200 -
+INFO:logger:API v1.0 online: http://127.0.0.1:8080
+INFO:logger:API v1.0 online: http://127.0.0.1:8080
+INFO:werkzeug:[31m[1mWARNING: This is a development server. Do not use it in a production deployment. Use a production WSGI server instead.[0m
+ * Running on http://127.0.0.1:8080
+INFO:werkzeug:[33mPress CTRL+C to quit[0m
+INFO:werkzeug: * Restarting with watchdog (windowsapi)
+WARNING:werkzeug: * Debugger is active!
+INFO:werkzeug: * Debugger PIN: 137-437-087
+INFO:logger:PUT /dbproj/user
+DEBUG:logger:PUT /dbproj/user - payload: {'username': 'tsnaprozis@gmail.com', 'password': 'tiagosilva'}
+INFO:werkzeug:127.0.0.1 - - [27/May/2024 11:40:19] "PUT /dbproj/user HTTP/1.1" 200 -
+INFO:logger:API v1.0 online: http://127.0.0.1:8080
+INFO:logger:API v1.0 online: http://127.0.0.1:8080
+INFO:werkzeug:[31m[1mWARNING: This is a development server. Do not use it in a production deployment. Use a production WSGI server instead.[0m
+ * Running on http://127.0.0.1:8080
+INFO:werkzeug:[33mPress CTRL+C to quit[0m
+INFO:werkzeug: * Restarting with watchdog (windowsapi)
+WARNING:werkzeug: * Debugger is active!
+INFO:werkzeug: * Debugger PIN: 137-437-087
+INFO:logger:API v1.0 online: http://127.0.0.1:8080
+INFO:logger:API v1.0 online: http://127.0.0.1:8080
+INFO:werkzeug:[31m[1mWARNING: This is a development server. Do not use it in a production deployment. Use a production WSGI server instead.[0m
+ * Running on http://127.0.0.1:8080
+INFO:werkzeug:[33mPress CTRL+C to quit[0m
+INFO:werkzeug: * Restarting with watchdog (windowsapi)
+WARNING:werkzeug: * Debugger is active!
+INFO:werkzeug: * Debugger PIN: 137-437-087
+INFO:logger:PUT /dbproj/user
+DEBUG:logger:PUT /dbproj/user - payload: {'username': 21345483, 'password': 'carlosgodinho'}
+INFO:werkzeug:127.0.0.1 - - [27/May/2024 18:54:49] "PUT /dbproj/user HTTP/1.1" 200 -
+INFO:logger:POST /dbproj/appointment
+DEBUG:logger:POST /dbproj/appointment - payload: {'doctor_id': 'magdanunes@gmail.com', 'appointment_time': '2024-06-01 07:00:00', 'nurses': [['tsnaprozis@gmail.com', 'some role']]}, token_id: 21345483, token_type: patient
+ERROR:logger:POST /dbproj/appointment - error: ERRO:  null value in column "bill_id" of relation "appointment" violates not-null constraint
+DETAIL:  Registro que falhou contém (1, 2024-06-01 07:00:00, null, magdanunes@gmail.com, 21345483).
+CONTEXT:  comando SQL "INSERT INTO appointment(start_time, doctor_email, patient_cc)
+	VALUES(appointment_time, doctor_id, patient_id)
+	RETURNING id"
+função PL/pgSQL schedule_appointment(timestamp without time zone,character varying,bigint,character varying[],character varying[]) linha 43 em comando SQL
+
+INFO:werkzeug:127.0.0.1 - - [27/May/2024 18:55:07] "[35m[1mPOST /dbproj/appointment HTTP/1.1[0m" 500 -
+INFO:logger:API v1.0 online: http://127.0.0.1:8080
+INFO:logger:API v1.0 online: http://127.0.0.1:8080
+INFO:werkzeug:[31m[1mWARNING: This is a development server. Do not use it in a production deployment. Use a production WSGI server instead.[0m
+ * Running on http://127.0.0.1:8080
+INFO:werkzeug:[33mPress CTRL+C to quit[0m
+INFO:werkzeug: * Restarting with watchdog (windowsapi)
+WARNING:werkzeug: * Debugger is active!
+INFO:werkzeug: * Debugger PIN: 137-437-087
+INFO:logger:POST /dbproj/appointment
+DEBUG:logger:POST /dbproj/appointment - payload: {'doctor_id': 'magdanunes@gmail.com', 'appointment_time': '2024-06-01 07:00:00', 'nurses': [['tsnaprozis@gmail.com', 'some role']]}, token_id: 21345483, token_type: patient
+INFO:werkzeug:127.0.0.1 - - [27/May/2024 18:57:22] "POST /dbproj/appointment HTTP/1.1" 200 -
+INFO:logger:API v1.0 online: http://127.0.0.1:8080
+INFO:logger:API v1.0 online: http://127.0.0.1:8080
+INFO:werkzeug:[31m[1mWARNING: This is a development server. Do not use it in a production deployment. Use a production WSGI server instead.[0m
+ * Running on http://127.0.0.1:8080
+INFO:werkzeug:[33mPress CTRL+C to quit[0m
+INFO:werkzeug: * Restarting with watchdog (windowsapi)
+WARNING:werkzeug: * Debugger is active!
+INFO:werkzeug: * Debugger PIN: 137-437-087
+INFO:logger:PUT /dbproj/user
+DEBUG:logger:PUT /dbproj/user - payload: {'username': 'carlossimoes@gmail.com', 'password': 'carlossimoes'}
+INFO:werkzeug:127.0.0.1 - - [27/May/2024 19:17:05] "PUT /dbproj/user HTTP/1.1" 200 -
+INFO:logger:POST /dbproj/surgery/7
+DEBUG:logger:POST /dbproj/surgery - payload: {'patient_id': 21345483, 'doctor': 'magdanunes@gmail.com', 'nurses': [['tsnaprozis@gmail.com', 'a role']], 'surgery_start': '2024-05-29 19:30:00', 'surgery_end': '2024-05-30 00:00:00'}, token_id: carlossimoes@gmail.com, token_type: assistant
+INFO:werkzeug:127.0.0.1 - - [27/May/2024 19:18:12] "POST /dbproj/surgery/7 HTTP/1.1" 200 -
+INFO:logger:API v1.0 online: http://127.0.0.1:8080
+INFO:logger:API v1.0 online: http://127.0.0.1:8080
+INFO:werkzeug:[31m[1mWARNING: This is a development server. Do not use it in a production deployment. Use a production WSGI server instead.[0m
+ * Running on http://127.0.0.1:8080
+INFO:werkzeug:[33mPress CTRL+C to quit[0m
+INFO:werkzeug: * Restarting with watchdog (windowsapi)
+WARNING:werkzeug: * Debugger is active!
+INFO:werkzeug: * Debugger PIN: 137-437-087
+INFO:logger:POST /dbproj/register/nurse
+DEBUG:logger:POST /dbproj/register/nurse - payload: {'cc': 39385761, 'name': 'Gonçalo Foles', 'password': 'goncalofoles', 'contract_id': 511, 'salary': 90000, 'contract_issue_date': '2024-05-15', 'contract_due_date': '2028-05-15', 'birthday': '1998-01-06', 'email': 'goncalofoles@gmail.com', 'cc_superior': 77679347}
+INFO:werkzeug: * Detected change in 'C:\\Users\\Daniel Nunes\\anaconda3\\Lib\\site-packages\\flask\\app.py', reloading
+INFO:werkzeug:127.0.0.1 - - [27/May/2024 19:59:18] "[35m[1mPOST /dbproj/register/nurse HTTP/1.1[0m" 500 -
+INFO:werkzeug: * Restarting with watchdog (windowsapi)
+WARNING:werkzeug: * Debugger is active!
+INFO:werkzeug: * Debugger PIN: 137-437-087
+INFO:logger:API v1.0 online: http://127.0.0.1:8080
+INFO:logger:API v1.0 online: http://127.0.0.1:8080
+INFO:werkzeug:[31m[1mWARNING: This is a development server. Do not use it in a production deployment. Use a production WSGI server instead.[0m
+ * Running on http://127.0.0.1:8080
+INFO:werkzeug:[33mPress CTRL+C to quit[0m
+INFO:werkzeug: * Restarting with watchdog (windowsapi)
+WARNING:werkzeug: * Debugger is active!
+INFO:werkzeug: * Debugger PIN: 137-437-087
+INFO:logger:POST /dbproj/register/nurse
+DEBUG:logger:POST /dbproj/register/nurse - payload: {'cc': 39385761, 'name': 'Gonçalo Foles', 'password': 'goncalofoles', 'contract_id': 511, 'salary': 90000, 'contract_issue_date': '2024-05-15', 'contract_due_date': '2028-05-15', 'birthday': '1998-01-06', 'email': 'goncalofoles@gmail.com', 'cc_superior': 77679347}
+INFO:werkzeug:127.0.0.1 - - [27/May/2024 20:00:08] "POST /dbproj/register/nurse HTTP/1.1" 200 -
+INFO:logger:API v1.0 online: http://127.0.0.1:8080
+INFO:logger:API v1.0 online: http://127.0.0.1:8080
+INFO:werkzeug:[31m[1mWARNING: This is a development server. Do not use it in a production deployment. Use a production WSGI server instead.[0m
+ * Running on http://127.0.0.1:8080
+INFO:werkzeug:[33mPress CTRL+C to quit[0m
+INFO:werkzeug: * Restarting with watchdog (windowsapi)
+WARNING:werkzeug: * Debugger is active!
+INFO:werkzeug: * Debugger PIN: 137-437-087
+INFO:logger:POST /dbproj/register/nurse
+DEBUG:logger:POST /dbproj/register/nurse - payload: {'cc': 39385761, 'name': 'Filipe Gonçalves', 'password': 'filipegoncalves', 'contract_id': 511, 'salary': 90000, 'contract_issue_date': '2024-05-15', 'contract_due_date': '2028-05-15', 'birthday': '1998-01-06', 'email': 'filipegoncalves@gmail.com', 'superior_email': 'tsnaprozis@gmail.com'}
+ERROR:logger:POST /dbproj/register/nurse - error: ERRO:  CC, email or contract id already exists in the database
+CONTEXT:  função PL/pgSQL add_emp(bigint,character varying,character varying,bigint,integer,date,date,date,character varying) linha 8 em RAISE
+comando SQL "CALL add_emp(cc_num, name, hashcode, contract_id, sal, contract_issue_date, contract_due_date, birthday, email)"
+função PL/pgSQL add_nurse(bigint,character varying,character varying,bigint,integer,date,date,date,character varying,character varying) linha 3 em CALL
+
+INFO:werkzeug:127.0.0.1 - - [27/May/2024 20:02:02] "[35m[1mPOST /dbproj/register/nurse HTTP/1.1[0m" 500 -
+INFO:logger:POST /dbproj/register/nurse
+DEBUG:logger:POST /dbproj/register/nurse - payload: {'cc': 567472922, 'name': 'Filipe Gonçalves', 'password': 'filipegoncalves', 'contract_id': 347, 'salary': 120000, 'contract_issue_date': '2023-05-15', 'contract_due_date': '2027-05-15', 'birthday': '1988-05-23', 'email': 'filipegoncalves@gmail.com', 'superior_email': 'tsnaprozis@gmail.com'}
+INFO:werkzeug:127.0.0.1 - - [27/May/2024 20:02:28] "POST /dbproj/register/nurse HTTP/1.1" 200 -
+INFO:logger:API v1.0 online: http://127.0.0.1:8080
+INFO:logger:API v1.0 online: http://127.0.0.1:8080
+INFO:werkzeug:[31m[1mWARNING: This is a development server. Do not use it in a production deployment. Use a production WSGI server instead.[0m
+ * Running on http://127.0.0.1:8080
+INFO:werkzeug:[33mPress CTRL+C to quit[0m
+INFO:werkzeug: * Restarting with watchdog (windowsapi)
+WARNING:werkzeug: * Debugger is active!
+INFO:werkzeug: * Debugger PIN: 137-437-087
+INFO:logger:PUT /dbproj/user
+DEBUG:logger:PUT /dbproj/user - payload: {'username': 'carlossimoes@gmail.com', 'password': 'carlossimoes'}
+INFO:werkzeug:127.0.0.1 - - [27/May/2024 20:56:20] "PUT /dbproj/user HTTP/1.1" 200 -
+INFO:logger:PUT /dbproj/user
+DEBUG:logger:PUT /dbproj/user - payload: {'username': 21345483, 'password': 'carlosgodinho'}
+INFO:werkzeug:127.0.0.1 - - [27/May/2024 20:56:35] "PUT /dbproj/user HTTP/1.1" 200 -
+INFO:logger:POST /dbproj/appointment
+DEBUG:logger:POST /dbproj/appointment - payload: {'doctor_id': 'magdanunes@gmail.com', 'appointment_time': '2024-06-01 07:00:00', 'nurses': [['tsnaprozis@gmail.com', 'some role']]}, token_id: 21345483, token_type: patient
+ERROR:logger:POST /dbproj/appointment - error: ERRO:  função schedule_appointment(unknown, unknown, integer, text[], text[]) não existe
+LINE 4:     SELECT schedule_appointment('2024-06-01 07:00:00', 'magd...
+                   ^
+HINT:  Nenhuma função corresponde com o nome e os tipos de argumentos informados. Você precisa adicionar conversões de tipo explícitas.
+
+INFO:werkzeug:127.0.0.1 - - [27/May/2024 20:56:51] "[35m[1mPOST /dbproj/appointment HTTP/1.1[0m" 500 -
+INFO:logger:API v1.0 online: http://127.0.0.1:8080
+INFO:logger:API v1.0 online: http://127.0.0.1:8080
+INFO:werkzeug:[31m[1mWARNING: This is a development server. Do not use it in a production deployment. Use a production WSGI server instead.[0m
+ * Running on http://127.0.0.1:8080
+INFO:werkzeug:[33mPress CTRL+C to quit[0m
+INFO:werkzeug: * Restarting with watchdog (windowsapi)
+WARNING:werkzeug: * Debugger is active!
+INFO:werkzeug: * Debugger PIN: 137-437-087
+INFO:logger:POST /dbproj/appointment
+DEBUG:logger:POST /dbproj/appointment - payload: {'doctor_id': 'magdanunes@gmail.com', 'appointment_time': '2024-06-01 07:00:00'}, token_id: 21345483, token_type: patient
+INFO:werkzeug:127.0.0.1 - - [27/May/2024 20:57:53] "POST /dbproj/appointment HTTP/1.1" 200 -
+INFO:logger:POST /dbproj/appointment
+DEBUG:logger:POST /dbproj/appointment - payload: {'doctor_id': 'magdanunes@gmail.com', 'appointment_time': '2024-06-01 07:00:00'}, token_id: 21345483, token_type: patient
+ERROR:logger:POST /dbproj/appointment - error: ERRO:  Doctor or patient occupied at this time
+CONTEXT:  função PL/pgSQL schedule_appointment(timestamp without time zone,character varying,bigint) linha 22 em RAISE
+
+INFO:werkzeug:127.0.0.1 - - [27/May/2024 20:57:55] "[35m[1mPOST /dbproj/appointment HTTP/1.1[0m" 500 -
+INFO:logger:POST /dbproj/appointment
+DEBUG:logger:POST /dbproj/appointment - payload: {'doctor_id': 'magdanunes@gmail.com', 'appointment_time': '2024-06-01 07:30:00'}, token_id: 21345483, token_type: patient
+INFO:werkzeug:127.0.0.1 - - [27/May/2024 20:58:02] "POST /dbproj/appointment HTTP/1.1" 200 -
+INFO:logger:POST /dbproj/appointment
+DEBUG:logger:POST /dbproj/appointment - payload: {'doctor_id': 'magdanunes@gmail.com', 'appointment_time': '2024-06-05 07:30:00'}, token_id: 21345483, token_type: patient
+INFO:werkzeug:127.0.0.1 - - [27/May/2024 20:58:07] "POST /dbproj/appointment HTTP/1.1" 200 -
+INFO:logger:POST /dbproj/appointment
+DEBUG:logger:POST /dbproj/appointment - payload: {'doctor_id': 'magdanunes@gmail.com', 'appointment_time': '2024-06-05 07:00:00'}, token_id: 21345483, token_type: patient
+INFO:werkzeug:127.0.0.1 - - [27/May/2024 20:58:10] "POST /dbproj/appointment HTTP/1.1" 200 -
+INFO:logger:POST /dbproj/appointment
+DEBUG:logger:POST /dbproj/appointment - payload: {'doctor_id': 'magdanunes@gmail.com', 'appointment_time': '2024-06-05 06:30:00'}, token_id: 21345483, token_type: patient
+ERROR:logger:POST /dbproj/appointment - error: ERRO:  Doctor or patient occupied at this time
+CONTEXT:  função PL/pgSQL schedule_appointment(timestamp without time zone,character varying,bigint) linha 22 em RAISE
+
+INFO:werkzeug:127.0.0.1 - - [27/May/2024 20:58:16] "[35m[1mPOST /dbproj/appointment HTTP/1.1[0m" 500 -
+INFO:logger:API v1.0 online: http://127.0.0.1:8080
+INFO:logger:API v1.0 online: http://127.0.0.1:8080
+INFO:werkzeug:[31m[1mWARNING: This is a development server. Do not use it in a production deployment. Use a production WSGI server instead.[0m
+ * Running on http://127.0.0.1:8080
+INFO:werkzeug:[33mPress CTRL+C to quit[0m
+INFO:werkzeug: * Restarting with watchdog (windowsapi)
+WARNING:werkzeug: * Debugger is active!
+INFO:werkzeug: * Debugger PIN: 137-437-087
+INFO:werkzeug:127.0.0.1 - - [27/May/2024 21:08:12] "[31m[1mGET /dbproj/appointments/21345483 HTTP/1.1[0m" 400 -
+INFO:logger:PUT /dbproj/user
+DEBUG:logger:PUT /dbproj/user - payload: {'username': 21345483, 'password': 'carlosgodinho'}
+INFO:werkzeug:127.0.0.1 - - [27/May/2024 21:08:18] "PUT /dbproj/user HTTP/1.1" 200 -
+INFO:logger:GET /dbproj/appointments/<patient_user_id>
+DEBUG:logger:patient_user_id: 21345483, token_id: 21345483, token_type: patient
+INFO:werkzeug:127.0.0.1 - - [27/May/2024 21:08:26] "GET /dbproj/appointments/21345483 HTTP/1.1" 200 -
+INFO:logger:GET /dbproj/appointments/<patient_user_id>
+DEBUG:logger:patient_user_id: 21345482, token_id: 21345483, token_type: patient
+INFO:werkzeug:127.0.0.1 - - [27/May/2024 21:09:01] "[31m[1mGET /dbproj/appointments/21345482 HTTP/1.1[0m" 400 -
+INFO:logger:GET /dbproj/appointments/<patient_user_id>
+DEBUG:logger:patient_user_id: 21345483, token_id: 21345483, token_type: patient
+INFO:werkzeug:127.0.0.1 - - [27/May/2024 21:09:07] "GET /dbproj/appointments/21345483 HTTP/1.1" 200 -
+INFO:logger:API v1.0 online: http://127.0.0.1:8080
+INFO:logger:API v1.0 online: http://127.0.0.1:8080
+INFO:werkzeug:[31m[1mWARNING: This is a development server. Do not use it in a production deployment. Use a production WSGI server instead.[0m
+ * Running on http://127.0.0.1:8080
+INFO:werkzeug:[33mPress CTRL+C to quit[0m
+INFO:werkzeug: * Restarting with watchdog (windowsapi)
+WARNING:werkzeug: * Debugger is active!
+INFO:werkzeug: * Debugger PIN: 137-437-087
+INFO:logger:PUT /dbproj/user
+DEBUG:logger:PUT /dbproj/user - payload: {'username': 21345483, 'password': 'carlosgodinho'}
+INFO:werkzeug:127.0.0.1 - - [27/May/2024 21:39:42] "PUT /dbproj/user HTTP/1.1" 200 -
+INFO:logger:POST /dbproj/appointment
+DEBUG:logger:POST /dbproj/appointment - payload: {'doctor_id': 'magdanunes@gmail.com', 'appointment_time': '2024-06-05 06:30:00'}, token_id: 21345483, token_type: patient
+ERROR:logger:POST /dbproj/appointment - error: ERRO:  Doctor or patient occupied at this time
+CONTEXT:  função PL/pgSQL schedule_appointment(timestamp without time zone,character varying,bigint) linha 22 em RAISE
+
+INFO:werkzeug:127.0.0.1 - - [27/May/2024 21:39:53] "[35m[1mPOST /dbproj/appointment HTTP/1.1[0m" 500 -
+INFO:logger:POST /dbproj/appointment
+DEBUG:logger:POST /dbproj/appointment - payload: {'doctor_id': 'magdanunes@gmail.com', 'appointment_time': '2024-06-05 07:00:00'}, token_id: 21345483, token_type: patient
+ERROR:logger:POST /dbproj/appointment - error: ERRO:  Doctor or patient occupied at this time
+CONTEXT:  função PL/pgSQL schedule_appointment(timestamp without time zone,character varying,bigint) linha 22 em RAISE
+
+INFO:werkzeug:127.0.0.1 - - [27/May/2024 21:40:00] "[35m[1mPOST /dbproj/appointment HTTP/1.1[0m" 500 -
+INFO:logger:POST /dbproj/appointment
+DEBUG:logger:POST /dbproj/appointment - payload: {'doctor_id': 'magdanunes@gmail.com', 'appointment_time': '2024-06-05 08:00:00'}, token_id: 21345483, token_type: patient
+INFO:werkzeug:127.0.0.1 - - [27/May/2024 21:40:04] "POST /dbproj/appointment HTTP/1.1" 200 -
+INFO:logger:API v1.0 online: http://127.0.0.1:8080
+INFO:logger:API v1.0 online: http://127.0.0.1:8080
+INFO:werkzeug:[31m[1mWARNING: This is a development server. Do not use it in a production deployment. Use a production WSGI server instead.[0m
+ * Running on http://127.0.0.1:8080
+INFO:werkzeug:[33mPress CTRL+C to quit[0m
+INFO:werkzeug: * Restarting with watchdog (windowsapi)
+WARNING:werkzeug: * Debugger is active!
+INFO:werkzeug: * Debugger PIN: 137-437-087
+INFO:logger:PUT /dbproj/user
+DEBUG:logger:PUT /dbproj/user - payload: {'username': 21345483, 'password': 'carlosgodinho'}
+INFO:werkzeug:127.0.0.1 - - [27/May/2024 23:27:15] "PUT /dbproj/user HTTP/1.1" 200 -
+INFO:logger:POST /dbproj/bills/<bill_id>
+DEBUG:logger:POST /dbproj/bills/9 - payload: {'amount': 10, 'payment_method': 'card'}, token_id: 21345483, token_type: patient
+ERROR:logger:POST /dbproj/bills/<bill_id> - error: ERRO:  coluna "bill_patient" não existe
+LINE 1: (bill_patient IS NULL)
+         ^
+QUERY:  (bill_patient IS NULL)
+CONTEXT:  função PL/pgSQL execute_payment(bigint,integer,character varying,bigint) linha 31 em IF
+
+INFO:werkzeug:127.0.0.1 - - [27/May/2024 23:27:46] "[35m[1mPOST /dbproj/bills/9 HTTP/1.1[0m" 500 -
+INFO:logger:API v1.0 online: http://127.0.0.1:8080
+INFO:logger:API v1.0 online: http://127.0.0.1:8080
+INFO:werkzeug:[31m[1mWARNING: This is a development server. Do not use it in a production deployment. Use a production WSGI server instead.[0m
+ * Running on http://127.0.0.1:8080
+INFO:werkzeug:[33mPress CTRL+C to quit[0m
+INFO:werkzeug: * Restarting with watchdog (windowsapi)
+WARNING:werkzeug: * Debugger is active!
+INFO:werkzeug: * Debugger PIN: 137-437-087
+INFO:logger:POST /dbproj/bills/<bill_id>
+DEBUG:logger:POST /dbproj/bills/9 - payload: {'amount': 10, 'payment_method': 'card'}, token_id: 21345483, token_type: patient
+ERROR:logger:POST /dbproj/bills/<bill_id> - error: ERRO:  Bill not found
+CONTEXT:  função PL/pgSQL execute_payment(bigint,integer,character varying,bigint) linha 37 em RAISE
+
+INFO:werkzeug:127.0.0.1 - - [27/May/2024 23:36:14] "[35m[1mPOST /dbproj/bills/9 HTTP/1.1[0m" 500 -
+INFO:logger:API v1.0 online: http://127.0.0.1:8080
+INFO:logger:API v1.0 online: http://127.0.0.1:8080
+INFO:werkzeug:[31m[1mWARNING: This is a development server. Do not use it in a production deployment. Use a production WSGI server instead.[0m
+ * Running on http://127.0.0.1:8080
+INFO:werkzeug:[33mPress CTRL+C to quit[0m
+INFO:werkzeug: * Restarting with watchdog (windowsapi)
+WARNING:werkzeug: * Debugger is active!
+INFO:werkzeug: * Debugger PIN: 137-437-087
+INFO:logger:POST /dbproj/bills/<bill_id>
+DEBUG:logger:POST /dbproj/bills/9 - payload: {'amount': 10, 'payment_method': 'card'}, token_id: 21345483, token_type: patient
+ERROR:logger:POST /dbproj/bills/<bill_id> - error: ERRO:  Bill not found
+CONTEXT:  função PL/pgSQL execute_payment(bigint,integer,character varying,bigint) linha 37 em RAISE
+
+INFO:werkzeug:127.0.0.1 - - [27/May/2024 23:39:46] "[35m[1mPOST /dbproj/bills/9 HTTP/1.1[0m" 500 -
+INFO:logger:API v1.0 online: http://127.0.0.1:8080
+INFO:logger:API v1.0 online: http://127.0.0.1:8080
+INFO:werkzeug:[31m[1mWARNING: This is a development server. Do not use it in a production deployment. Use a production WSGI server instead.[0m
+ * Running on http://127.0.0.1:8080
+INFO:werkzeug:[33mPress CTRL+C to quit[0m
+INFO:werkzeug: * Restarting with watchdog (windowsapi)
+WARNING:werkzeug: * Debugger is active!
+INFO:werkzeug: * Debugger PIN: 137-437-087
+INFO:logger:POST /dbproj/bills/<bill_id>
+DEBUG:logger:POST /dbproj/bills/10 - payload: {'amount': 10, 'payment_method': 'card'}, token_id: 21345483, token_type: patient
+INFO:werkzeug:127.0.0.1 - - [27/May/2024 23:40:47] "POST /dbproj/bills/10 HTTP/1.1" 200 -
+INFO:logger:POST /dbproj/bills/<bill_id>
+DEBUG:logger:POST /dbproj/bills/9 - payload: {'amount': 10, 'payment_method': 'card'}, token_id: 21345483, token_type: patient
+ERROR:logger:POST /dbproj/bills/<bill_id> - error: ERRO:  Bill not found
+CONTEXT:  função PL/pgSQL execute_payment(bigint,integer,character varying,bigint) linha 37 em RAISE
+
+INFO:werkzeug:127.0.0.1 - - [27/May/2024 23:40:56] "[35m[1mPOST /dbproj/bills/9 HTTP/1.1[0m" 500 -
+INFO:logger:POST /dbproj/bills/<bill_id>
+DEBUG:logger:POST /dbproj/bills/11 - payload: {'amount': 10, 'payment_method': 'card'}, token_id: 21345483, token_type: patient
+INFO:werkzeug:127.0.0.1 - - [27/May/2024 23:41:15] "POST /dbproj/bills/11 HTTP/1.1" 200 -
+INFO:logger:POST /dbproj/bills/<bill_id>
+DEBUG:logger:POST /dbproj/bills/12 - payload: {'amount': 10, 'payment_method': 'card'}, token_id: 21345483, token_type: patient
+INFO:werkzeug:127.0.0.1 - - [27/May/2024 23:41:19] "POST /dbproj/bills/12 HTTP/1.1" 200 -
+INFO:logger:POST /dbproj/bills/<bill_id>
+DEBUG:logger:POST /dbproj/bills/13 - payload: {'amount': 10, 'payment_method': 'card'}, token_id: 21345483, token_type: patient
+INFO:werkzeug:127.0.0.1 - - [27/May/2024 23:41:22] "POST /dbproj/bills/13 HTTP/1.1" 200 -
+INFO:logger:POST /dbproj/bills/<bill_id>
+DEBUG:logger:POST /dbproj/bills/14 - payload: {'amount': 10, 'payment_method': 'card'}, token_id: 21345483, token_type: patient
+INFO:werkzeug:127.0.0.1 - - [27/May/2024 23:41:26] "POST /dbproj/bills/14 HTTP/1.1" 200 -
+INFO:logger:POST /dbproj/bills/<bill_id>
+DEBUG:logger:POST /dbproj/bills/15 - payload: {'amount': 10, 'payment_method': 'card'}, token_id: 21345483, token_type: patient
+ERROR:logger:POST /dbproj/bills/<bill_id> - error: ERRO:  Bill not found
+CONTEXT:  função PL/pgSQL execute_payment(bigint,integer,character varying,bigint) linha 37 em RAISE
+
+INFO:werkzeug:127.0.0.1 - - [27/May/2024 23:41:29] "[35m[1mPOST /dbproj/bills/15 HTTP/1.1[0m" 500 -
+INFO:logger:POST /dbproj/bills/<bill_id>
+DEBUG:logger:POST /dbproj/bills/9 - payload: {'amount': 10, 'payment_method': 'card'}, token_id: 21345483, token_type: patient
+ERROR:logger:POST /dbproj/bills/<bill_id> - error: ERRO:  Bill not found
+CONTEXT:  função PL/pgSQL execute_payment(bigint,integer,character varying,bigint) linha 37 em RAISE
+
+INFO:werkzeug:127.0.0.1 - - [27/May/2024 23:41:38] "[35m[1mPOST /dbproj/bills/9 HTTP/1.1[0m" 500 -
+INFO:logger:POST /dbproj/bills/<bill_id>
+DEBUG:logger:POST /dbproj/bills/8 - payload: {'amount': 10, 'payment_method': 'card'}, token_id: 21345483, token_type: patient
+ERROR:logger:POST /dbproj/bills/<bill_id> - error: ERRO:  Bill already paid
+CONTEXT:  função PL/pgSQL execute_payment(bigint,integer,character varying,bigint) linha 43 em RAISE
+
+INFO:werkzeug:127.0.0.1 - - [27/May/2024 23:41:41] "[35m[1mPOST /dbproj/bills/8 HTTP/1.1[0m" 500 -
+INFO:logger:POST /dbproj/bills/<bill_id>
+DEBUG:logger:POST /dbproj/bills/2 - payload: {'amount': 10, 'payment_method': 'card'}, token_id: 21345483, token_type: patient
+ERROR:logger:POST /dbproj/bills/<bill_id> - error: ERRO:  Bill not found
+CONTEXT:  função PL/pgSQL execute_payment(bigint,integer,character varying,bigint) linha 37 em RAISE
+
+INFO:werkzeug:127.0.0.1 - - [27/May/2024 23:41:46] "[35m[1mPOST /dbproj/bills/2 HTTP/1.1[0m" 500 -
+INFO:logger:POST /dbproj/bills/<bill_id>
+DEBUG:logger:POST /dbproj/bills/1 - payload: {'amount': 10, 'payment_method': 'card'}, token_id: 21345483, token_type: patient
+ERROR:logger:POST /dbproj/bills/<bill_id> - error: ERRO:  Bill not found
+CONTEXT:  função PL/pgSQL execute_payment(bigint,integer,character varying,bigint) linha 37 em RAISE
+
+INFO:werkzeug:127.0.0.1 - - [27/May/2024 23:41:50] "[35m[1mPOST /dbproj/bills/1 HTTP/1.1[0m" 500 -
+INFO:logger:POST /dbproj/bills/<bill_id>
+DEBUG:logger:POST /dbproj/bills/3 - payload: {'amount': 10, 'payment_method': 'card'}, token_id: 21345483, token_type: patient
+INFO:werkzeug:127.0.0.1 - - [27/May/2024 23:41:53] "POST /dbproj/bills/3 HTTP/1.1" 200 -
+INFO:logger:API v1.0 online: http://127.0.0.1:8080
+INFO:logger:API v1.0 online: http://127.0.0.1:8080
+INFO:werkzeug:[31m[1mWARNING: This is a development server. Do not use it in a production deployment. Use a production WSGI server instead.[0m
+ * Running on http://127.0.0.1:8080
+INFO:werkzeug:[33mPress CTRL+C to quit[0m
+INFO:werkzeug: * Restarting with watchdog (windowsapi)
+WARNING:werkzeug: * Debugger is active!
+INFO:werkzeug: * Debugger PIN: 137-437-087
+INFO:logger:API v1.0 online: http://127.0.0.1:8080
+INFO:logger:API v1.0 online: http://127.0.0.1:8080
+INFO:werkzeug:[31m[1mWARNING: This is a development server. Do not use it in a production deployment. Use a production WSGI server instead.[0m
+ * Running on http://127.0.0.1:8080
+INFO:werkzeug:[33mPress CTRL+C to quit[0m
+INFO:werkzeug: * Restarting with watchdog (windowsapi)
+WARNING:werkzeug: * Debugger is active!
+INFO:werkzeug: * Debugger PIN: 137-437-087
+INFO:logger:PUT /dbproj/user
+DEBUG:logger:PUT /dbproj/user - payload: {'username': 21345483, 'password': 'carlosgodinho'}
+INFO:werkzeug:127.0.0.1 - - [27/May/2024 23:55:53] "PUT /dbproj/user HTTP/1.1" 200 -
+INFO:logger:GET /dbproj/prescriptions/<person_id>
+DEBUG:logger:person_id: 21345483, token_id: 21345483, token_type: patient
+INFO:werkzeug:127.0.0.1 - - [27/May/2024 23:56:03] "GET /dbproj/prescriptions/21345483 HTTP/1.1" 200 -
+INFO:logger:POST /dbproj/bills/<bill_id>
+DEBUG:logger:POST /dbproj/bills/3 - payload: {'amount': 10, 'payment_method': 'card'}, token_id: 21345483, token_type: patient
+INFO:werkzeug:127.0.0.1 - - [27/May/2024 23:56:37] "POST /dbproj/bills/3 HTTP/1.1" 200 -
+INFO:logger:PUT /dbproj/user
+DEBUG:logger:PUT /dbproj/user - payload: {'username': 68340365, 'password': 'sebastiaosugalho'}
+INFO:werkzeug:127.0.0.1 - - [27/May/2024 23:59:01] "[31m[1mPUT /dbproj/user HTTP/1.1[0m" 400 -
+INFO:logger:PUT /dbproj/user
+DEBUG:logger:PUT /dbproj/user - payload: {'username': 68340365, 'password': 'sebastiaobugalho'}
+INFO:werkzeug:127.0.0.1 - - [27/May/2024 23:59:11] "PUT /dbproj/user HTTP/1.1" 200 -
+INFO:logger:POST /dbproj/bills/<bill_id>
+DEBUG:logger:POST /dbproj/bills/3 - payload: {'amount': 10, 'payment_method': 'card'}, token_id: 68340365, token_type: patient
+ERROR:logger:POST /dbproj/bills/<bill_id> - error: ERRO:  Only the patient can pay the bill
+CONTEXT:  função PL/pgSQL execute_payment(bigint,integer,character varying,bigint) linha 41 em RAISE
+
+INFO:werkzeug:127.0.0.1 - - [27/May/2024 23:59:24] "[35m[1mPOST /dbproj/bills/3 HTTP/1.1[0m" 500 -
+INFO:werkzeug: * Detected change in 'c:\\Users\\Daniel Nunes\\LEI\\BD\\Projeto\\python\\demo-api.py', reloading
+INFO:werkzeug: * Detected change in 'c:\\Users\\Daniel Nunes\\LEI\\BD\\Projeto\\python\\demo-api.py', reloading
+INFO:werkzeug: * Detected change in 'c:\\Users\\Daniel Nunes\\LEI\\BD\\Projeto\\python\\demo-api.py', reloading
+INFO:werkzeug: * Detected change in 'c:\\Users\\Daniel Nunes\\LEI\\BD\\Projeto\\python\\demo-api.py', reloading
+INFO:werkzeug: * Restarting with watchdog (windowsapi)
+WARNING:werkzeug: * Debugger is active!
+INFO:werkzeug: * Debugger PIN: 137-437-087
+INFO:werkzeug: * Detected change in 'c:\\Users\\Daniel Nunes\\LEI\\BD\\Projeto\\python\\demo-api.py', reloading
+INFO:werkzeug: * Detected change in 'c:\\Users\\Daniel Nunes\\LEI\\BD\\Projeto\\python\\demo-api.py', reloading
+INFO:werkzeug: * Detected change in 'c:\\Users\\Daniel Nunes\\LEI\\BD\\Projeto\\python\\demo-api.py', reloading
+INFO:werkzeug: * Detected change in 'c:\\Users\\Daniel Nunes\\LEI\\BD\\Projeto\\python\\demo-api.py', reloading
+INFO:werkzeug: * Restarting with watchdog (windowsapi)
+WARNING:werkzeug: * Debugger is active!
+INFO:werkzeug: * Debugger PIN: 137-437-087
+INFO:logger:API v1.0 online: http://127.0.0.1:8080
+INFO:logger:API v1.0 online: http://127.0.0.1:8080
+INFO:werkzeug:[31m[1mWARNING: This is a development server. Do not use it in a production deployment. Use a production WSGI server instead.[0m
+ * Running on http://127.0.0.1:8080
+INFO:werkzeug:[33mPress CTRL+C to quit[0m
+INFO:werkzeug: * Restarting with watchdog (windowsapi)
+WARNING:werkzeug: * Debugger is active!
+INFO:werkzeug: * Debugger PIN: 137-437-087
+INFO:logger:PUT /dbproj/user
+DEBUG:logger:PUT /dbproj/user - payload: {'username': 67493269, 'password': 'carlossimoes'}
+ERROR:logger:POST /dbproj/user - error: 'NoneType' object is not subscriptable
+INFO:werkzeug:127.0.0.1 - - [28/May/2024 01:02:08] "[35m[1mPUT /dbproj/user HTTP/1.1[0m" 500 -
+INFO:logger:PUT /dbproj/user
+DEBUG:logger:PUT /dbproj/user - payload: {'username': 67493269, 'password': 'carlossimoes'}
+ERROR:logger:POST /dbproj/user - error: 'NoneType' object is not subscriptable
+INFO:werkzeug:127.0.0.1 - - [28/May/2024 01:02:13] "[35m[1mPUT /dbproj/user HTTP/1.1[0m" 500 -
+INFO:logger:PUT /dbproj/user
+DEBUG:logger:PUT /dbproj/user - payload: {'username': 'carlossimoes@gmail.com', 'password': 'carlossimoes'}
+INFO:werkzeug:127.0.0.1 - - [28/May/2024 01:02:46] "PUT /dbproj/user HTTP/1.1" 200 -
+INFO:logger:PUT /dbproj/user
+DEBUG:logger:PUT /dbproj/user - payload: {'username': 67493269, 'password': 'carlossimoes'}
+ERROR:logger:POST /dbproj/user - error: 'NoneType' object is not subscriptable
+INFO:werkzeug:127.0.0.1 - - [28/May/2024 01:02:50] "[35m[1mPUT /dbproj/user HTTP/1.1[0m" 500 -
+INFO:logger:API v1.0 online: http://127.0.0.1:8080
+INFO:logger:API v1.0 online: http://127.0.0.1:8080
+INFO:werkzeug:[31m[1mWARNING: This is a development server. Do not use it in a production deployment. Use a production WSGI server instead.[0m
+ * Running on http://127.0.0.1:8080
+INFO:werkzeug:[33mPress CTRL+C to quit[0m
+INFO:werkzeug: * Restarting with watchdog (windowsapi)
+WARNING:werkzeug: * Debugger is active!
+INFO:werkzeug: * Debugger PIN: 137-437-087
+INFO:logger:PUT /dbproj/user
+DEBUG:logger:PUT /dbproj/user - payload: {'username': 67493269, 'password': 'carlossimoes'}
+ERROR:logger:POST /dbproj/user - error: 'NoneType' object is not subscriptable
+INFO:werkzeug:127.0.0.1 - - [28/May/2024 01:04:08] "[35m[1mPUT /dbproj/user HTTP/1.1[0m" 500 -
+INFO:logger:API v1.0 online: http://127.0.0.1:8080
+INFO:logger:API v1.0 online: http://127.0.0.1:8080
+INFO:werkzeug:[31m[1mWARNING: This is a development server. Do not use it in a production deployment. Use a production WSGI server instead.[0m
+ * Running on http://127.0.0.1:8080
+INFO:werkzeug:[33mPress CTRL+C to quit[0m
+INFO:werkzeug: * Restarting with watchdog (windowsapi)
+WARNING:werkzeug: * Debugger is active!
+INFO:werkzeug: * Debugger PIN: 137-437-087
+INFO:logger:PUT /dbproj/user
+DEBUG:logger:PUT /dbproj/user - payload: {'username': 67493269, 'password': 'carlossimoes'}
+INFO:werkzeug:127.0.0.1 - - [28/May/2024 01:05:18] "[31m[1mPUT /dbproj/user HTTP/1.1[0m" 400 -
+INFO:logger:API v1.0 online: http://127.0.0.1:8080
+INFO:logger:API v1.0 online: http://127.0.0.1:8080
+INFO:werkzeug:[31m[1mWARNING: This is a development server. Do not use it in a production deployment. Use a production WSGI server instead.[0m
+ * Running on http://127.0.0.1:8080
+INFO:werkzeug:[33mPress CTRL+C to quit[0m
+INFO:werkzeug: * Restarting with watchdog (windowsapi)
+WARNING:werkzeug: * Debugger is active!
+INFO:werkzeug: * Debugger PIN: 137-437-087
+INFO:logger:PUT /dbproj/user
+DEBUG:logger:PUT /dbproj/user - payload: {'username': 'carlossimoes@gmail.com', 'password': 'carlossimoes'}
+INFO:werkzeug:127.0.0.1 - - [28/May/2024 01:05:56] "PUT /dbproj/user HTTP/1.1" 200 -
+INFO:logger:POST /dbproj/surgery/7
+DEBUG:logger:POST /dbproj/surgery - payload: {'patient_id': 68340365, 'doctor': 'magdanunes@gmail.com', 'nurses': [['tsnaprozis@gmail.com', 'a role']], 'surgery_start': '2024-05-29 19:30:00', 'surgery_end': '2024-05-30 00:00:00'}, token_id: carlossimoes@gmail.com, token_type: assistant
+ERROR:logger:POST /dbproj/surgery - error: ERRO:  Doctor, nurse or patient unavailable at this time
+CONTEXT:  função PL/pgSQL schedule_surgery(bigint,character varying,character varying[],character varying[],timestamp without time zone,timestamp without time zone,bigint,timestamp without time zone,timestamp without time zone,character varying) linha 33 em RAISE
+
+INFO:werkzeug:127.0.0.1 - - [28/May/2024 01:06:14] "[35m[1mPOST /dbproj/surgery/7 HTTP/1.1[0m" 500 -
+INFO:logger:POST /dbproj/surgery/7
+DEBUG:logger:POST /dbproj/surgery - payload: {'patient_id': 68340365, 'doctor': 'magdanunes@gmail.com', 'surgery_start': '2024-05-29 19:30:00', 'surgery_end': '2024-05-30 00:00:00'}, token_id: carlossimoes@gmail.com, token_type: assistant
+INFO:werkzeug:127.0.0.1 - - [28/May/2024 01:06:29] "[31m[1mPOST /dbproj/surgery/7 HTTP/1.1[0m" 400 -
+INFO:logger:POST /dbproj/surgery/7
+DEBUG:logger:POST /dbproj/surgery - payload: {'patient_id': 68340365, 'doctor': 'magdanunes@gmail.com', 'nurses': [], 'surgery_start': '2024-05-29 19:30:00', 'surgery_end': '2024-05-30 00:00:00'}, token_id: carlossimoes@gmail.com, token_type: assistant
+ERROR:logger:POST /dbproj/surgery - error: ERRO:  Doctor, nurse or patient unavailable at this time
+CONTEXT:  função PL/pgSQL schedule_surgery(bigint,character varying,character varying[],character varying[],timestamp without time zone,timestamp without time zone,bigint,timestamp without time zone,timestamp without time zone,character varying) linha 33 em RAISE
+
+INFO:werkzeug:127.0.0.1 - - [28/May/2024 01:06:37] "[35m[1mPOST /dbproj/surgery/7 HTTP/1.1[0m" 500 -
+INFO:logger:API v1.0 online: http://127.0.0.1:8080
+INFO:logger:API v1.0 online: http://127.0.0.1:8080
+INFO:werkzeug:[31m[1mWARNING: This is a development server. Do not use it in a production deployment. Use a production WSGI server instead.[0m
+ * Running on http://127.0.0.1:8080
+INFO:werkzeug:[33mPress CTRL+C to quit[0m
+INFO:werkzeug: * Restarting with watchdog (windowsapi)
+WARNING:werkzeug: * Debugger is active!
+INFO:werkzeug: * Debugger PIN: 137-437-087
+INFO:logger:POST /dbproj/surgery/7
+DEBUG:logger:POST /dbproj/surgery - payload: {'patient_id': 68340365, 'doctor': 'magdanunes@gmail.com', 'nurses': [], 'surgery_start': '2024-05-29 19:00:00', 'surgery_end': '2024-05-30 20:30:00'}, token_id: carlossimoes@gmail.com, token_type: assistant
+ERROR:logger:POST /dbproj/surgery - error: ERRO:  Doctor, nurse or patient unavailable at this time
+CONTEXT:  função PL/pgSQL schedule_surgery(bigint,character varying,character varying[],character varying[],timestamp without time zone,timestamp without time zone,bigint,timestamp without time zone,timestamp without time zone,character varying) linha 33 em RAISE
+
+INFO:werkzeug:127.0.0.1 - - [28/May/2024 01:10:37] "[35m[1mPOST /dbproj/surgery/7 HTTP/1.1[0m" 500 -
+INFO:logger:POST /dbproj/surgery/7
+DEBUG:logger:POST /dbproj/surgery - payload: {'patient_id': 68340365, 'doctor': 'magdanunes@gmail.com', 'nurses': [], 'surgery_start': '2024-05-29 19:00:00', 'surgery_end': '2024-05-30 20:00:00'}, token_id: carlossimoes@gmail.com, token_type: assistant
+ERROR:logger:POST /dbproj/surgery - error: ERRO:  Doctor, nurse or patient unavailable at this time
+CONTEXT:  função PL/pgSQL schedule_surgery(bigint,character varying,character varying[],character varying[],timestamp without time zone,timestamp without time zone,bigint,timestamp without time zone,timestamp without time zone,character varying) linha 33 em RAISE
+
+INFO:werkzeug:127.0.0.1 - - [28/May/2024 01:10:42] "[35m[1mPOST /dbproj/surgery/7 HTTP/1.1[0m" 500 -
+INFO:logger:POST /dbproj/surgery/7
+DEBUG:logger:POST /dbproj/surgery - payload: {'patient_id': 68340365, 'doctor': 'magdanunes@gmail.com', 'nurses': [], 'surgery_start': '2024-05-29 19:00:00', 'surgery_end': '2024-05-30 19:30:00'}, token_id: carlossimoes@gmail.com, token_type: assistant
+ERROR:logger:POST /dbproj/surgery - error: ERRO:  Doctor, nurse or patient unavailable at this time
+CONTEXT:  função PL/pgSQL schedule_surgery(bigint,character varying,character varying[],character varying[],timestamp without time zone,timestamp without time zone,bigint,timestamp without time zone,timestamp without time zone,character varying) linha 33 em RAISE
+
+INFO:werkzeug:127.0.0.1 - - [28/May/2024 01:10:48] "[35m[1mPOST /dbproj/surgery/7 HTTP/1.1[0m" 500 -
+INFO:logger:POST /dbproj/surgery/7
+DEBUG:logger:POST /dbproj/surgery - payload: {'patient_id': 68340365, 'doctor': 'magdanunes@gmail.com', 'nurses': [], 'surgery_start': '2024-05-29 19:00:00', 'surgery_end': '2024-05-30 19:30:00'}, token_id: carlossimoes@gmail.com, token_type: assistant
+ERROR:logger:POST /dbproj/surgery - error: ERRO:  Doctor, nurse or patient unavailable at this time
+CONTEXT:  função PL/pgSQL schedule_surgery(bigint,character varying,character varying[],character varying[],timestamp without time zone,timestamp without time zone,bigint,timestamp without time zone,timestamp without time zone,character varying) linha 33 em RAISE
+
+INFO:werkzeug:127.0.0.1 - - [28/May/2024 01:11:27] "[35m[1mPOST /dbproj/surgery/7 HTTP/1.1[0m" 500 -
+INFO:logger:POST /dbproj/surgery/7
+DEBUG:logger:POST /dbproj/surgery - payload: {'patient_id': 68340365, 'doctor': 'magdanunes@gmail.com', 'nurses': [], 'surgery_start': '2024-05-29 19:00:00', 'surgery_end': '2024-05-29 19:30:00'}, token_id: carlossimoes@gmail.com, token_type: assistant
+INFO:werkzeug:127.0.0.1 - - [28/May/2024 01:12:38] "POST /dbproj/surgery/7 HTTP/1.1" 200 -
+INFO:logger:API v1.0 online: http://127.0.0.1:8080
+INFO:logger:API v1.0 online: http://127.0.0.1:8080
+INFO:werkzeug:[31m[1mWARNING: This is a development server. Do not use it in a production deployment. Use a production WSGI server instead.[0m
+ * Running on http://127.0.0.1:8080
+INFO:werkzeug:[33mPress CTRL+C to quit[0m
+INFO:werkzeug: * Restarting with watchdog (windowsapi)
+WARNING:werkzeug: * Debugger is active!
+INFO:werkzeug: * Debugger PIN: 137-437-087
+INFO:logger:POST /dbproj/surgery/7
+DEBUG:logger:POST /dbproj/surgery - payload: {'patient_id': 68340365, 'doctor': 'magdanunes@gmail.com', 'nurses': [], 'surgery_start': '2024-05-29 19:10:00', 'surgery_end': '2024-05-29 19:30:00'}, token_id: carlossimoes@gmail.com, token_type: assistant
+ERROR:logger:POST /dbproj/surgery - error: ERRO:  Doctor, nurse or patient unavailable at this time
+CONTEXT:  função PL/pgSQL schedule_surgery(bigint,character varying,character varying[],character varying[],timestamp without time zone,timestamp without time zone,bigint,timestamp without time zone,timestamp without time zone,character varying) linha 33 em RAISE
+
+INFO:werkzeug:127.0.0.1 - - [28/May/2024 01:15:52] "[35m[1mPOST /dbproj/surgery/7 HTTP/1.1[0m" 500 -
+INFO:logger:POST /dbproj/surgery/7
+DEBUG:logger:POST /dbproj/surgery - payload: {'patient_id': 68340365, 'doctor': 'magdanunes@gmail.com', 'nurses': [], 'surgery_start': '2024-05-29 18:50:00', 'surgery_end': '2024-05-29 18:30:00'}, token_id: carlossimoes@gmail.com, token_type: assistant
+ERROR:logger:POST /dbproj/surgery - error: ERRO:  limite inferior do range deve ser menor ou igual a limite superior do range
+CONTEXT:  SQL expression "EXISTS (
+			SELECT 1
+			FROM appointment AS a
+			LEFT JOIN appointment_role AS ar ON a.id = ar.appointment_id
+			FULL OUTER JOIN surgery AS s ON TRUE
+			LEFT JOIN surgery_role AS sr ON s.id = sr.surgery_id
+			FULL OUTER JOIN hospitalization AS h ON s.hospitalization_id = h.id
+			WHERE
+				-- Check appointment overlaps
+				tsrange(a.start_time, a.start_time + INTERVAL '30 minutes')
+				&& tsrange(surgery_start, surgery_end)
+				AND (a.doctor_email = doctor_id OR a.patient_cc = patient_id OR ar.nurse_email = ANY(nurse_id))
+			OR
+				-- Check hospitalization overlaps
+				tsrange(h.entry_time, h.exit_time)
+				&& tsrange(surgery_start, surgery_end)
+				AND h.patient_cc = patient_id
+			OR
+				-- Check surgery overlaps
+				tsrange(s.start_time, s.end_time)
+				&& tsrange(surgery_start, surgery_end)
+				AND (s.doctor_email = doctor_id OR h.patient_cc = patient_id OR sr.nurse_email = ANY(nurse_id))
+		)"
+função PL/pgSQL schedule_surgery(bigint,character varying,character varying[],character varying[],timestamp without time zone,timestamp without time zone,bigint,timestamp without time zone,timestamp without time zone,character varying) linha 10 em IF
+
+INFO:werkzeug:127.0.0.1 - - [28/May/2024 01:16:07] "[35m[1mPOST /dbproj/surgery/7 HTTP/1.1[0m" 500 -
+INFO:logger:POST /dbproj/surgery/7
+DEBUG:logger:POST /dbproj/surgery - payload: {'patient_id': 68340365, 'doctor': 'magdanunes@gmail.com', 'nurses': [], 'surgery_start': '2024-05-29 18:30:00', 'surgery_end': '2024-05-29 18:50:00'}, token_id: carlossimoes@gmail.com, token_type: assistant
+ERROR:logger:POST /dbproj/surgery - error: ERRO:  novo registro da relação "surgery" viola restrição de verificação "check_surgery_time"
+DETAIL:  Registro que falhou contém (11, 2024-05-29 18:30:00, 2024-05-29 18:50:00, magdanunes@gmail.com, 7).
+CONTEXT:  comando SQL "INSERT INTO surgery(start_time, end_time, doctor_email, hospitalization_id)
+	VALUES(surgery_start, surgery_end, doctor_id, hospitalization_id)
+	RETURNING id"
+função PL/pgSQL schedule_surgery(bigint,character varying,character varying[],character varying[],timestamp without time zone,timestamp without time zone,bigint,timestamp without time zone,timestamp without time zone,character varying) linha 46 em comando SQL
+
+INFO:werkzeug:127.0.0.1 - - [28/May/2024 01:16:24] "[35m[1mPOST /dbproj/surgery/7 HTTP/1.1[0m" 500 -
+INFO:logger:POST /dbproj/surgery/7
+DEBUG:logger:POST /dbproj/surgery - payload: {'patient_id': 68340365, 'doctor': 'magdanunes@gmail.com', 'nurses': [], 'surgery_start': '2024-05-29 19:00:00', 'surgery_end': '2024-05-29 19:30:00'}, token_id: carlossimoes@gmail.com, token_type: assistant
+ERROR:logger:POST /dbproj/surgery - error: ERRO:  Doctor, nurse or patient unavailable at this time
+CONTEXT:  função PL/pgSQL schedule_surgery(bigint,character varying,character varying[],character varying[],timestamp without time zone,timestamp without time zone,bigint,timestamp without time zone,timestamp without time zone,character varying) linha 33 em RAISE
+
+INFO:werkzeug:127.0.0.1 - - [28/May/2024 01:16:41] "[35m[1mPOST /dbproj/surgery/7 HTTP/1.1[0m" 500 -
+INFO:logger:API v1.0 online: http://127.0.0.1:8080
+INFO:logger:API v1.0 online: http://127.0.0.1:8080

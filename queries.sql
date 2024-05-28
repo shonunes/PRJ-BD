@@ -130,9 +130,9 @@ BEGIN
 
 	IF (assistant_email IS NOT NULL) THEN
 		type := 'assistant';
-	ELSEIF (nurse_email IS NOT NULL) THEN
+	ELSIF (nurse_email IS NOT NULL) THEN
 		type := 'nurse';
-	ELSEIF (doctor_email IS NOT NULL) THEN
+	ELSIF (doctor_email IS NOT NULL) THEN
 		type := 'doctor';
 	ELSE
 		RAISE EXCEPTION 'Employee not found';
@@ -171,7 +171,7 @@ DECLARE
 BEGIN
 	IF (appointment_time < CURRENT_TIMESTAMP) THEN
 		RAISE EXCEPTION 'Cannot schedule appointment in the past';
-	ELSEIF (appointment_time > CURRENT_TIMESTAMP + INTERVAL '3 months') THEN
+	ELSIF (appointment_time > CURRENT_TIMESTAMP + INTERVAL '3 months') THEN
 		RAISE EXCEPTION 'Cannot schedule appointment more than 3 months in advance';
 	END IF;
 
@@ -179,15 +179,24 @@ BEGIN
 			SELECT 1
 			FROM appointment AS a
 			FULL OUTER JOIN surgery AS s ON TRUE
-			WHERE a.start_time = appointment_time
-			AND (a.doctor_email = doctor_id OR a.patient_cc = patient_id)
-			OR 
-			appointment_time
-			BETWEEN s.start_time AND s.end_time - INTERVAL '30 minutes'
-			AND s.doctor_email = doctor_id
+			JOIN hospitalization AS h ON s.hospitalization_id = h.id
+			WHERE
+				-- Check appointment overlaps
+				a.start_time = appointment_time
+				AND (a.doctor_email = doctor_id OR a.patient_cc = patient_id)
+			OR
+				-- Check surgery overlaps
+				tsrange(appointment_time, appointment_time + INTERVAL '30 minutes')
+				&& tsrange(s.start_time, s.end_time)
+				AND (s.doctor_email = doctor_id OR h.patient_cc = patient_id)
+			OR
+				-- Check hospitalization overlaps
+				tsrange(appointment_time, appointment_time + INTERVAL '30 minutes')
+				&& tsrange(h.entry_time, h.exit_time)
+				AND h.patient_cc = patient_id
 		) THEN
-			RAISE EXCEPTION 'Doctor or patient occupied at this time';
-		END IF;
+		RAISE EXCEPTION 'Doctor or patient unavailable at this time';
+	END IF;
 
 	INSERT INTO appointment(start_time, doctor_email, patient_cc)
 	VALUES(appointment_time, doctor_id, patient_id)
@@ -230,7 +239,7 @@ BEGIN
 	UPDATE bill
 	SET amount = amount + 2000
 	WHERE id = hosp_bill_id;
-	
+
 	RETURN NEW;
 END;
 $$;
@@ -252,47 +261,42 @@ DECLARE
 	surgery_id BIGINT;
 	hosp_bill_id BIGINT DEFAULT NULL;
 BEGIN
-	IF (surgery_start < CURRENT_TIMESTAMP) THEN
-		RAISE EXCEPTION 'Cannot schedule surgery in the past';
-	ELSEIF (surgery_start > CURRENT_TIMESTAMP + INTERVAL '6 months') THEN
+	IF (surgery_start > CURRENT_TIMESTAMP + INTERVAL '6 months') THEN
 		RAISE EXCEPTION 'Cannot schedule surgery more than 6 months in advance';
-	ELSEIF (EXISTS (SELECT 1
-					FROM surgery AS s
-					WHERE doctor_email = doctor_id
-					AND (surgery_start < s.end_time AND surgery_start > s.start_time)
-					OR (surgery_end > s.start_time AND surgery_end < s.end_time)
-					OR (surgery_start <= s.start_time AND surgery_end >= s.end_time))
-			) THEN
-		RAISE EXCEPTION 'Doctor already has a surgery at this time';
-	ELSEIF (EXISTS (SELECT 1
-					FROM appointment
-					WHERE start_time
-					BETWEEN surgery_start AND surgery_end + INTERVAL '30 minutes'
-					AND (doctor_email = doctor_id OR patient_cc = patient_id))
-			) THEN
-		RAISE EXCEPTION 'Doctor or patient already has an appointment at this time';
+	ELSIF (surgery_start >= surgery_end) THEN
+		RAISE EXCEPTION 'Surgery start time must be before end time';
 	END IF;
 
-	IF (EXISTS (SELECT 1
-				FROM surgery AS s
-				JOIN surgery_role AS sr ON s.id = sr.surgery_id
-				WHERE  sr.nurse_email = ANY(nurse_id)
-				AND (surgery_start < s.end_time AND surgery_start > s.start_time)
-				OR (surgery_end > s.start_time AND surgery_end < s.end_time)
-				OR (surgery_start <= s.start_time AND surgery_end >= s.end_time))
+	IF EXISTS (
+			SELECT 1
+			FROM appointment AS a
+			LEFT JOIN appointment_role AS ar ON a.id = ar.appointment_id
+			FULL OUTER JOIN surgery AS s ON TRUE
+			LEFT JOIN surgery_role AS sr ON s.id = sr.surgery_id
+			JOIN hospitalization AS h ON s.hospitalization_id = h.id
+			WHERE
+				-- Check appointment overlaps
+				tsrange(a.start_time, a.start_time + INTERVAL '30 minutes')
+				&& tsrange(surgery_start, surgery_end)
+				AND (a.doctor_email = doctor_id OR a.patient_cc = patient_id OR ar.nurse_email = ANY(nurse_id))
+			OR
+				-- Check hospitalization overlaps
+				tsrange(h.entry_time, h.exit_time)
+				&& tsrange(surgery_start, surgery_end)
+				AND h.patient_cc = patient_id
+			OR
+				-- Check surgery overlaps
+				tsrange(s.start_time, s.end_time)
+				&& tsrange(surgery_start, surgery_end)
+				AND (s.doctor_email = doctor_id OR h.patient_cc = patient_id OR sr.nurse_email = ANY(nurse_id))
 		) THEN
-		RAISE EXCEPTION 'One or more nurses are already involved in surgeries at this time';
-	ELSEIF (EXISTS (SELECT 1
-					FROM appointment AS a
-					JOIN appointment_role AS ar ON a.id = ar.appointment_id
-					WHERE a.start_time
-					BETWEEN surgery_start AND surgery_end + INTERVAL '30 minutes'
-					AND ar.nurse_email = ANY(nurse_id))
-			) THEN
-		RAISE EXCEPTION 'One or more nurses are already involved in appointments at this time';
+		RAISE EXCEPTION 'Doctor, nurse or patient unavailable at this time';
 	END IF;
 
 	IF (hosp_entry_time IS NOT NULL) THEN
+		IF (hosp_entry_time >= hosp_exit_time) THEN
+			RAISE EXCEPTION 'Hospitalization entry time must be before exit time';
+		END IF;
 		INSERT INTO hospitalization(entry_time, exit_time, nurse_email, patient_cc)
 		VALUES(hosp_entry_time, hosp_exit_time, hosp_nurse, patient_id)
 		RETURNING id, hospitalization.bill_id INTO hospitalization_id, hosp_bill_id;
@@ -310,7 +314,7 @@ BEGIN
 		INSERT INTO surgery_role
 		VALUES(UNNEST(nurse_role), surgery_id, UNNEST(nurse_id));
 	END IF;
-	
+
 	RETURN QUERY
 	SELECT surgery_id, hospitalization_id, hosp_bill_id;
 END;
@@ -328,6 +332,7 @@ DECLARE
 	bill_amount INTEGER;
 	paid_amount INTEGER;
 	bill_paid BOOLEAN;
+	bill_patient BIGINT;
 BEGIN
 	IF (payment_amount <= 0) THEN
 		RAISE EXCEPTION 'Payment must be positive';
@@ -340,7 +345,7 @@ BEGIN
 		appt.patient_cc,
 		hosp.patient_cc
 	INTO 
-		paid_amount, 
+		paid_amount,
 		bill_amount,
 		bill_paid,
 		appt_cc,
@@ -351,15 +356,21 @@ BEGIN
 	LEFT JOIN hospitalization AS hosp ON hosp.bill_id = ps.id
 	WHERE ps.id = id_bill;
 
-	IF (bill_patient IS NULL) THEN
-		RAISE EXCEPTION 'Bill not found';
-	ELSEIF (bill_patient != user_id) THEN
+	IF (appt_cc IS NOT NULL) THEN
+        bill_patient := appt_cc;
+    ELSIF (hosp_cc IS NOT NULL) THEN
+        bill_patient := hosp_cc;
+    ELSE
+        RAISE EXCEPTION 'Bill not found';
+    END IF;
+
+	IF (bill_patient != user_id) THEN
 		RAISE EXCEPTION 'Only the patient can pay the bill';
-	ELSEIF (bill_paid) THEN
+	ELSIF (bill_paid) THEN
 		RAISE EXCEPTION 'Bill already paid';
-	ELSEIF (paid_amount + payment_amount > bill_amount) THEN
+	ELSIF (paid_amount + payment_amount > bill_amount) THEN
 		RAISE EXCEPTION 'Payment amount exceeds bill amount';
-	ELSEIF (paid_amount + payment_amount = bill_amount) THEN
+	ELSIF (paid_amount + payment_amount = bill_amount) THEN
 		UPDATE bill
 		SET paid = TRUE
 		WHERE id = id_bill;
@@ -389,7 +400,7 @@ BEGIN
 		INSERT INTO appointment_prescription
 		VALUES(prescription_id, event_id);
 
-	ELSEIF type = 'hospitalization' THEN
+	ELSIF type = 'hospitalization' THEN
 		INSERT INTO prescription(validity)
 		VALUES (val)
 		RETURNING id INTO prescription_id;

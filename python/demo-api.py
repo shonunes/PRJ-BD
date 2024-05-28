@@ -138,6 +138,7 @@ def add_patient():
 
     try:
         conn = db_connection()
+        conn.autocommit = False
         cur = conn.cursor()
 
         cur.execute(statement, values)
@@ -197,6 +198,7 @@ def add_assistant():
 
     try:
         conn = db_connection()
+        conn.autocommit = False
         cur = conn.cursor()
 
         cur.execute(statement, values)
@@ -259,11 +261,9 @@ def add_nurse():
     statement = 'CALL add_nurse(%s, %s, %s, %s, %s, %s, %s, %s, %s, %s)'
     values = (payload['cc'], payload['name'], hashed_password, payload['contract_id'], payload['salary'], payload['contract_issue_date'], payload['contract_due_date'], payload['birthday'], payload['email'], payload['superior_email'],)
 
-    conn = db_connection()
-    cur = conn.cursor()
-
     try:
         conn = db_connection()
+        conn.autocommit = False
         cur = conn.cursor()
 
         cur.execute(statement, values)
@@ -325,6 +325,7 @@ def add_doctor():
 
     try:
         conn = db_connection()
+        conn.autocommit = False
         cur = conn.cursor()
 
         cur.execute(statement, values)
@@ -390,16 +391,17 @@ def login():
 
     try:
         conn = db_connection()
+        conn.autocommit = False
         cur = conn.cursor()
 
         cur.execute(statement, value)
 
         if (is_patient):
             user_type = 'patient'
-            hashcode = cur.fetchone()[0]
-            if not hashcode:
+            if not cur.rowcount:
                 response = {'status': StatusCodes['api_error'], 'errors': 'User not found'}
                 return flask.jsonify(response), response['status']
+            hashcode = cur.fetchone()[0]
         else:
             user_type, hashcode = cur.fetchone()
 
@@ -468,6 +470,7 @@ def schedule_appointment(user_id, user_type):
 
     try:
         conn = db_connection()
+        conn.autocommit = False
         cur = conn.cursor()
 
         cur.execute(statement, values)
@@ -526,6 +529,7 @@ def get_appointments(patient_user_id, user_id, user_type):
 
     try:
         conn = db_connection()
+        conn.autocommit = False
         cur = conn.cursor()
 
         cur.execute(statement, value)
@@ -623,6 +627,7 @@ def schedule_surgery(hospitalization_id, user_id, user_type):
 
     try:
         conn = db_connection()
+        conn.autocommit = False
         cur = conn.cursor()
 
         cur.execute(statement, values)
@@ -683,12 +688,19 @@ def execute_payment(bill_id, user_id, user_type):
     except ValueError:
         response = {'status': StatusCodes['api_error'], 'errors': 'Invalid bill_id or amount'}
         return flask.jsonify(response), response['status']
-    
-    statement = 'SELECT execute_payment(%s, %s, %s, %s)'
-    values = (bill_id, payload['amount'], payload['payment_method'], user_id,)
+
+    statement = '''
+        SELECT *
+        FROM bill
+        WHERE id = %s
+        FOR UPDATE;
+        SELECT execute_payment(%s, %s, %s, %s);
+    '''
+    values = (bill_id, bill_id, payload['amount'], payload['payment_method'], user_id,)
 
     try:
         conn = db_connection()
+        conn.autocommit = False
         cur = conn.cursor()
 
         cur.execute(statement, values)
@@ -745,6 +757,7 @@ def daily_summary(date, user_id, user_type):
 
     try:
         conn = db_connection()
+        conn.autocommit = False
         cur = conn.cursor()
 
         cur.execute(statement, values)
@@ -788,7 +801,6 @@ def generate_monthly_report(user_id, user_type):
     logger.debug(f'token_id: {user_id}, token_type: {user_type}')
 
     statement = '''
-        LOCK TABLE surgery IN SHARE MODE;
         SELECT dms.surgery_month, e.name, dms.surgery_count
         FROM doctor_monthly_surgeries AS dms
         JOIN max_monthly_surgery_count AS month_maxs
@@ -801,6 +813,7 @@ def generate_monthly_report(user_id, user_type):
 
     try:
         conn = db_connection()
+        conn.autocommit = False
         cur = conn.cursor()
 
         cur.execute(statement)
@@ -850,6 +863,7 @@ def get_top3():
     logger.info('GET /dbproj/top3')
 
     conn = db_connection()
+    conn.autocommit = False
     cur = conn.cursor()
 
     statement = '''
@@ -1017,6 +1031,7 @@ def get_prescriptions(person_id, user_id, user_type):
 
     try:
         conn = db_connection()
+        conn.autocommit = False
         cur = conn.cursor()
 
         cur.execute(statement, value)
@@ -1076,6 +1091,7 @@ def add_prescription(user_id, user_type):
 
     try:
         conn = db_connection()
+        conn.autocommit = False
         cur = conn.cursor()
 
         cur.execute('SELECT add_prescription(%s, %s, %s)', (payload['type'], payload['validity'], payload['event_id'],))
