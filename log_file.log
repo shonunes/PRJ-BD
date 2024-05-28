@@ -1,0 +1,656 @@
+INFO:werkzeug:[31m[1mWARNING: This is a development server. Do not use it in a production deployment. Use a production WSGI server instead.[0m
+ * Running on http://127.0.0.1:8080
+INFO:werkzeug:[33mPress CTRL+C to quit[0m
+INFO:werkzeug: * Restarting with watchdog (windowsapi)
+WARNING:werkzeug: * Debugger is active!
+INFO:werkzeug: * Debugger PIN: 137-437-087
+INFO:logger:POST /dbproj/register/patient
+DEBUG:logger:POST /dbproj/register/patient - payload: {'cc': 21345483, 'name': 'Carlos Godinho', 'password': 'carlosgodinho', 'health_number': 67493673, 'emergency_contact': 963456836, 'birthday': '1985-05-09', 'email': 'godinho@gmail.com'}
+ERROR:logger:POST /dbproj/register/patient - error: 'utf-8' codec can't decode byte 0xe3 in position 87: invalid continuation byte
+INFO:werkzeug: * Detected change in 'C:\\Users\\Daniel Nunes\\anaconda3\\Lib\\site-packages\\psycopg2\\__init__.py', reloading
+INFO:werkzeug:127.0.0.1 - - [28/May/2024 11:44:45] "[35m[1mPOST /dbproj/register/patient HTTP/1.1[0m" 500 -
+INFO:werkzeug: * Restarting with watchdog (windowsapi)
+WARNING:werkzeug: * Debugger is active!
+INFO:werkzeug: * Debugger PIN: 137-437-087
+INFO:werkzeug: * Detected change in 'c:\\Users\\Daniel Nunes\\LEI\\BD\\Projeto\\python\\care_sync.py', reloading
+INFO:werkzeug: * Detected change in 'c:\\Users\\Daniel Nunes\\LEI\\BD\\Projeto\\python\\care_sync.py', reloading
+INFO:werkzeug: * Restarting with watchdog (windowsapi)
+WARNING:werkzeug: * Debugger is active!
+INFO:werkzeug: * Debugger PIN: 137-437-087
+INFO:werkzeug: * Detected change in 'c:\\Users\\Daniel Nunes\\LEI\\BD\\Projeto\\python\\care_sync.py', reloading
+INFO:werkzeug: * Detected change in 'c:\\Users\\Daniel Nunes\\LEI\\BD\\Projeto\\python\\care_sync.py', reloading
+INFO:werkzeug: * Detected change in 'c:\\Users\\Daniel Nunes\\LEI\\BD\\Projeto\\python\\care_sync.py', reloading
+INFO:werkzeug: * Restarting with watchdog (windowsapi)
+INFO:werkzeug:[31m[1mWARNING: This is a development server. Do not use it in a production deployment. Use a production WSGI server instead.[0m
+ * Running on http://127.0.0.1:8080
+INFO:werkzeug:[33mPress CTRL+C to quit[0m
+INFO:werkzeug: * Restarting with watchdog (windowsapi)
+WARNING:werkzeug: * Debugger is active!
+INFO:werkzeug: * Debugger PIN: 137-437-087
+INFO:logger:POST /dbproj/register/patient
+DEBUG:logger:POST /dbproj/register/patient - payload: {'cc': 21345483, 'name': 'Carlos Godinho', 'password': 'carlosgodinho', 'health_number': 67493673, 'emergency_contact': 963456836, 'birthday': '1985-05-09', 'email': 'godinho@gmail.com'}
+INFO:werkzeug:127.0.0.1 - - [28/May/2024 11:45:35] "[35m[1mPOST /dbproj/register/patient HTTP/1.1[0m" 500 -
+INFO:logger:API v1.0 online: http://127.0.0.1:8080
+INFO:logger:API v1.0 online: http://127.0.0.1:8080
+INFO:werkzeug:[31m[1mWARNING: This is a development server. Do not use it in a production deployment. Use a production WSGI server instead.[0m
+ * Running on http://127.0.0.1:8080
+INFO:werkzeug:[33mPress CTRL+C to quit[0m
+INFO:werkzeug: * Restarting with watchdog (windowsapi)
+WARNING:werkzeug: * Debugger is active!
+INFO:werkzeug: * Debugger PIN: 137-437-087
+INFO:werkzeug: * Detected change in 'c:\\Users\\Daniel Nunes\\LEI\\BD\\Projeto\\python\\care_sync.py', reloading
+INFO:werkzeug: * Detected change in 'c:\\Users\\Daniel Nunes\\LEI\\BD\\Projeto\\python\\care_sync.py', reloading
+INFO:werkzeug: * Detected change in 'c:\\Users\\Daniel Nunes\\LEI\\BD\\Projeto\\python\\care_sync.py', reloading
+INFO:werkzeug: * Restarting with watchdog (windowsapi)
+WARNING:werkzeug: * Debugger is active!
+INFO:werkzeug: * Debugger PIN: 137-437-087
+INFO:werkzeug: * Detected change in 'c:\\Users\\Daniel Nunes\\LEI\\BD\\Projeto\\python\\care_sync.py', reloading
+INFO:werkzeug: * Detected change in 'c:\\Users\\Daniel Nunes\\LEI\\BD\\Projeto\\python\\care_sync.py', reloading
+INFO:werkzeug: * Detected change in 'c:\\Users\\Daniel Nunes\\LEI\\BD\\Projeto\\python\\care_sync.py', reloading
+INFO:werkzeug: * Restarting with watchdog (windowsapi)
+WARNING:werkzeug: * Debugger is active!
+INFO:werkzeug: * Debugger PIN: 137-437-087
+INFO:logger:API v1.0 online: http://127.0.0.1:8080
+INFO:logger:API v1.0 online: http://127.0.0.1:8080
+INFO:werkzeug:[31m[1mWARNING: This is a development server. Do not use it in a production deployment. Use a production WSGI server instead.[0m
+ * Running on http://127.0.0.1:8080
+INFO:werkzeug:[33mPress CTRL+C to quit[0m
+INFO:werkzeug: * Restarting with watchdog (windowsapi)
+WARNING:werkzeug: * Debugger is active!
+INFO:werkzeug: * Debugger PIN: 137-437-087
+INFO:werkzeug: * Detected change in 'c:\\Users\\Daniel Nunes\\LEI\\BD\\Projeto\\python\\care_sync.py', reloading
+INFO:werkzeug: * Detected change in 'c:\\Users\\Daniel Nunes\\LEI\\BD\\Projeto\\python\\care_sync.py', reloading
+INFO:werkzeug: * Detected change in 'c:\\Users\\Daniel Nunes\\LEI\\BD\\Projeto\\python\\care_sync.py', reloading
+INFO:werkzeug: * Restarting with watchdog (windowsapi)
+WARNING:werkzeug: * Debugger is active!
+INFO:werkzeug: * Debugger PIN: 137-437-087
+INFO:logger:API v1.0 online: http://127.0.0.1:8080
+INFO:logger:API v1.0 online: http://127.0.0.1:8080
+INFO:werkzeug:[31m[1mWARNING: This is a development server. Do not use it in a production deployment. Use a production WSGI server instead.[0m
+ * Running on http://127.0.0.1:8080
+INFO:werkzeug:[33mPress CTRL+C to quit[0m
+INFO:werkzeug: * Restarting with watchdog (windowsapi)
+WARNING:werkzeug: * Debugger is active!
+INFO:werkzeug: * Debugger PIN: 137-437-087
+INFO:logger:POST /dbproj/register/patient
+DEBUG:logger:POST /dbproj/register/patient - payload: {'cc': 21345483, 'name': 'Carlos Godinho', 'password': 'carlosgodinho', 'health_number': 67493673, 'emergency_contact': 963456836, 'birthday': '1985-05-09', 'email': 'godinho@gmail.com'}
+INFO:werkzeug:127.0.0.1 - - [28/May/2024 11:49:48] "POST /dbproj/register/patient HTTP/1.1" 200 -
+INFO:logger:API v1.0 online: http://127.0.0.1:8080
+INFO:logger:API v1.0 online: http://127.0.0.1:8080
+INFO:werkzeug:[31m[1mWARNING: This is a development server. Do not use it in a production deployment. Use a production WSGI server instead.[0m
+ * Running on http://127.0.0.1:8080
+INFO:werkzeug:[33mPress CTRL+C to quit[0m
+INFO:werkzeug: * Restarting with watchdog (windowsapi)
+WARNING:werkzeug: * Debugger is active!
+INFO:werkzeug: * Debugger PIN: 137-437-087
+INFO:logger:POST /dbproj/register/patient
+DEBUG:logger:POST /dbproj/register/patient - payload: {'cc': 21345483, 'name': 'Carlos Godinho', 'password': 'carlosgodinho', 'health_number': 67493673, 'emergency_contact': 963456836, 'birthday': '1985-05-09', 'email': 'godinho@gmail.com'}
+ERROR:logger:POST /dbproj/register/patient - error: ERRO:  CC or health number already exists in the database
+CONTEXT:  função PL/pgSQL add_patient(bigint,character varying,character varying,bigint,bigint,date,character varying) linha 8 em RAISE
+
+INFO:werkzeug:127.0.0.1 - - [28/May/2024 11:50:26] "[35m[1mPOST /dbproj/register/patient HTTP/1.1[0m" 500 -
+INFO:logger:POST /dbproj/register/patient
+DEBUG:logger:POST /dbproj/register/patient - payload: {'cc': 2134548, 'name': 'Carlos Godinho', 'password': 'carlosgodinho', 'health_number': 67493673, 'emergency_contact': 963456836, 'birthday': '1985-05-09', 'email': 'godinho@gmail.com'}
+ERROR:logger:POST /dbproj/register/patient - error: ERRO:  CC or health number already exists in the database
+CONTEXT:  função PL/pgSQL add_patient(bigint,character varying,character varying,bigint,bigint,date,character varying) linha 8 em RAISE
+
+INFO:werkzeug:127.0.0.1 - - [28/May/2024 11:50:35] "[35m[1mPOST /dbproj/register/patient HTTP/1.1[0m" 500 -
+INFO:logger:POST /dbproj/register/patient
+DEBUG:logger:POST /dbproj/register/patient - payload: {'cc': 21345483, 'name': 'Carlos Godinho', 'password': 'carlosgodinho', 'health_number': 6749363, 'emergency_contact': 963456836, 'birthday': '1985-05-09', 'email': 'godinho@gmail.com'}
+ERROR:logger:POST /dbproj/register/patient - error: ERRO:  CC or health number already exists in the database
+CONTEXT:  função PL/pgSQL add_patient(bigint,character varying,character varying,bigint,bigint,date,character varying) linha 8 em RAISE
+
+INFO:werkzeug:127.0.0.1 - - [28/May/2024 11:50:42] "[35m[1mPOST /dbproj/register/patient HTTP/1.1[0m" 500 -
+INFO:logger:POST /dbproj/register/patient
+DEBUG:logger:POST /dbproj/register/patient - payload: {'cc': 56392759, 'name': 'Carlos Godinho', 'password': 'carlosgodinho', 'health_number': 66329834, 'emergency_contact': 963456836, 'birthday': '1985-05-09', 'email': 'godinho@gmail.com'}
+INFO:werkzeug:127.0.0.1 - - [28/May/2024 11:51:05] "POST /dbproj/register/patient HTTP/1.1" 200 -
+INFO:logger:POST /dbproj/register/assistant
+DEBUG:logger:POST /dbproj/register/assistant - payload: {'cc': 67493269, 'name': 'Carlos Simões', 'password': 'carlossimoes', 'contract_id': 443, 'salary': 30000, 'contract_issue_date': '2022-07-04', 'contract_due_date': '2025-07-04', 'birthday': '1985-01-12', 'email': 'carlossimoes@gmail.com'}
+INFO:werkzeug:127.0.0.1 - - [28/May/2024 11:52:18] "POST /dbproj/register/assistant HTTP/1.1" 200 -
+INFO:logger:POST /dbproj/register/assistant
+DEBUG:logger:POST /dbproj/register/assistant - payload: {'cc': 67493269, 'name': 'Carlos Simões', 'password': 'carlossimoes', 'contract_id': 443, 'salary': 30000, 'contract_issue_date': '2022-07-04', 'contract_due_date': '2025-07-04', 'birthday': '1985-01-12', 'email': 'carlossimoes@gmail.com'}
+ERROR:logger:POST /dbproj/register/assistant - error: ERRO:  CC, email or contract id already exists in the database
+CONTEXT:  função PL/pgSQL add_emp(bigint,character varying,character varying,bigint,integer,date,date,date,character varying) linha 8 em RAISE
+comando SQL "CALL add_emp(cc_num, name, hashcode, contract_id, sal, contract_issue_date, contract_due_date, birthday, email)"
+função PL/pgSQL add_assistant(bigint,character varying,character varying,bigint,integer,date,date,date,character varying) linha 3 em CALL
+
+INFO:werkzeug:127.0.0.1 - - [28/May/2024 11:52:23] "[35m[1mPOST /dbproj/register/assistant HTTP/1.1[0m" 500 -
+INFO:logger:POST /dbproj/register/assistant
+DEBUG:logger:POST /dbproj/register/assistant - payload: {'cc': 67493269, 'name': 'Carlos Simões', 'password': 'carlossimoes', 'contract_id': 443, 'salary': 30000, 'contract_issue_date': '2022-07-04', 'contract_due_date': '2025-07-04', 'birthday': '1985-01-12', 'email': 'carlosimoes@gmail.com'}
+ERROR:logger:POST /dbproj/register/assistant - error: ERRO:  CC, email or contract id already exists in the database
+CONTEXT:  função PL/pgSQL add_emp(bigint,character varying,character varying,bigint,integer,date,date,date,character varying) linha 8 em RAISE
+comando SQL "CALL add_emp(cc_num, name, hashcode, contract_id, sal, contract_issue_date, contract_due_date, birthday, email)"
+função PL/pgSQL add_assistant(bigint,character varying,character varying,bigint,integer,date,date,date,character varying) linha 3 em CALL
+
+INFO:werkzeug:127.0.0.1 - - [28/May/2024 11:52:28] "[35m[1mPOST /dbproj/register/assistant HTTP/1.1[0m" 500 -
+INFO:logger:POST /dbproj/register/assistant
+DEBUG:logger:POST /dbproj/register/assistant - payload: {'cc': 67493269, 'name': 'Carlos Simões', 'password': 'carlossimoes', 'contract_id': 444, 'salary': 30000, 'contract_issue_date': '2022-07-04', 'contract_due_date': '2025-07-04', 'birthday': '1985-01-12', 'email': 'carlosimoes@gmail.com'}
+ERROR:logger:POST /dbproj/register/assistant - error: ERRO:  CC, email or contract id already exists in the database
+CONTEXT:  função PL/pgSQL add_emp(bigint,character varying,character varying,bigint,integer,date,date,date,character varying) linha 8 em RAISE
+comando SQL "CALL add_emp(cc_num, name, hashcode, contract_id, sal, contract_issue_date, contract_due_date, birthday, email)"
+função PL/pgSQL add_assistant(bigint,character varying,character varying,bigint,integer,date,date,date,character varying) linha 3 em CALL
+
+INFO:werkzeug:127.0.0.1 - - [28/May/2024 11:52:38] "[35m[1mPOST /dbproj/register/assistant HTTP/1.1[0m" 500 -
+INFO:logger:POST /dbproj/register/assistant
+DEBUG:logger:POST /dbproj/register/assistant - payload: {'cc': 6749269, 'name': 'Carlos Simões', 'password': 'carlossimoes', 'contract_id': 443, 'salary': 30000, 'contract_issue_date': '2022-07-04', 'contract_due_date': '2025-07-04', 'birthday': '1985-01-12', 'email': 'carlosimoes@gmail.com'}
+ERROR:logger:POST /dbproj/register/assistant - error: ERRO:  CC, email or contract id already exists in the database
+CONTEXT:  função PL/pgSQL add_emp(bigint,character varying,character varying,bigint,integer,date,date,date,character varying) linha 8 em RAISE
+comando SQL "CALL add_emp(cc_num, name, hashcode, contract_id, sal, contract_issue_date, contract_due_date, birthday, email)"
+função PL/pgSQL add_assistant(bigint,character varying,character varying,bigint,integer,date,date,date,character varying) linha 3 em CALL
+
+INFO:werkzeug:127.0.0.1 - - [28/May/2024 11:52:43] "[35m[1mPOST /dbproj/register/assistant HTTP/1.1[0m" 500 -
+INFO:logger:POST /dbproj/register/patient
+DEBUG:logger:POST /dbproj/register/patient - payload: {'cc': 12347597, 'name': 'Diogo Santos', 'password': 'diogo santos', 'health_number': 99373547, 'emergency_contact': 962465824, 'birthday': '1985-05-09', 'email': 'diogosantos@gmail.com'}
+INFO:werkzeug:127.0.0.1 - - [28/May/2024 11:53:44] "POST /dbproj/register/patient HTTP/1.1" 200 -
+INFO:logger:POST /dbproj/register/assistant
+DEBUG:logger:POST /dbproj/register/assistant - payload: {'cc': 37565639, 'name': 'Hugo Mendes', 'password': 'hugomendes', 'contract_id': 5, 'salary': 60000, 'contract_issue_date': '2022-07-04', 'contract_due_date': '2025-07-04', 'birthday': '1985-01-12', 'email': 'hugomendes@gmail.com'}
+INFO:werkzeug:127.0.0.1 - - [28/May/2024 11:54:50] "POST /dbproj/register/assistant HTTP/1.1" 200 -
+INFO:logger:POST /dbproj/register/nurse
+DEBUG:logger:POST /dbproj/register/nurse - payload: {'cc': 22585639, 'name': 'Filipe Gonçalves', 'password': 'filipegoncalves', 'contract_id': 141, 'salary': 120000, 'contract_issue_date': '2023-05-15', 'contract_due_date': '2027-05-15', 'birthday': '1988-05-23', 'email': 'filipegoncalves@gmail.com', 'superior_email': None}
+INFO:werkzeug:127.0.0.1 - - [28/May/2024 11:55:53] "POST /dbproj/register/nurse HTTP/1.1" 200 -
+INFO:logger:POST /dbproj/register/doctor
+DEBUG:logger:POST /dbproj/register/doctor - payload: {'cc': 54638275, 'name': 'Miguel Silva', 'password': 'miguelsilva', 'contract_id': 8743, 'salary': 95000, 'contract_issue_date': '2018-03-19', 'contract_due_date': '2028-03-19', 'birthday': '2004-08-30', 'email': 'miguelsilva@gmail.com', 'license_id': 'afhb35sjk', 'license_company': 'Pfizer', 'license_issue_date': '1998-05-08', 'license_due_date': '2028-05-08', 'specialties': [{'specialty_name': 'cardiologista', 'parent_specialty': 'oftalmologista'}]}
+ERROR:logger:POST /dbproj/register/doctor - error: ERRO:  inserção ou atualização em tabela "specialty_hierarchy" viola restrição de chave estrangeira "specialty_hierarchy_fk2"
+DETAIL:  Chave (specialty_parent)=(oftalmologista) não está presente na tabela "specialty".
+CONTEXT:  comando SQL "INSERT INTO specialty_hierarchy(specialty_name, specialty_parent)
+    SELECT s_name, s_parent
+    FROM unnest(specialty_names) AS s_name
+    LEFT JOIN unnest(specialty_parents) AS s_parent ON true
+    WHERE s_parent IS NOT NULL"
+função PL/pgSQL add_doctor(bigint,character varying,character varying,bigint,integer,date,date,date,character varying,character varying,date,date,character varying,character varying[],character varying[]) linha 12 em comando SQL
+
+INFO:werkzeug:127.0.0.1 - - [28/May/2024 11:56:17] "[35m[1mPOST /dbproj/register/doctor HTTP/1.1[0m" 500 -
+INFO:logger:POST /dbproj/register/doctor
+DEBUG:logger:POST /dbproj/register/doctor - payload: {'cc': 54638275, 'name': 'Miguel Silva', 'password': 'miguelsilva', 'contract_id': 8743, 'salary': 95000, 'contract_issue_date': '2018-03-19', 'contract_due_date': '2028-03-19', 'birthday': '2004-08-30', 'email': 'miguelsilva@gmail.com', 'license_id': 'afhb35sjk', 'license_company': 'Pfizer', 'license_issue_date': '1998-05-08', 'license_due_date': '2028-05-08', 'specialties': [{'specialty_name': 'cardiologista', 'parent_specialty': None}]}
+INFO:werkzeug:127.0.0.1 - - [28/May/2024 11:56:23] "POST /dbproj/register/doctor HTTP/1.1" 200 -
+INFO:logger:POST /dbproj/register/doctor
+DEBUG:logger:POST /dbproj/register/doctor - payload: {'cc': 57773244, 'name': 'José Mário', 'password': 'josemario', 'contract_id': 142, 'salary': 148000, 'contract_issue_date': '2018-03-19', 'contract_due_date': '2028-03-19', 'birthday': '2004-08-30', 'email': 'josemario@gmail.com', 'license_id': 'afb5sjk', 'license_company': 'Pfizer', 'license_issue_date': '1998-05-08', 'license_due_date': '2028-05-08', 'specialties': [{'specialty_name': 'oftalmologista', 'parent_specialty': 'cardiologista'}]}
+INFO:werkzeug:127.0.0.1 - - [28/May/2024 11:59:40] "POST /dbproj/register/doctor HTTP/1.1" 200 -
+INFO:logger:API v1.0 online: http://127.0.0.1:8080
+INFO:logger:API v1.0 online: http://127.0.0.1:8080
+INFO:werkzeug:[31m[1mWARNING: This is a development server. Do not use it in a production deployment. Use a production WSGI server instead.[0m
+ * Running on http://127.0.0.1:8080
+INFO:werkzeug:[33mPress CTRL+C to quit[0m
+INFO:werkzeug: * Restarting with watchdog (windowsapi)
+WARNING:werkzeug: * Debugger is active!
+INFO:werkzeug: * Debugger PIN: 137-437-087
+INFO:logger:PUT /dbproj/user
+DEBUG:logger:PUT /dbproj/user - payload: {'username': 12347597, 'password': 'diogosantos'}
+INFO:werkzeug:127.0.0.1 - - [28/May/2024 12:04:39] "[31m[1mPUT /dbproj/user HTTP/1.1[0m" 400 -
+INFO:logger:PUT /dbproj/user
+DEBUG:logger:PUT /dbproj/user - payload: {'username': 12347597, 'password': 'diogo santos'}
+INFO:werkzeug:127.0.0.1 - - [28/May/2024 12:04:53] "PUT /dbproj/user HTTP/1.1" 200 -
+INFO:logger:API v1.0 online: http://127.0.0.1:8080
+INFO:logger:API v1.0 online: http://127.0.0.1:8080
+INFO:werkzeug:[31m[1mWARNING: This is a development server. Do not use it in a production deployment. Use a production WSGI server instead.[0m
+ * Running on http://127.0.0.1:8080
+INFO:werkzeug:[33mPress CTRL+C to quit[0m
+INFO:werkzeug: * Restarting with watchdog (windowsapi)
+WARNING:werkzeug: * Debugger is active!
+INFO:werkzeug: * Debugger PIN: 137-437-087
+INFO:logger:POST /dbproj/appointment
+DEBUG:logger:POST /dbproj/appointment - payload: {'doctor_id': 'magdanunes@gmail.com', 'appointment_time': '2024-06-05 08:00:00'}, token_id: 12347597, token_type: patient
+ERROR:logger:POST /dbproj/appointment - error: ERRO:  inserção ou atualização em tabela "appointment" viola restrição de chave estrangeira "appointment_fk2"
+DETAIL:  Chave (doctor_email)=(magdanunes@gmail.com) não está presente na tabela "doctor".
+CONTEXT:  comando SQL "INSERT INTO appointment(start_time, doctor_email, patient_cc)
+	VALUES(appointment_time, doctor_id, patient_id)
+	RETURNING id"
+função PL/pgSQL schedule_appointment(timestamp without time zone,character varying,bigint) linha 34 em comando SQL
+
+INFO:werkzeug:127.0.0.1 - - [28/May/2024 12:16:35] "[35m[1mPOST /dbproj/appointment HTTP/1.1[0m" 500 -
+INFO:logger:POST /dbproj/appointment
+DEBUG:logger:POST /dbproj/appointment - payload: {'doctor_id': 'josemario@gmail.com', 'appointment_time': '2024-06-05 08:00:00'}, token_id: 12347597, token_type: patient
+INFO:werkzeug:127.0.0.1 - - [28/May/2024 12:16:52] "POST /dbproj/appointment HTTP/1.1" 200 -
+INFO:logger:API v1.0 online: http://127.0.0.1:8080
+INFO:logger:API v1.0 online: http://127.0.0.1:8080
+INFO:werkzeug:[31m[1mWARNING: This is a development server. Do not use it in a production deployment. Use a production WSGI server instead.[0m
+ * Running on http://127.0.0.1:8080
+INFO:werkzeug:[33mPress CTRL+C to quit[0m
+INFO:werkzeug: * Restarting with watchdog (windowsapi)
+WARNING:werkzeug: * Debugger is active!
+INFO:werkzeug: * Debugger PIN: 137-437-087
+INFO:werkzeug:127.0.0.1 - - [28/May/2024 12:20:32] "[31m[1mPOST /dbproj/appointment HTTP/1.1[0m" 400 -
+INFO:logger:PUT /dbproj/user
+DEBUG:logger:PUT /dbproj/user - payload: {'username': 12347597, 'password': 'diogo santos'}
+INFO:werkzeug:127.0.0.1 - - [28/May/2024 12:20:38] "PUT /dbproj/user HTTP/1.1" 200 -
+INFO:logger:POST /dbproj/appointment
+DEBUG:logger:POST /dbproj/appointment - payload: {'doctor_id': 'josemario@gmail.com', 'appointment_time': '2024-06-05 08:00:00'}, token_id: 12347597, token_type: patient
+INFO:werkzeug:127.0.0.1 - - [28/May/2024 12:20:48] "POST /dbproj/appointment HTTP/1.1" 200 -
+INFO:logger:POST /dbproj/appointment
+DEBUG:logger:POST /dbproj/appointment - payload: {'doctor_id': 'josemario@gmail.com', 'appointment_time': '2024-06-05 08:00:00'}, token_id: 12347597, token_type: patient
+INFO:werkzeug:127.0.0.1 - - [28/May/2024 12:20:52] "POST /dbproj/appointment HTTP/1.1" 200 -
+INFO:logger:API v1.0 online: http://127.0.0.1:8080
+INFO:logger:API v1.0 online: http://127.0.0.1:8080
+INFO:werkzeug:[31m[1mWARNING: This is a development server. Do not use it in a production deployment. Use a production WSGI server instead.[0m
+ * Running on http://127.0.0.1:8080
+INFO:werkzeug:[33mPress CTRL+C to quit[0m
+INFO:werkzeug: * Restarting with watchdog (windowsapi)
+WARNING:werkzeug: * Debugger is active!
+INFO:werkzeug: * Debugger PIN: 137-437-087
+INFO:logger:POST /dbproj/appointment
+DEBUG:logger:POST /dbproj/appointment - payload: {'doctor_id': 'josemario@gmail.com', 'appointment_time': '2024-06-05 08:00:00'}, token_id: 12347597, token_type: patient
+ERROR:logger:POST /dbproj/appointment - error: ERRO:  Doctor or patient unavailable at this time
+CONTEXT:  função PL/pgSQL schedule_appointment(timestamp without time zone,character varying,bigint) linha 31 em RAISE
+
+INFO:werkzeug:127.0.0.1 - - [28/May/2024 12:21:44] "[35m[1mPOST /dbproj/appointment HTTP/1.1[0m" 500 -
+INFO:logger:POST /dbproj/appointment
+DEBUG:logger:POST /dbproj/appointment - payload: {'doctor_id': 'josemario@gmail.com', 'appointment_time': '2024-06-05 08:00:00'}, token_id: 12347597, token_type: patient
+INFO:werkzeug:127.0.0.1 - - [28/May/2024 12:22:02] "POST /dbproj/appointment HTTP/1.1" 200 -
+INFO:logger:POST /dbproj/appointment
+DEBUG:logger:POST /dbproj/appointment - payload: {'doctor_id': 'josemario@gmail.com', 'appointment_time': '2024-06-05 08:00:00'}, token_id: 12347597, token_type: patient
+ERROR:logger:POST /dbproj/appointment - error: ERRO:  Doctor or patient unavailable at this time
+CONTEXT:  função PL/pgSQL schedule_appointment(timestamp without time zone,character varying,bigint) linha 31 em RAISE
+
+INFO:werkzeug:127.0.0.1 - - [28/May/2024 12:22:14] "[35m[1mPOST /dbproj/appointment HTTP/1.1[0m" 500 -
+INFO:logger:API v1.0 online: http://127.0.0.1:8080
+INFO:logger:API v1.0 online: http://127.0.0.1:8080
+INFO:werkzeug:[31m[1mWARNING: This is a development server. Do not use it in a production deployment. Use a production WSGI server instead.[0m
+ * Running on http://127.0.0.1:8080
+INFO:werkzeug:[33mPress CTRL+C to quit[0m
+INFO:werkzeug: * Restarting with watchdog (windowsapi)
+WARNING:werkzeug: * Debugger is active!
+INFO:werkzeug: * Debugger PIN: 137-437-087
+INFO:logger:POST /dbproj/appointment
+DEBUG:logger:POST /dbproj/appointment - payload: {'doctor_id': 'josemario@gmail.com', 'appointment_time': '2024-06-05 08:00:00'}, token_id: 12347597, token_type: patient
+ERROR:logger:POST /dbproj/appointment - error: ERRO:  Doctor or patient unavailable at this time
+CONTEXT:  função PL/pgSQL schedule_appointment(timestamp without time zone,character varying,bigint) linha 31 em RAISE
+
+INFO:werkzeug:127.0.0.1 - - [28/May/2024 12:26:27] "[35m[1mPOST /dbproj/appointment HTTP/1.1[0m" 500 -
+INFO:logger:POST /dbproj/appointment
+DEBUG:logger:POST /dbproj/appointment - payload: {'doctor_id': 'josemario@gmail.com', 'appointment_time': '2024-06-05 08:30:00'}, token_id: 12347597, token_type: patient
+INFO:werkzeug:127.0.0.1 - - [28/May/2024 12:26:34] "POST /dbproj/appointment HTTP/1.1" 200 -
+INFO:logger:API v1.0 online: http://127.0.0.1:8080
+INFO:logger:API v1.0 online: http://127.0.0.1:8080
+INFO:werkzeug:[31m[1mWARNING: This is a development server. Do not use it in a production deployment. Use a production WSGI server instead.[0m
+ * Running on http://127.0.0.1:8080
+INFO:werkzeug:[33mPress CTRL+C to quit[0m
+INFO:werkzeug: * Restarting with watchdog (windowsapi)
+WARNING:werkzeug: * Debugger is active!
+INFO:werkzeug: * Debugger PIN: 137-437-087
+INFO:logger:PUT /dbproj/user
+DEBUG:logger:PUT /dbproj/user - payload: {'username': 12347597, 'password': 'diogo santos'}
+INFO:werkzeug:127.0.0.1 - - [28/May/2024 12:27:24] "PUT /dbproj/user HTTP/1.1" 200 -
+INFO:werkzeug:127.0.0.1 - - [28/May/2024 12:27:34] "[31m[1mGET /dbproj/appointments/12347597 HTTP/1.1[0m" 400 -
+INFO:logger:PUT /dbproj/user
+DEBUG:logger:PUT /dbproj/user - payload: {'username': 12347597, 'password': 'diogo santos'}
+INFO:werkzeug:127.0.0.1 - - [28/May/2024 12:27:51] "PUT /dbproj/user HTTP/1.1" 200 -
+INFO:logger:GET /dbproj/appointments/<patient_user_id>
+DEBUG:logger:patient_user_id: 12347597, token_id: 12347597, token_type: patient
+INFO:werkzeug:127.0.0.1 - - [28/May/2024 12:28:02] "GET /dbproj/appointments/12347597 HTTP/1.1" 200 -
+INFO:werkzeug:127.0.0.1 - - [28/May/2024 12:31:32] "[31m[1mPOST /dbproj/surgery/7 HTTP/1.1[0m" 400 -
+INFO:logger:PUT /dbproj/user
+DEBUG:logger:PUT /dbproj/user - payload: {'username': 'hugomendes@gmail.com', 'password': 'hugomendes'}
+INFO:werkzeug:127.0.0.1 - - [28/May/2024 12:31:54] "PUT /dbproj/user HTTP/1.1" 200 -
+INFO:logger:API v1.0 online: http://127.0.0.1:8080
+INFO:logger:API v1.0 online: http://127.0.0.1:8080
+INFO:werkzeug:[31m[1mWARNING: This is a development server. Do not use it in a production deployment. Use a production WSGI server instead.[0m
+ * Running on http://127.0.0.1:8080
+INFO:werkzeug:[33mPress CTRL+C to quit[0m
+INFO:werkzeug: * Restarting with watchdog (windowsapi)
+WARNING:werkzeug: * Debugger is active!
+INFO:werkzeug: * Debugger PIN: 137-437-087
+INFO:logger:PUT /dbproj/user
+DEBUG:logger:PUT /dbproj/user - payload: {'username': 'hugomendes@gmail.com', 'password': 'hugomendes'}
+INFO:werkzeug:127.0.0.1 - - [28/May/2024 17:53:02] "PUT /dbproj/user HTTP/1.1" 200 -
+INFO:werkzeug: * Detected change in 'C:\\Users\\Daniel Nunes\\anaconda3\\Lib\\site-packages\\flask\\app.py', reloading
+INFO:werkzeug:127.0.0.1 - - [28/May/2024 17:53:15] "[35m[1mGET /dbproj/top3 HTTP/1.1[0m" 500 -
+INFO:werkzeug: * Restarting with watchdog (windowsapi)
+WARNING:werkzeug: * Debugger is active!
+INFO:werkzeug: * Debugger PIN: 137-437-087
+INFO:logger:API v1.0 online: http://127.0.0.1:8080
+INFO:logger:API v1.0 online: http://127.0.0.1:8080
+INFO:werkzeug:[31m[1mWARNING: This is a development server. Do not use it in a production deployment. Use a production WSGI server instead.[0m
+ * Running on http://127.0.0.1:8080
+INFO:werkzeug:[33mPress CTRL+C to quit[0m
+INFO:werkzeug: * Restarting with watchdog (windowsapi)
+WARNING:werkzeug: * Debugger is active!
+INFO:werkzeug: * Debugger PIN: 137-437-087
+INFO:logger:GET /dbproj/top3
+DEBUG:logger:GET /dbproj/top3 - parse
+INFO:werkzeug:127.0.0.1 - - [28/May/2024 17:54:09] "GET /dbproj/top3 HTTP/1.1" 200 -
+INFO:logger:API v1.0 online: http://127.0.0.1:8080
+INFO:logger:API v1.0 online: http://127.0.0.1:8080
+INFO:werkzeug:[31m[1mWARNING: This is a development server. Do not use it in a production deployment. Use a production WSGI server instead.[0m
+ * Running on http://127.0.0.1:8080
+INFO:werkzeug:[33mPress CTRL+C to quit[0m
+INFO:werkzeug: * Restarting with watchdog (windowsapi)
+WARNING:werkzeug: * Debugger is active!
+INFO:werkzeug: * Debugger PIN: 137-437-087
+INFO:logger:GET /dbproj/top3
+DEBUG:logger:GET /dbproj/top3 - parse
+INFO:werkzeug:127.0.0.1 - - [28/May/2024 17:54:37] "GET /dbproj/top3 HTTP/1.1" 200 -
+INFO:logger:PUT /dbproj/user
+DEBUG:logger:PUT /dbproj/user - payload: {'username': 12347597, 'password': 'diogo santos'}
+INFO:werkzeug:127.0.0.1 - - [28/May/2024 17:54:57] "PUT /dbproj/user HTTP/1.1" 200 -
+INFO:logger:POST /dbproj/bills/<bill_id>
+DEBUG:logger:POST /dbproj/bills/2 - payload: {'amount': 10, 'payment_method': 'card'}, token_id: 12347597, token_type: patient
+INFO:werkzeug:127.0.0.1 - - [28/May/2024 17:55:19] "POST /dbproj/bills/2 HTTP/1.1" 200 -
+INFO:logger:GET /dbproj/top3
+DEBUG:logger:GET /dbproj/top3 - parse
+INFO:werkzeug:127.0.0.1 - - [28/May/2024 17:55:24] "GET /dbproj/top3 HTTP/1.1" 200 -
+INFO:logger:API v1.0 online: http://127.0.0.1:8080
+INFO:logger:API v1.0 online: http://127.0.0.1:8080
+INFO:werkzeug:[31m[1mWARNING: This is a development server. Do not use it in a production deployment. Use a production WSGI server instead.[0m
+ * Running on http://127.0.0.1:8080
+INFO:werkzeug:[33mPress CTRL+C to quit[0m
+INFO:werkzeug: * Restarting with watchdog (windowsapi)
+WARNING:werkzeug: * Debugger is active!
+INFO:werkzeug: * Debugger PIN: 137-437-087
+INFO:logger:PUT /dbproj/user
+DEBUG:logger:PUT /dbproj/user - payload: {'username': 12347597, 'password': 'diogo santos'}
+INFO:werkzeug:127.0.0.1 - - [28/May/2024 19:29:41] "PUT /dbproj/user HTTP/1.1" 200 -
+INFO:werkzeug:127.0.0.1 - - [28/May/2024 19:29:53] "[31m[1mGET /dbproj/top3 HTTP/1.1[0m" 400 -
+INFO:logger:PUT /dbproj/user
+DEBUG:logger:PUT /dbproj/user - payload: {'username': 'hugomendes@gmail.com', 'password': 'hugomendes'}
+INFO:werkzeug:127.0.0.1 - - [28/May/2024 19:30:14] "PUT /dbproj/user HTTP/1.1" 200 -
+INFO:logger:GET /dbproj/top3
+INFO:werkzeug:127.0.0.1 - - [28/May/2024 19:30:30] "[35m[1mGET /dbproj/top3 HTTP/1.1[0m" 500 -
+INFO:logger:API v1.0 online: http://127.0.0.1:8080
+INFO:logger:API v1.0 online: http://127.0.0.1:8080
+INFO:werkzeug:[31m[1mWARNING: This is a development server. Do not use it in a production deployment. Use a production WSGI server instead.[0m
+ * Running on http://127.0.0.1:8080
+INFO:werkzeug:[33mPress CTRL+C to quit[0m
+INFO:werkzeug: * Restarting with watchdog (windowsapi)
+WARNING:werkzeug: * Debugger is active!
+INFO:werkzeug: * Debugger PIN: 137-437-087
+INFO:logger:GET /dbproj/top3
+INFO:werkzeug:127.0.0.1 - - [28/May/2024 19:31:37] "[35m[1mGET /dbproj/top3 HTTP/1.1[0m" 500 -
+INFO:logger:API v1.0 online: http://127.0.0.1:8080
+INFO:logger:API v1.0 online: http://127.0.0.1:8080
+INFO:werkzeug:[31m[1mWARNING: This is a development server. Do not use it in a production deployment. Use a production WSGI server instead.[0m
+ * Running on http://127.0.0.1:8080
+INFO:werkzeug:[33mPress CTRL+C to quit[0m
+INFO:werkzeug: * Restarting with watchdog (windowsapi)
+WARNING:werkzeug: * Debugger is active!
+INFO:werkzeug: * Debugger PIN: 137-437-087
+INFO:logger:GET /dbproj/top3
+INFO:werkzeug:127.0.0.1 - - [28/May/2024 19:32:17] "GET /dbproj/top3 HTTP/1.1" 200 -
+INFO:logger:API v1.0 online: http://127.0.0.1:8080
+INFO:logger:API v1.0 online: http://127.0.0.1:8080
+INFO:werkzeug:[31m[1mWARNING: This is a development server. Do not use it in a production deployment. Use a production WSGI server instead.[0m
+ * Running on http://127.0.0.1:8080
+INFO:werkzeug:[33mPress CTRL+C to quit[0m
+INFO:werkzeug: * Restarting with watchdog (windowsapi)
+WARNING:werkzeug: * Debugger is active!
+INFO:werkzeug: * Debugger PIN: 137-437-087
+INFO:logger:PUT /dbproj/user
+DEBUG:logger:PUT /dbproj/user - payload: {'username': 'hugomendes@gmail.com', 'password': 'hugomendes'}
+INFO:werkzeug:127.0.0.1 - - [28/May/2024 19:37:01] "PUT /dbproj/user HTTP/1.1" 200 -
+INFO:logger:POST /dbproj/surgery
+DEBUG:logger:POST /dbproj/surgery - payload: {'patient_id': 12347597, 'doctor': 'josemario@gmail.com', 'nurses': [], 'surgery_start': '2024-05-29 19:00:00', 'surgery_end': '2024-05-29 19:30:00'}, token_id: hugomendes@gmail.com, token_type: assistant
+INFO:werkzeug:127.0.0.1 - - [28/May/2024 19:37:45] "[31m[1mPOST /dbproj/surgery HTTP/1.1[0m" 400 -
+INFO:logger:POST /dbproj/surgery
+DEBUG:logger:POST /dbproj/surgery - payload: {'patient_id': 12347597, 'doctor': 'josemario@gmail.com', 'nurses': [], 'surgery_start': '2024-05-29 19:00:00', 'surgery_end': '2024-05-29 19:30:00', 'hospitalization_entry_time': '2024-05-29 19:30:00', 'hospitalization_exit_time': '2024-05-29 21:30:00'}, token_id: hugomendes@gmail.com, token_type: assistant
+INFO:werkzeug:127.0.0.1 - - [28/May/2024 19:38:24] "[31m[1mPOST /dbproj/surgery HTTP/1.1[0m" 400 -
+INFO:logger:POST /dbproj/surgery
+DEBUG:logger:POST /dbproj/surgery - payload: {'patient_id': 12347597, 'doctor': 'josemario@gmail.com', 'nurses': [], 'surgery_start': '2024-05-29 19:00:00', 'surgery_end': '2024-05-29 19:30:00', 'hospitalization_entry_time': '2024-05-29 19:30:00', 'hospitalization_exit_time': '2024-05-29 21:30:00', 'hospitalization_responsable_nurse': 'filipegoncalves@gmail.com'}, token_id: hugomendes@gmail.com, token_type: assistant
+INFO:werkzeug:127.0.0.1 - - [28/May/2024 19:38:52] "POST /dbproj/surgery HTTP/1.1" 200 -
+INFO:logger:PUT /dbproj/user
+DEBUG:logger:PUT /dbproj/user - payload: {'username': 12347597, 'password': 'diogo santos'}
+INFO:werkzeug:127.0.0.1 - - [28/May/2024 19:39:15] "PUT /dbproj/user HTTP/1.1" 200 -
+INFO:logger:POST /dbproj/bills/<bill_id>
+DEBUG:logger:POST /dbproj/bills/7 - payload: {'amount': 10, 'payment_method': 'card'}, token_id: 12347597, token_type: patient
+INFO:werkzeug:127.0.0.1 - - [28/May/2024 19:39:32] "POST /dbproj/bills/7 HTTP/1.1" 200 -
+INFO:logger:POST /dbproj/bills/<bill_id>
+DEBUG:logger:POST /dbproj/bills/7 - payload: {'amount': 1000, 'payment_method': 'card'}, token_id: 12347597, token_type: patient
+INFO:werkzeug:127.0.0.1 - - [28/May/2024 19:39:38] "POST /dbproj/bills/7 HTTP/1.1" 200 -
+INFO:logger:GET /dbproj/top3
+INFO:werkzeug:127.0.0.1 - - [28/May/2024 19:39:45] "GET /dbproj/top3 HTTP/1.1" 200 -
+INFO:logger:API v1.0 online: http://127.0.0.1:8080
+INFO:logger:API v1.0 online: http://127.0.0.1:8080
+INFO:werkzeug:[31m[1mWARNING: This is a development server. Do not use it in a production deployment. Use a production WSGI server instead.[0m
+ * Running on http://127.0.0.1:8080
+INFO:werkzeug:[33mPress CTRL+C to quit[0m
+INFO:werkzeug: * Restarting with watchdog (windowsapi)
+WARNING:werkzeug: * Debugger is active!
+INFO:werkzeug: * Debugger PIN: 137-437-087
+INFO:logger:PUT /dbproj/user
+DEBUG:logger:PUT /dbproj/user - payload: {'username': 12347597, 'password': 'diogo santos'}
+INFO:werkzeug:127.0.0.1 - - [28/May/2024 21:58:12] "PUT /dbproj/user HTTP/1.1" 200 -
+INFO:werkzeug:127.0.0.1 - - [28/May/2024 21:58:21] "[31m[1mGET /dbproj/top3 HTTP/1.1[0m" 400 -
+INFO:werkzeug:127.0.0.1 - - [28/May/2024 21:58:54] "[31m[1mGET /dbproj/top3 HTTP/1.1[0m" 400 -
+INFO:logger:PUT /dbproj/user
+DEBUG:logger:PUT /dbproj/user - payload: {'username': 'hugomendes@gmail.com', 'password': 'hugomendes'}
+INFO:werkzeug:127.0.0.1 - - [28/May/2024 21:59:03] "PUT /dbproj/user HTTP/1.1" 200 -
+INFO:logger:GET /dbproj/top3
+ERROR:logger:GET /departments/<ndep> - error: ERRO:  coluna tp.patient_id não existe
+LINE 18:             JOIN patient ON tp.patient_id = patient.cc
+                                     ^
+
+INFO:werkzeug:127.0.0.1 - - [28/May/2024 21:59:12] "GET /dbproj/top3 HTTP/1.1" 200 -
+INFO:logger:API v1.0 online: http://127.0.0.1:8080
+INFO:logger:API v1.0 online: http://127.0.0.1:8080
+INFO:werkzeug:[31m[1mWARNING: This is a development server. Do not use it in a production deployment. Use a production WSGI server instead.[0m
+ * Running on http://127.0.0.1:8080
+INFO:werkzeug:[33mPress CTRL+C to quit[0m
+INFO:werkzeug: * Restarting with watchdog (windowsapi)
+WARNING:werkzeug: * Debugger is active!
+INFO:werkzeug: * Debugger PIN: 137-437-087
+INFO:logger:GET /dbproj/top3
+ERROR:logger:GET /departments/<ndep> - error: ERRO:  coluna tp.patient_id não existe
+LINE 18:             JOIN patient ON tp.patient_id = patient.cc
+                                     ^
+
+INFO:werkzeug:127.0.0.1 - - [28/May/2024 22:02:25] "GET /dbproj/top3 HTTP/1.1" 200 -
+INFO:logger:API v1.0 online: http://127.0.0.1:8080
+INFO:logger:API v1.0 online: http://127.0.0.1:8080
+INFO:werkzeug:[31m[1mWARNING: This is a development server. Do not use it in a production deployment. Use a production WSGI server instead.[0m
+ * Running on http://127.0.0.1:8080
+INFO:werkzeug:[33mPress CTRL+C to quit[0m
+INFO:werkzeug: * Restarting with watchdog (windowsapi)
+WARNING:werkzeug: * Debugger is active!
+INFO:werkzeug: * Debugger PIN: 137-437-087
+INFO:werkzeug: * Detected change in 'C:\\Users\\Daniel Nunes\\anaconda3\\Lib\\concurrent\\__init__.py', reloading
+INFO:werkzeug: * Detected change in 'C:\\Users\\Daniel Nunes\\anaconda3\\Lib\\distutils\\__init__.py', reloading
+INFO:werkzeug: * Detected change in 'C:\\Users\\Daniel Nunes\\anaconda3\\Lib\\idlelib\\__init__.py', reloading
+INFO:werkzeug: * Detected change in 'C:\\Users\\Daniel Nunes\\anaconda3\\Lib\\lib2to3\\__init__.py', reloading
+INFO:werkzeug: * Detected change in 'C:\\Users\\Daniel Nunes\\anaconda3\\Lib\\test\\__init__.py', reloading
+INFO:werkzeug: * Detected change in 'C:\\Users\\Daniel Nunes\\anaconda3\\Lib\\turtledemo\\__init__.py', reloading
+INFO:werkzeug: * Detected change in 'C:\\Users\\Daniel Nunes\\anaconda3\\Lib\\wsgiref\\__init__.py', reloading
+INFO:werkzeug: * Detected change in 'C:\\Users\\Daniel Nunes\\anaconda3\\Lib\\xmlrpc\\__init__.py', reloading
+INFO:werkzeug: * Detected change in 'C:\\Users\\Daniel Nunes\\anaconda3\\Lib\\__phello__\\__init__.py', reloading
+INFO:werkzeug: * Detected change in 'C:\\Users\\Daniel Nunes\\anaconda3\\Lib\\site-packages\\adodbapi\\__init__.py', reloading
+INFO:werkzeug: * Detected change in 'C:\\Users\\Daniel Nunes\\anaconda3\\Lib\\site-packages\\aiobotocore\\__init__.py', reloading
+INFO:werkzeug: * Detected change in 'C:\\Users\\Daniel Nunes\\anaconda3\\Lib\\site-packages\\alabaster\\__init__.py', reloading
+INFO:werkzeug: * Detected change in 'C:\\Users\\Daniel Nunes\\anaconda3\\Lib\\site-packages\\anaconda_anon_usage\\__init__.py', reloading
+INFO:werkzeug: * Detected change in 'C:\\Users\\Daniel Nunes\\anaconda3\\Lib\\site-packages\\anaconda_navigator\\__init__.py', reloading
+INFO:werkzeug: * Detected change in 'C:\\Users\\Daniel Nunes\\anaconda3\\Lib\\site-packages\\anaconda_project\\__init__.py', reloading
+INFO:werkzeug: * Detected change in 'C:\\Users\\Daniel Nunes\\anaconda3\\Lib\\site-packages\\astropy\\__init__.py', reloading
+INFO:werkzeug: * Detected change in 'C:\\Users\\Daniel Nunes\\anaconda3\\Lib\\site-packages\\asttokens\\__init__.py', reloading
+INFO:werkzeug: * Detected change in 'C:\\Users\\Daniel Nunes\\anaconda3\\Lib\\site-packages\\atomicwrites\\__init__.py', reloading
+INFO:werkzeug: * Detected change in 'C:\\Users\\Daniel Nunes\\anaconda3\\Lib\\site-packages\\babel\\__init__.py', reloading
+INFO:werkzeug: * Detected change in 'C:\\Users\\Daniel Nunes\\anaconda3\\Lib\\site-packages\\backcall\\__init__.py', reloading
+INFO:werkzeug: * Detected change in 'C:\\Users\\Daniel Nunes\\anaconda3\\Lib\\site-packages\\backports\\__init__.py', reloading
+INFO:werkzeug: * Detected change in 'C:\\Users\\Daniel Nunes\\anaconda3\\Lib\\site-packages\\binaryornot\\__init__.py', reloading
+INFO:werkzeug: * Detected change in 'C:\\Users\\Daniel Nunes\\anaconda3\\Lib\\site-packages\\binstar_client\\__init__.py', reloading
+INFO:werkzeug: * Detected change in 'C:\\Users\\Daniel Nunes\\anaconda3\\Lib\\site-packages\\blackd\\__init__.py', reloading
+INFO:werkzeug: * Detected change in 'C:\\Users\\Daniel Nunes\\anaconda3\\Lib\\site-packages\\blib2to3\\__init__.py', reloading
+INFO:werkzeug: * Detected change in 'C:\\Users\\Daniel Nunes\\anaconda3\\Lib\\site-packages\\boto3\\__init__.py', reloading
+INFO:werkzeug: * Detected change in 'C:\\Users\\Daniel Nunes\\anaconda3\\Lib\\site-packages\\botocore\\__init__.py', reloading
+INFO:werkzeug: * Detected change in 'C:\\Users\\Daniel Nunes\\anaconda3\\Lib\\site-packages\\bottleneck\\__init__.py', reloading
+INFO:werkzeug: * Detected change in 'C:\\Users\\Daniel Nunes\\anaconda3\\Lib\\site-packages\\brotli\\__init__.py', reloading
+INFO:werkzeug: * Detected change in 'C:\\Users\\Daniel Nunes\\anaconda3\\Lib\\site-packages\\cloudpickle\\__init__.py', reloading
+INFO:werkzeug: * Detected change in 'C:\\Users\\Daniel Nunes\\anaconda3\\Lib\\site-packages\\clyent\\__init__.py', reloading
+INFO:werkzeug: * Detected change in 'C:\\Users\\Daniel Nunes\\anaconda3\\Lib\\site-packages\\colorcet\\__init__.py', reloading
+INFO:werkzeug: * Detected change in 'C:\\Users\\Daniel Nunes\\anaconda3\\Lib\\site-packages\\conda_content_trust\\__init__.py', reloading
+INFO:werkzeug: * Detected change in 'C:\\Users\\Daniel Nunes\\anaconda3\\Lib\\site-packages\\conda_env\\__init__.py', reloading
+INFO:werkzeug: * Detected change in 'C:\\Users\\Daniel Nunes\\anaconda3\\Lib\\site-packages\\conda_index\\__init__.py', reloading
+INFO:werkzeug: * Detected change in 'C:\\Users\\Daniel Nunes\\anaconda3\\Lib\\site-packages\\conda_libmamba_solver\\__init__.py', reloading
+INFO:werkzeug: * Detected change in 'C:\\Users\\Daniel Nunes\\anaconda3\\Lib\\site-packages\\conda_pack\\__init__.py', reloading
+INFO:werkzeug: * Detected change in 'C:\\Users\\Daniel Nunes\\anaconda3\\Lib\\site-packages\\conda_package_handling\\__init__.py', reloading
+INFO:werkzeug: * Detected change in 'C:\\Users\\Daniel Nunes\\anaconda3\\Lib\\site-packages\\conda_package_streaming\\__init__.py', reloading
+INFO:werkzeug: * Detected change in 'C:\\Users\\Daniel Nunes\\anaconda3\\Lib\\site-packages\\conda_token\\__init__.py', reloading
+INFO:werkzeug: * Detected change in 'C:\\Users\\Daniel Nunes\\anaconda3\\Lib\\site-packages\\conda_verify\\__init__.py', reloading
+INFO:werkzeug: * Detected change in 'C:\\Users\\Daniel Nunes\\anaconda3\\Lib\\site-packages\\cookiecutter\\__init__.py', reloading
+INFO:werkzeug: * Detected change in 'C:\\Users\\Daniel Nunes\\anaconda3\\Lib\\site-packages\\cpuinfo\\__init__.py', reloading
+INFO:werkzeug: * Detected change in 'C:\\Users\\Daniel Nunes\\anaconda3\\Lib\\site-packages\\cssselect\\__init__.py', reloading
+INFO:werkzeug: * Detected change in 'C:\\Users\\Daniel Nunes\\anaconda3\\Lib\\site-packages\\curl\\__init__.py', reloading
+INFO:werkzeug: * Detected change in 'C:\\Users\\Daniel Nunes\\anaconda3\\Lib\\site-packages\\cytoolz\\__init__.py', reloading
+INFO:werkzeug: * Detected change in 'C:\\Users\\Daniel Nunes\\anaconda3\\Lib\\site-packages\\daal4py\\__init__.py', reloading
+INFO:werkzeug: * Detected change in 'C:\\Users\\Daniel Nunes\\anaconda3\\Lib\\site-packages\\datashader\\__init__.py', reloading
+INFO:werkzeug: * Detected change in 'C:\\Users\\Daniel Nunes\\anaconda3\\Lib\\site-packages\\datashape\\__init__.py', reloading
+INFO:werkzeug: * Detected change in 'C:\\Users\\Daniel Nunes\\anaconda3\\Lib\\site-packages\\diff_match_patch\\__init__.py', reloading
+INFO:werkzeug: * Detected change in 'C:\\Users\\Daniel Nunes\\anaconda3\\Lib\\site-packages\\dill\\__init__.py', reloading
+INFO:werkzeug: * Detected change in 'C:\\Users\\Daniel Nunes\\anaconda3\\Lib\\site-packages\\erfa\\__init__.py', reloading
+INFO:werkzeug: * Detected change in 'C:\\Users\\Daniel Nunes\\anaconda3\\Lib\\site-packages\\et_xmlfile\\__init__.py', reloading
+INFO:werkzeug: * Detected change in 'C:\\Users\\Daniel Nunes\\anaconda3\\Lib\\site-packages\\flake8\\__init__.py', reloading
+INFO:werkzeug: * Detected change in 'C:\\Users\\Daniel Nunes\\anaconda3\\Lib\\site-packages\\fqdn\\__init__.py', reloading
+INFO:werkzeug: * Detected change in 'C:\\Users\\Daniel Nunes\\anaconda3\\Lib\\site-packages\\future\\__init__.py', reloading
+INFO:werkzeug: * Detected change in 'C:\\Users\\Daniel Nunes\\anaconda3\\Lib\\site-packages\\gensim\\__init__.py', reloading
+INFO:werkzeug: * Detected change in 'C:\\Users\\Daniel Nunes\\anaconda3\\Lib\\site-packages\\glob2\\__init__.py', reloading
+INFO:werkzeug: * Detected change in 'C:\\Users\\Daniel Nunes\\anaconda3\\Lib\\site-packages\\h5py\\__init__.py', reloading
+INFO:werkzeug: * Detected change in 'C:\\Users\\Daniel Nunes\\anaconda3\\Lib\\site-packages\\hvplot\\__init__.py', reloading
+INFO:werkzeug: * Detected change in 'C:\\Users\\Daniel Nunes\\anaconda3\\Lib\\site-packages\\intervaltree\\__init__.py', reloading
+INFO:werkzeug: * Detected change in 'C:\\Users\\Daniel Nunes\\anaconda3\\Lib\\site-packages\\ipython_genutils\\__init__.py', reloading
+INFO:werkzeug: * Detected change in 'C:\\Users\\Daniel Nunes\\anaconda3\\Lib\\site-packages\\ipywidgets\\__init__.py', reloading
+INFO:werkzeug: * Detected change in 'C:\\Users\\Daniel Nunes\\anaconda3\\Lib\\site-packages\\itemadapter\\__init__.py', reloading
+INFO:werkzeug: * Detected change in 'C:\\Users\\Daniel Nunes\\anaconda3\\Lib\\site-packages\\itemloaders\\__init__.py', reloading
+INFO:werkzeug: * Detected change in 'C:\\Users\\Daniel Nunes\\anaconda3\\Lib\\site-packages\\jedi\\__init__.py', reloading
+INFO:werkzeug: * Detected change in 'C:\\Users\\Daniel Nunes\\anaconda3\\Lib\\site-packages\\jupyterlab\\__init__.py', reloading
+INFO:werkzeug: * Detected change in 'C:\\Users\\Daniel Nunes\\anaconda3\\Lib\\site-packages\\jupyterlab_plotly\\__init__.py', reloading
+INFO:werkzeug: * Detected change in 'C:\\Users\\Daniel Nunes\\anaconda3\\Lib\\site-packages\\jupyterlab_pygments\\__init__.py', reloading
+INFO:werkzeug: * Detected change in 'C:\\Users\\Daniel Nunes\\anaconda3\\Lib\\site-packages\\jupyterlab_widgets\\__init__.py', reloading
+INFO:werkzeug: * Detected change in 'C:\\Users\\Daniel Nunes\\anaconda3\\Lib\\site-packages\\jupyter_console\\__init__.py', reloading
+INFO:werkzeug: * Detected change in 'C:\\Users\\Daniel Nunes\\anaconda3\\Lib\\site-packages\\jupyter_server_fileid\\__init__.py', reloading
+INFO:werkzeug: * Detected change in 'C:\\Users\\Daniel Nunes\\anaconda3\\Lib\\site-packages\\jupyter_server_ydoc\\__init__.py', reloading
+INFO:werkzeug: * Detected change in 'C:\\Users\\Daniel Nunes\\anaconda3\\Lib\\site-packages\\jupyter_ydoc\\__init__.py', reloading
+INFO:werkzeug: * Detected change in 'C:\\Users\\Daniel Nunes\\anaconda3\\Lib\\site-packages\\libfuturize\\__init__.py', reloading
+INFO:werkzeug: * Detected change in 'C:\\Users\\Daniel Nunes\\anaconda3\\Lib\\site-packages\\libmambapy\\__init__.py', reloading
+INFO:werkzeug: * Detected change in 'C:\\Users\\Daniel Nunes\\anaconda3\\Lib\\site-packages\\libpasteurize\\__init__.py', reloading
+INFO:werkzeug: * Detected change in 'C:\\Users\\Daniel Nunes\\anaconda3\\Lib\\site-packages\\linkify_it\\__init__.py', reloading
+INFO:werkzeug: * Detected change in 'C:\\Users\\Daniel Nunes\\anaconda3\\Lib\\site-packages\\llvmlite\\__init__.py', reloading
+INFO:werkzeug: * Detected change in 'C:\\Users\\Daniel Nunes\\anaconda3\\Lib\\site-packages\\lxml\\__init__.py', reloading
+INFO:werkzeug: * Detected change in 'C:\\Users\\Daniel Nunes\\anaconda3\\Lib\\site-packages\\lz4\\__init__.py', reloading
+INFO:werkzeug: * Detected change in 'C:\\Users\\Daniel Nunes\\anaconda3\\Lib\\site-packages\\matlab_kernel\\__init__.py', reloading
+INFO:werkzeug: * Detected change in 'C:\\Users\\Daniel Nunes\\anaconda3\\Lib\\site-packages\\matplotlib\\pylab.py', reloading
+INFO:werkzeug: * Detected change in 'C:\\Users\\Daniel Nunes\\anaconda3\\Lib\\site-packages\\matplotlib\\tests\\__init__.py', reloading
+INFO:werkzeug: * Detected change in 'C:\\Users\\Daniel Nunes\\anaconda3\\Lib\\site-packages\\matplotlib\\tight_bbox.py', reloading
+INFO:werkzeug: * Detected change in 'C:\\Users\\Daniel Nunes\\anaconda3\\Lib\\site-packages\\matplotlib_inline\\__init__.py', reloading
+INFO:werkzeug: * Detected change in 'C:\\Users\\Daniel Nunes\\anaconda3\\Lib\\site-packages\\menuinst\\__init__.py', reloading
+INFO:werkzeug: * Detected change in 'C:\\Users\\Daniel Nunes\\anaconda3\\Lib\\site-packages\\mkl\\__init__.py', reloading
+INFO:werkzeug: * Detected change in 'C:\\Users\\Daniel Nunes\\anaconda3\\Lib\\site-packages\\mpmath\\__init__.py', reloading
+INFO:werkzeug: * Detected change in 'C:\\Users\\Daniel Nunes\\anaconda3\\Lib\\site-packages\\msgpack\\__init__.py', reloading
+INFO:werkzeug: * Detected change in 'C:\\Users\\Daniel Nunes\\anaconda3\\Lib\\site-packages\\multipledispatch\\__init__.py', reloading
+INFO:werkzeug: * Detected change in 'C:\\Users\\Daniel Nunes\\anaconda3\\Lib\\site-packages\\navigator_updater\\__init__.py', reloading
+INFO:werkzeug: * Detected change in 'C:\\Users\\Daniel Nunes\\anaconda3\\Lib\\site-packages\\nbclassic\\__init__.py', reloading
+INFO:werkzeug: * Detected change in 'C:\\Users\\Daniel Nunes\\anaconda3\\Lib\\site-packages\\nbclient\\__init__.py', reloading
+INFO:werkzeug: * Detected change in 'C:\\Users\\Daniel Nunes\\anaconda3\\Lib\\site-packages\\nbconvert\\__init__.py', reloading
+INFO:werkzeug: * Detected change in 'C:\\Users\\Daniel Nunes\\anaconda3\\Lib\\site-packages\\nltk\\__init__.py', reloading
+INFO:werkzeug: * Detected change in 'C:\\Users\\Daniel Nunes\\anaconda3\\Lib\\site-packages\\notebook\\__init__.py', reloading
+INFO:werkzeug: * Detected change in 'C:\\Users\\Daniel Nunes\\anaconda3\\Lib\\site-packages\\notebook_shim\\__init__.py', reloading
+INFO:werkzeug: * Detected change in 'C:\\Users\\Daniel Nunes\\anaconda3\\Lib\\site-packages\\numexpr\\__init__.py', reloading
+INFO:werkzeug: * Detected change in 'C:\\Users\\Daniel Nunes\\anaconda3\\Lib\\site-packages\\numpydoc\\__init__.py', reloading
+INFO:werkzeug: * Detected change in 'C:\\Users\\Daniel Nunes\\anaconda3\\Lib\\site-packages\\param\\__init__.py', reloading
+INFO:werkzeug: * Detected change in 'C:\\Users\\Daniel Nunes\\anaconda3\\Lib\\site-packages\\parsel\\__init__.py', reloading
+INFO:werkzeug: * Detected change in 'C:\\Users\\Daniel Nunes\\anaconda3\\Lib\\site-packages\\parso\\__init__.py', reloading
+INFO:werkzeug: * Detected change in 'C:\\Users\\Daniel Nunes\\anaconda3\\Lib\\site-packages\\partd\\__init__.py', reloading
+INFO:werkzeug: * Detected change in 'C:\\Users\\Daniel Nunes\\anaconda3\\Lib\\site-packages\\past\\__init__.py', reloading
+INFO:werkzeug: * Detected change in 'C:\\Users\\Daniel Nunes\\anaconda3\\Lib\\site-packages\\ptyprocess\\__init__.py', reloading
+INFO:werkzeug: * Detected change in 'C:\\Users\\Daniel Nunes\\anaconda3\\Lib\\site-packages\\pyarrow\\__init__.py', reloading
+INFO:werkzeug: * Detected change in 'C:\\Users\\Daniel Nunes\\anaconda3\\Lib\\site-packages\\pyasn1_modules\\__init__.py', reloading
+INFO:werkzeug: * Detected change in 'C:\\Users\\Daniel Nunes\\anaconda3\\Lib\\site-packages\\pyct\\__init__.py', reloading
+INFO:werkzeug: * Detected change in 'C:\\Users\\Daniel Nunes\\anaconda3\\Lib\\site-packages\\pydispatch\\__init__.py', reloading
+INFO:werkzeug: * Detected change in 'C:\\Users\\Daniel Nunes\\anaconda3\\Lib\\site-packages\\pydocstyle\\__init__.py', reloading
+INFO:werkzeug: * Detected change in 'C:\\Users\\Daniel Nunes\\anaconda3\\Lib\\site-packages\\pyls_spyder\\__init__.py', reloading
+INFO:werkzeug: * Detected change in 'C:\\Users\\Daniel Nunes\\anaconda3\\Lib\\site-packages\\PyQt5\\__init__.py', reloading
+INFO:werkzeug: * Detected change in 'C:\\Users\\Daniel Nunes\\anaconda3\\Lib\\site-packages\\pyviz_comms\\__init__.py', reloading
+INFO:werkzeug: * Detected change in 'C:\\Users\\Daniel Nunes\\anaconda3\\Lib\\site-packages\\qdarkstyle\\__init__.py', reloading
+INFO:werkzeug: * Detected change in 'C:\\Users\\Daniel Nunes\\anaconda3\\Lib\\site-packages\\qstylizer\\__init__.py', reloading
+INFO:werkzeug: * Detected change in 'C:\\Users\\Daniel Nunes\\anaconda3\\Lib\\site-packages\\qtawesome\\__init__.py', reloading
+INFO:werkzeug: * Detected change in 'C:\\Users\\Daniel Nunes\\anaconda3\\Lib\\site-packages\\qtconsole\\__init__.py', reloading
+INFO:werkzeug: * Detected change in 'C:\\Users\\Daniel Nunes\\anaconda3\\Lib\\site-packages\\queuelib\\__init__.py', reloading
+INFO:werkzeug: * Detected change in 'C:\\Users\\Daniel Nunes\\anaconda3\\Lib\\site-packages\\repo_cli\\__init__.py', reloading
+INFO:werkzeug: * Detected change in 'C:\\Users\\Daniel Nunes\\anaconda3\\Lib\\site-packages\\rope\\__init__.py', reloading
+INFO:werkzeug: * Detected change in 'C:\\Users\\Daniel Nunes\\anaconda3\\Lib\\site-packages\\ruamel_yaml\\__init__.py', reloading
+INFO:werkzeug: * Detected change in 'C:\\Users\\Daniel Nunes\\anaconda3\\Lib\\site-packages\\s3fs\\__init__.py', reloading
+INFO:werkzeug: * Detected change in 'C:\\Users\\Daniel Nunes\\anaconda3\\Lib\\site-packages\\s3transfer\\__init__.py', reloading
+INFO:werkzeug: * Detected change in 'C:\\Users\\Daniel Nunes\\anaconda3\\Lib\\site-packages\\sacremoses\\__init__.py', reloading
+INFO:werkzeug: * Detected change in 'C:\\Users\\Daniel Nunes\\anaconda3\\Lib\\site-packages\\scipy\\conftest.py', reloading
+INFO:werkzeug: * Detected change in 'C:\\Users\\Daniel Nunes\\anaconda3\\Lib\\site-packages\\scipy\\setup.py', reloading
+INFO:werkzeug: * Detected change in 'C:\\Users\\Daniel Nunes\\anaconda3\\Lib\\site-packages\\scipy\\version.py', reloading
+INFO:werkzeug: * Detected change in 'C:\\Users\\Daniel Nunes\\anaconda3\\Lib\\site-packages\\sipbuild\\__init__.py', reloading
+INFO:werkzeug: * Detected change in 'C:\\Users\\Daniel Nunes\\anaconda3\\Lib\\site-packages\\snappy\\__init__.py', reloading
+INFO:werkzeug: * Detected change in 'C:\\Users\\Daniel Nunes\\anaconda3\\Lib\\site-packages\\spyder\\__init__.py', reloading
+INFO:werkzeug: * Detected change in 'C:\\Users\\Daniel Nunes\\anaconda3\\Lib\\site-packages\\spyder_kernels\\__init__.py', reloading
+INFO:werkzeug: * Detected change in 'C:\\Users\\Daniel Nunes\\anaconda3\\Lib\\site-packages\\stack_data\\__init__.py', reloading
+INFO:werkzeug: * Detected change in 'C:\\Users\\Daniel Nunes\\anaconda3\\Lib\\site-packages\\textdistance\\__init__.py', reloading
+INFO:werkzeug: * Detected change in 'C:\\Users\\Daniel Nunes\\anaconda3\\Lib\\site-packages\\text_unidecode\\__init__.py', reloading
+INFO:werkzeug: * Detected change in 'C:\\Users\\Daniel Nunes\\anaconda3\\Lib\\site-packages\\three_merge\\__init__.py', reloading
+INFO:werkzeug: * Detected change in 'C:\\Users\\Daniel Nunes\\anaconda3\\Lib\\site-packages\\tinycss2\\__init__.py', reloading
+INFO:werkzeug: * Detected change in 'C:\\Users\\Daniel Nunes\\anaconda3\\Lib\\site-packages\\tlz\\__init__.py', reloading
+INFO:werkzeug: * Detected change in 'C:\\Users\\Daniel Nunes\\anaconda3\\Lib\\site-packages\\toolz\\__init__.py', reloading
+INFO:werkzeug: * Detected change in 'C:\\Users\\Daniel Nunes\\anaconda3\\Lib\\site-packages\\transformers\\__init__.py', reloading
+INFO:werkzeug: * Detected change in 'C:\\Users\\Daniel Nunes\\anaconda3\\Lib\\site-packages\\tzdata\\__init__.py', reloading
+INFO:werkzeug: * Detected change in 'C:\\Users\\Daniel Nunes\\anaconda3\\Lib\\site-packages\\uc_micro\\__init__.py', reloading
+INFO:werkzeug: * Detected change in 'C:\\Users\\Daniel Nunes\\anaconda3\\Lib\\site-packages\\w3lib\\__init__.py', reloading
+INFO:werkzeug: * Detected change in 'C:\\Users\\Daniel Nunes\\anaconda3\\Lib\\site-packages\\watchdog\\__init__.py', reloading
+INFO:werkzeug: * Detected change in 'C:\\Users\\Daniel Nunes\\anaconda3\\Lib\\site-packages\\webencodings\\__init__.py', reloading
+INFO:werkzeug: * Detected change in 'C:\\Users\\Daniel Nunes\\anaconda3\\Lib\\site-packages\\websocket\\__init__.py', reloading
+INFO:werkzeug: * Detected change in 'C:\\Users\\Daniel Nunes\\anaconda3\\Lib\\site-packages\\wheel\\__init__.py', reloading
+INFO:werkzeug: * Detected change in 'C:\\Users\\Daniel Nunes\\anaconda3\\Lib\\site-packages\\widgetsnbextension\\__init__.py', reloading
+INFO:werkzeug: * Detected change in 'C:\\Users\\Daniel Nunes\\anaconda3\\Lib\\site-packages\\win32ctypes\\__init__.py', reloading
+INFO:werkzeug: * Detected change in 'C:\\Users\\Daniel Nunes\\anaconda3\\Lib\\site-packages\\winpty\\__init__.py', reloading
+INFO:werkzeug: * Detected change in 'C:\\Users\\Daniel Nunes\\anaconda3\\Lib\\site-packages\\wrapt\\__init__.py', reloading
+INFO:werkzeug: * Detected change in 'C:\\Users\\Daniel Nunes\\anaconda3\\Lib\\site-packages\\xyzservices\\__init__.py', reloading
+INFO:werkzeug: * Detected change in 'C:\\Users\\Daniel Nunes\\anaconda3\\Lib\\site-packages\\yapf\\__init__.py', reloading
+INFO:werkzeug: * Detected change in 'C:\\Users\\Daniel Nunes\\anaconda3\\Lib\\site-packages\\yapftests\\__init__.py', reloading
+INFO:werkzeug: * Detected change in 'C:\\Users\\Daniel Nunes\\anaconda3\\Lib\\site-packages\\zope\\__init__.py', reloading
+INFO:werkzeug: * Detected change in 'C:\\Users\\Daniel Nunes\\anaconda3\\Lib\\site-packages\\matlabengine-23.2-py3.11.egg\\matlab\\__init__.py', reloading
+INFO:werkzeug: * Detected change in 'C:\\Users\\Daniel Nunes\\anaconda3\\Lib\\site-packages\\pythonwin\\pywin\\__init__.py', reloading
+INFO:werkzeug: * Restarting with watchdog (windowsapi)
+WARNING:werkzeug: * Debugger is active!
+INFO:werkzeug: * Debugger PIN: 137-437-087
+INFO:logger:PUT /dbproj/user
+DEBUG:logger:PUT /dbproj/user - payload: {'username': 'hugomendes@gmail.com', 'password': 'hugomendes'}
+INFO:werkzeug:127.0.0.1 - - [28/May/2024 22:06:10] "PUT /dbproj/user HTTP/1.1" 200 -
+INFO:logger:GET /dbproj/top3
+DEBUG:logger:GET /dbproj/top3 - parse
+INFO:werkzeug:127.0.0.1 - - [28/May/2024 22:06:21] "GET /dbproj/top3 HTTP/1.1" 200 -
+INFO:werkzeug:[31m[1mWARNING: This is a development server. Do not use it in a production deployment. Use a production WSGI server instead.[0m
+ * Running on http://127.0.0.1:8080
+INFO:werkzeug:[33mPress CTRL+C to quit[0m
+INFO:werkzeug: * Restarting with watchdog (windowsapi)
+WARNING:werkzeug: * Debugger is active!
+INFO:werkzeug: * Debugger PIN: 137-437-087
+INFO:logger:PUT /dbproj/user
+DEBUG:logger:PUT /dbproj/user - payload: {'username': 'hugomendes@gmail.com', 'password': 'hugomendes'}
+INFO:werkzeug:127.0.0.1 - - [28/May/2024 22:11:18] "PUT /dbproj/user HTTP/1.1" 200 -
+INFO:logger:GET /dbproj/top3
+DEBUG:logger:GET /dbproj/top3 - parse
+INFO:werkzeug:127.0.0.1 - - [28/May/2024 22:11:30] "GET /dbproj/top3 HTTP/1.1" 200 -
+INFO:logger:API v1.0 online: http://127.0.0.1:8080
+INFO:logger:API v1.0 online: http://127.0.0.1:8080
+INFO:werkzeug:[31m[1mWARNING: This is a development server. Do not use it in a production deployment. Use a production WSGI server instead.[0m
+ * Running on http://127.0.0.1:8080
+INFO:werkzeug:[33mPress CTRL+C to quit[0m
+INFO:werkzeug: * Restarting with watchdog (windowsapi)
+WARNING:werkzeug: * Debugger is active!
+INFO:werkzeug: * Debugger PIN: 137-437-087
+INFO:logger:GET /dbproj/top3
+ERROR:logger:GET /departments/<ndep> - error: ERRO:  erro de sintaxe em ou próximo a "FROM"
+LINE 10:         FROM 
+                 ^
+
+INFO:werkzeug:127.0.0.1 - - [28/May/2024 22:24:20] "GET /dbproj/top3 HTTP/1.1" 200 -
+INFO:werkzeug: * Detected change in 'c:\\Users\\Daniel Nunes\\LEI\\BD\\Projeto\\python\\care_sync.py', reloading
+INFO:werkzeug: * Detected change in 'c:\\Users\\Daniel Nunes\\LEI\\BD\\Projeto\\python\\care_sync.py', reloading
+INFO:werkzeug: * Detected change in 'c:\\Users\\Daniel Nunes\\LEI\\BD\\Projeto\\python\\care_sync.py', reloading
+INFO:werkzeug: * Restarting with watchdog (windowsapi)
+WARNING:werkzeug: * Debugger is active!
+INFO:werkzeug: * Debugger PIN: 137-437-087
+INFO:werkzeug: * Detected change in 'c:\\Users\\Daniel Nunes\\LEI\\BD\\Projeto\\python\\care_sync.py', reloading
+INFO:werkzeug: * Detected change in 'c:\\Users\\Daniel Nunes\\LEI\\BD\\Projeto\\python\\care_sync.py', reloading
+INFO:werkzeug: * Detected change in 'c:\\Users\\Daniel Nunes\\LEI\\BD\\Projeto\\python\\care_sync.py', reloading
+INFO:logger:API v1.0 online: http://127.0.0.1:8080
+INFO:logger:API v1.0 online: http://127.0.0.1:8080
+INFO:werkzeug:[31m[1mWARNING: This is a development server. Do not use it in a production deployment. Use a production WSGI server instead.[0m
+ * Running on http://127.0.0.1:8080
+INFO:werkzeug:[33mPress CTRL+C to quit[0m
+INFO:werkzeug: * Restarting with watchdog (windowsapi)
+WARNING:werkzeug: * Debugger is active!
+INFO:werkzeug: * Debugger PIN: 137-437-087
+INFO:logger:GET /dbproj/top3
+DEBUG:logger:GET /dbproj/top3 - parse
+INFO:werkzeug:127.0.0.1 - - [28/May/2024 22:24:42] "GET /dbproj/top3 HTTP/1.1" 200 -
+INFO:logger:API v1.0 online: http://127.0.0.1:8080
+INFO:logger:API v1.0 online: http://127.0.0.1:8080
