@@ -212,7 +212,7 @@
 				"header": [],
 				"body": {
 					"mode": "raw",
-					"raw": "{\n\t\"username\": \"hugomendes@gmail.com\",\n    \"password\": \"hugomendes\"\n}",
+					"raw": "{\n\t\"username\": 12347597,\n    \"password\": \"diogo santos\"\n}",
 					"options": {
 						"raw": {
 							"language": "json"
@@ -494,7 +494,7 @@
 				"header": [
 					{
 						"key": "Authorization",
-						"value": "eyJ0eXAiOiJKV1QiLCJhbGciOiJIUzI1NiJ9.eyJ1c2VybmFtZSI6NjgzNDAzNjUsInR5cGUiOiJwYXRpZW50IiwiZXhwIjoxNzE2ODUxNjUxLjIwODk1MzR9.1etCi_736uS8f1mLYKWWxZLFmIdwAtCKNjgkhfEbWek",
+						"value": "eyJ0eXAiOiJKV1QiLCJhbGciOiJIUzI1NiJ9.eyJ1c2VybmFtZSI6MTIzNDc1OTcsInR5cGUiOiJwYXRpZW50IiwiZXhwIjoxNzE2OTE2MTk3LjE5MDI4Nn0._wBvO92qBxPi4T_RtVONHusm9L_DtdKg7761WLsR__Y",
 						"type": "text"
 					}
 				],
@@ -508,7 +508,7 @@
 					}
 				},
 				"url": {
-					"raw": "http://localhost:8080/dbproj/bills/3",
+					"raw": "http://localhost:8080/dbproj/bills/2",
 					"protocol": "http",
 					"host": [
 						"localhost"
@@ -517,10 +517,51 @@
 					"path": [
 						"dbproj",
 						"bills",
-						"3"
+						"2"
 					]
 				},
 				"description": "This is a POST request, submitting data to an API via the request body. This request submits JSON data, and the data is reflected in the response.\n\nA successful POST request typically returns a `200 OK` or `201 Created` response code."
+			},
+			"response": []
+		},
+		{
+			"name": "List Top 3 Patients",
+			"event": [
+				{
+					"listen": "test",
+					"script": {
+						"exec": [
+							"pm.test(\"Status code is 200\", function () {",
+							"    pm.response.to.have.status(200);",
+							"});"
+						],
+						"type": "text/javascript",
+						"packages": {}
+					}
+				}
+			],
+			"request": {
+				"method": "GET",
+				"header": [
+					{
+						"key": "Authorization",
+						"value": "eyJ0eXAiOiJKV1QiLCJhbGciOiJIUzI1NiJ9.eyJ1c2VybmFtZSI6Imh1Z29tZW5kZXNAZ21haWwuY29tIiwidHlwZSI6ImFzc2lzdGFudCIsImV4cCI6MTcxNjkxNjA4Mi43NjUxMDV9.ZetrLSY9M1pJ479Y_SMPDz74RnSDeIo4XxFwy7UJGcE",
+						"type": "text"
+					}
+				],
+				"url": {
+					"raw": "http://localhost:8080/dbproj/top3",
+					"protocol": "http",
+					"host": [
+						"localhost"
+					],
+					"port": "8080",
+					"path": [
+						"dbproj",
+						"top3"
+					]
+				},
+				"description": "This is a GET request and it is used to \"get\" data from an endpoint. There is no request body for a GET request, but you can use query parameters to help specify the resource you want data on (e.g., in this request, we have `id=1`).\n\nA successful GET response will have a `200 OK` status, and should include some kind of response body - for example, HTML web content or JSON data."
 			},
 			"response": []
 		},
