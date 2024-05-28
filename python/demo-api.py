@@ -303,7 +303,7 @@ def add_doctor():
     logger.debug(f'POST /dbproj/register/doctor - payload: {payload}')
 
     # validate every argument
-    args = ['cc', 'name', 'password', 'contract_id', 'salary', 'contract_issue_date', 'contract_due_date', 'birthday', 'email', 'license_id', 'license_issue_date', 'license_due_date', 'specialty_name']
+    args = ['cc', 'name', 'password', 'contract_id', 'salary', 'contract_issue_date', 'contract_due_date', 'birthday', 'email', 'license_id', 'license_issue_date', 'license_due_date']
     for arg in args:
         if arg not in payload:
             response = {'status': StatusCodes['api_error'], 'errors': f'{arg} value not in payload'}
@@ -316,12 +316,37 @@ def add_doctor():
         response = {'status': StatusCodes['api_error'], 'errors': 'Invalid cc, contract_id or salary'}
         return flask.jsonify(response), response['status']
 
+    specialty_names = []
+    parent_specialties = []
+    if ('specialties' in payload):
+        for specialty in payload['specialties']:
+            if ('specialty_name' not in specialty or 'parent_specialty' not in specialty):
+                response = {'status': StatusCodes['api_error'], 'errors': 'Specialties missing values'}
+                return flask.jsonify(response), response['status']
+            specialty_names.append(specialty['specialty_name'])
+            parent_specialties.append(specialty['parent_specialty'])
+
     # generate password hash to store in the database
     hashed_password = generate_password_hash(payload['password'], method='sha256')
 
     # parameterized queries, good for security and performance
-    statement = 'CALL add_doctor(%s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s)'
-    values = (payload['cc'], payload['name'], hashed_password, payload['contract_id'], payload['salary'], payload['contract_issue_date'], payload['contract_due_date'], payload['birthday'], payload['email'], payload['license_id'], payload['license_issue_date'], payload['license_due_date'], payload['license_company'], payload['specialty_name'],)
+    statement = 'CALL add_doctor(%s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s)'
+    values = (
+        payload['cc'], 
+        payload['name'], 
+        hashed_password, 
+        payload['contract_id'], 
+        payload['salary'], 
+        payload['contract_issue_date'], 
+        payload['contract_due_date'], 
+        payload['birthday'], 
+        payload['email'], 
+        payload['license_id'], 
+        payload['license_issue_date'], 
+        payload['license_due_date'], 
+        payload['license_company'], 
+        specialty_names,
+        parent_specialties,)
 
     try:
         conn = db_connection()

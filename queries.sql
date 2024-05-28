@@ -54,57 +54,45 @@ END;
 $$;
 
 /* ADD DOCTOR */
-CREATE OR REPLACE PROCEDURE add_doctor(cc_num BIGINT, name VARCHAR, hashcode VARCHAR, contract_id BIGINT, sal INT, contract_issue_date DATE, contract_due_date DATE, birthday DATE, email VARCHAR, license_id VARCHAR, license_issue_date DATE, license_due_date DATE, license_comp VARCHAR, specialty_name VARCHAR)
+CREATE OR REPLACE PROCEDURE add_doctor(
+	cc_num BIGINT, 
+	doctor_name VARCHAR, 
+	hashcode VARCHAR, 
+	contract_id BIGINT, 
+	sal INT, 
+	contract_issue_date DATE, 
+	contract_due_date DATE, 
+	birthday DATE, 
+	email VARCHAR, 
+	license_id VARCHAR, 
+	license_issue_date DATE, 
+	license_due_date DATE, 
+	license_comp VARCHAR, 
+	specialty_names VARCHAR[],
+	specialty_parents VARCHAR[]
+)
 LANGUAGE plpgsql
 AS $$
 BEGIN
-	CALL add_emp(cc_num, name, hashcode, contract_id, sal, contract_issue_date, contract_due_date, birthday, email);
+	CALL add_emp(cc_num, doctor_name, hashcode, contract_id, sal, contract_issue_date, contract_due_date, birthday, email);
 
 	INSERT INTO doctor
 	VALUES(email, license_id, license_comp, license_issue_date, license_due_date);
 
-	IF (NOT specialty_exists(specialty_name)) THEN
-		CALL add_specialty(specialty_name, NULL);
-	END IF;
+	INSERT INTO specialty(name)
+    SELECT unnest(specialty_names)
+    ON CONFLICT (name) DO NOTHING;
 
-	INSERT INTO doctor_specialty
-	VALUES(email, specialty_name);
+    INSERT INTO specialty_hierarchy(specialty_name, specialty_parent)
+    SELECT s_name, s_parent
+    FROM unnest(specialty_names) AS s_name
+    LEFT JOIN unnest(specialty_parents) AS s_parent ON true
+    WHERE s_parent IS NOT NULL;
+
+    INSERT INTO doctor_specialty(doctor_email, specialty_name)
+    SELECT email, unnest(specialty_names);
 END;
 $$;
-
-/* ADD SPECIALTY */
-CREATE OR REPLACE PROCEDURE add_specialty(specialty_name VARCHAR, specialty_parent VARCHAR)
-LANGUAGE plpgsql
-AS $$
-BEGIN
-	INSERT INTO specialty
-	VALUES(specialty_name);
-	IF (specialty_parent IS NOT NULL) THEN
-		INSERT INTO specialty_hierarchy
-		VALUES(specialty_name, specialty_parent);
-	END IF;
-
-	EXCEPTION
-		WHEN OTHERS THEN
-			RAISE EXCEPTION 'error adding specialty: %', SQLERRM;
-END;
-$$;
-
-/* CHECK IF SPECIALTY EXISTS */
-CREATE OR REPLACE FUNCTION specialty_exists(specialty_name VARCHAR) 
-RETURNS BOOLEAN
-LANGUAGE plpgsql
-AS $$
-DECLARE
-	res INTEGER;
-BEGIN
-	SELECT COUNT(*) INTO res 
-	FROM specialty
-	WHERE name = specialty_name;
-	return res = 1;
-END;
-$$;
-
 
 /* LOGIN EMPLOYEE */
 CREATE OR REPLACE FUNCTION login_employee(emp_email VARCHAR)
