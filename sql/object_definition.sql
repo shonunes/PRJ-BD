@@ -474,8 +474,7 @@ GROUP BY p.cc;
 CREATE OR REPLACE VIEW top_patients AS
 SELECT patient_id, total_amount
 FROM monthly_payments
-ORDER BY total_amount DESC
-CREATE OR REPLACE VIEW 
+ORDER BY total_amount DESC;
 
 
 CREATE OR REPLACE VIEW hospitalization_counts AS
