@@ -20,6 +20,7 @@ CREATE TABLE employee (
 	contract_due_date	 DATE NOT NULL,
 	PRIMARY KEY(email)
 );
+CREATE INDEX employee_cc_idx ON employee(hashcode);
 
 CREATE TABLE patient (
 	cc		 BIGINT,
@@ -31,6 +32,7 @@ CREATE TABLE patient (
 	email		 VARCHAR(128),
 	PRIMARY KEY(cc)
 );
+CREATE INDEX patient_health_num_idx ON patient(hashcode);
 
 CREATE TABLE assistant (
 	email VARCHAR(128),

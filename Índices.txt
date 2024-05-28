@@ -1,0 +1,4 @@
+Índices:
+não meti índices em tudo o que eram appointments, cirurgias e hospitalizações porque há muitas inserções, também nas bills e pagamentos haverão tantas ou mais alterações.
+pacientes e empregados não devem ser inseridos e removidos assim com muita regularidade por isso meti índices nas tabelas correspondentes.
+Também nas especializações meti índices apesar de poder não haver demasiadas pesquisas.
