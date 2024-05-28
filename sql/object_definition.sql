@@ -171,7 +171,7 @@ BEGIN
 			SELECT 1
 			FROM appointment AS a
 			FULL OUTER JOIN surgery AS s ON TRUE
-			JOIN hospitalization AS h ON s.hospitalization_id = h.id
+			FULL OUTER JOIN hospitalization AS h ON s.hospitalization_id = h.id
 			WHERE
 				-- Check appointment overlaps
 				a.start_time = appointment_time
@@ -195,6 +195,10 @@ BEGIN
 	RETURNING id INTO appointment_id;
 
 	RETURN appointment_id;
+
+	EXCEPTION
+		WHEN FOREIGN_KEY_VIOLATION THEN
+			RAISE EXCEPTION 'Doctor not found';
 END;
 $$;
 
@@ -262,10 +266,10 @@ BEGIN
 	IF EXISTS (
 			SELECT 1
 			FROM appointment AS a
-			LEFT JOIN appointment_role AS ar ON a.id = ar.appointment_id
+			FULL OUTER JOIN appointment_role AS ar ON a.id = ar.appointment_id
 			FULL OUTER JOIN surgery AS s ON TRUE
-			LEFT JOIN surgery_role AS sr ON s.id = sr.surgery_id
-			JOIN hospitalization AS h ON s.hospitalization_id = h.id
+			FULL OUTER JOIN surgery_role AS sr ON s.id = sr.surgery_id
+			FULL OUTER JOIN hospitalization AS h ON s.hospitalization_id = h.id
 			WHERE
 				-- Check appointment overlaps
 				tsrange(a.start_time, a.start_time + INTERVAL '30 minutes')
